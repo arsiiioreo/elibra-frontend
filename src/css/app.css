@@ -1,10 +1,25 @@
-body 
-{
+/* 
+    This is a customized bootstrap classes
+*/
+
+body {
     margin: 0;
     padding: 0;
 }
 
-.bg-success, .btn-success:hover {
+.bg-success,
+.btn-success:hover {
     opacity: 1;
     background-color: #006012 !important;
 }
+
+/* Prime Green Text */
+.text-prime {
+    color: #0eb55c !important;
+}
+
+/* Prime Green Background */
+.bg-prime {
+    background-color: #0eb55c !important;
+}
+
