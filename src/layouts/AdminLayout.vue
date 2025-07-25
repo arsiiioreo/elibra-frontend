@@ -1,19 +1,28 @@
 <template>
     <div class="d-flex d-sm-none justify-content-center align-items-center w-100" style="height: 100vh">Sorry, this page is not accessible on mobile devices.</div>
-
     <div class="overflow-hidden d-none d-sm-flex" id="admin-layout" style="max-height: 100vh; min-height: 100vh">
         <!-- Sidebar -->
-        <nav id="sidebar" class="bg-black d-flex flex-column text-white p-3" style="width: 230px; height: 100vh">
+        <nav id="sidebar" class="bg-prime-secondary d-flex flex-column text-white vh-100" :class="sideBarOpen ? 'p-3' : 'p-0'" :style="sideBarOpen ? 'width: 250px;' : 'width: 0px;'">
             <!-- Logo/Header -->
-            <a href="/sup-ad/dashboard" class="d-flex justify-content-center align-items-center mb-md-0 me-md-auto text-decoration-none text-prime">
-                <img src="@/assets/LOGO.png" alt="" style="width: 50px; height: 50px" class="me-2" />
-                <span class="fs-5 fw-bold">e-Libra</span>
+            <a href="/sup-ad/dashboard" class="d-flex align-items-center mb-md-3 me-md-auto text-decoration-none text-light">
+                <img src="@/assets/LOGO-white.png" alt="" style="width: 25px; height: auto" class="me-2" />
+                <span class="me-2 fw-bold" style="font-size: 0.85rem">e-Libra</span>
             </a>
 
-            <hr class="mb-5" />
+            <div class="d-flex me-auto">
+                <div class="avatar rounded-circle overflow-hidden me-3 ms-2 border border-light p-1" style="height: 50px; width: 50px">
+                    <img :src="user.profile" alt="" class="rounded-circle" style="width: 100%; height: auto" />
+                </div>
+                <div class="d-flex flex-column justify-content-center" style="font-size: 0.85rem">
+                    <span class="small text-white-50">Welcome!</span>
+                    <span>{{ user.name }}</span>
+                </div>
+            </div>
+
+            <hr />
 
             <!-- TOP ROUTES -->
-            <div class="flex-grow-1 overflow-auto">
+            <div class="flex-grow-1 overflow-auto overflow-x-hidden">
                 <p class="text-light" style="font-size: 0.75rem">Management</p>
                 <ul class="nav flex-column mb-auto">
                     <li class="nav-item" v-for="(route, key) in sideBarRoutes" :key="key">
@@ -46,39 +55,40 @@
 
         <!-- Main content -->
         <div class="flex-grow-1 d-flex flex-column vh-100">
-            <!-- Top navbar -->
-            <header class="navbar d-flex align-items-center w-100 bg-black shadow p-3 text-light">
-                <nav style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E')" aria-label="breadcrumb">
-                    <ol class="breadcrumb m-0 align-items-center" style="font-size: 0.85rem">
-                        <i class="bi bi-house-fill"></i>
-                        <p class="mx-2 mb-0" style="background: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E') no-repeat center; width: 10px; height: 8px"></p>
-                        <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item text-light" :class="{ active: !crumb.to }">
-                            <router-link v-if="crumb.to" :to="crumb.to" class="text-decoration-none text-prime">{{ crumb.text }}</router-link>
-                            <span v-else class="fw-semibold">{{ crumb.text }}</span>
-                        </li>
-                    </ol>
-                </nav>
-                <div class="d-flex gap-2" style="font-size: 0.85rem">
-                    <span class="px-3 border-end">Hey there, {{ user.name }}</span>
-                    <span class="px-1">Super Admin</span>
-                </div>
-            </header>
-
-            <!-- Page content -->
-            <main class="flex-grow-1 bg-secondary-subtle d-flex flex-column">
-                <!-- Fixed Title Bar -->
-                <div class="page-header d-flex justify-content-start align-items-center bg-white p-3 border-bottom shadow-sm flex-shrink-0" style="z-index: 1">
-                    <span class="p-2 bg-light border border-success-subtle rounded shadow-sm me-3">
-                        <img src="@/assets/book-green.png" alt="" style="width: 25px; height: auto" />
+            <!-- Fixed Title Bar -->
+            <div class="page-header d-flex justify-content-between align-items-center bg-white p-3 flex-shrink-0" style="z-index: 1">
+                <div class="d-flex align-items-center">
+                    <span class="p-2 py-1 bg-light border rounded me-3 text-prime" @click="setSideBarState" style="cursor: pointer">
+                        <i class="bi bi-list"></i>
                     </span>
                     <div style="font-size: 0.85rem">
                         <h5 class="fw-bold mb-0">{{ pageTitle }}</h5>
                     </div>
                 </div>
+                <div class="d-flex gap-2" style="font-size: 0.85rem">
+                    <span class="px-3 border-end">Hey there, {{ user.name }}</span>
+                    <span class="px-1">Admin</span>
+                </div>
+            </div>
 
-                <!-- Scrollable Content -->
-                <div class="flex-grow-1 overflow-auto bg-light" style="scrollbar-width: thin">
-                    <router-view class="h-100 p-3" />
+            <!-- Top navbar -->
+            <header class="navbar d-flex align-items-center w-100 bg-secondary-subtle p-2 text-dark">
+                <nav style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E')" aria-label="breadcrumb">
+                    <ol class="breadcrumb m-0 align-items-center" style="font-size: 0.85rem">
+                        <i class="bi bi-house-fill ms-2"></i>
+                        <p class="mx-2 mb-0" style="background: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E') no-repeat center; width: 10px; height: 8px"></p>
+                        <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item text-dark" :class="{ active: !crumb.to }">
+                            <router-link v-if="crumb.to" :to="crumb.to" class="text-decoration-none text-black">{{ crumb.text }}</router-link>
+                            <span v-else>{{ crumb.text }}</span>
+                        </li>
+                    </ol>
+                </nav>
+            </header>
+
+            <!-- Page content -->
+            <main class="flex-grow-1 bg-light-subtle overflow-auto bg-light" style="scrollbar-width: thin">
+                <div class="p-3">
+                    <router-view />
                 </div>
             </main>
         </div>
@@ -113,8 +123,10 @@ export default {
         return {
             // Variables
             pageTitle: "",
+            sideBarOpen: localStorage.getItem("sba-state") === "true",
             user: {
                 name: "",
+                profile: "",
             },
 
             // Objects
@@ -133,9 +145,9 @@ export default {
             },
             sideBarRoutes: {
                 dashboard: {
-                    name: "Dashboard",
+                    name: "Files",
                     path: "SuperAdminDashboard",
-                    icon: "bi bi-speedometer2",
+                    icon: "bi bi-folder2-open",
                 },
                 campus: {
                     name: "Campus",
@@ -199,6 +211,11 @@ export default {
             }
         },
 
+        setSideBarState() {
+            this.sideBarOpen = !this.sideBarOpen;
+            localStorage.setItem("sba-state", this.sideBarOpen);
+        },
+
         promptLogout() {
             this.yesNoModal = {
                 action: "logout",
@@ -210,27 +227,28 @@ export default {
         },
     },
     mounted() {
+        const locSide = localStorage.getItem("sba-state");
+
+        if (!locSide) {
+            localStorage.setItem("sba-state", true);
+            this.sideBarOpen = true;
+        } else {
+            this.sideBarOpen = locSide === "true";
+        }
+
         this.pageTitle = this.$route.meta.title || "Super Admin";
-
         this.user = JSON.parse(localStorage.getItem("user"));
-
-        // if (user && user.role !== 2) {
-        //     this.$router.push({ name: "PageUnauthorized" });
-        // }
     },
 };
 </script>
 
 <style scoped>
 #sidebar {
+    overflow: hidden; /* Prevents wrapping and content squeeze */
+    white-space: nowrap; /* Optional: stops text wrapping */
     min-height: 100vh;
-    max-width: 100vh;
     transition: all 0.3s;
 }
-
-/* .nav-link:hover {
-  background-color: #0b964c !important;
-} */
 
 @media (max-width: 768px) {
     #sidebar {

@@ -11,7 +11,7 @@
             </div>
             <div v-if="user.id">
                 <router-link to="/" class="d-flex gap-1 align-items-center rounded-5 border p-1 px-2 text-decoration-none text-prime">
-                    <img class="logo" src="https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg" alt="" style="height: 35px; width: auto" />
+                    <img class="logo rounded-circle" :src="user.profile" alt="" style="height: 30px; width: auto" />
                     <small class="me-2">{{ user.name }}</small>
                 </router-link>
             </div>

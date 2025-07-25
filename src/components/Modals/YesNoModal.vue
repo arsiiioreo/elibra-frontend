@@ -1,24 +1,19 @@
 <template>
-    <div v-if="show" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);" @click.self="$emit('close')">
+    <div v-if="show" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5)" @click.self="$emit('close')">
         <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-4 shadow rounded-4 border-0">
+            <div class="modal-content text-center p-4 shadow rounded-4 border-0">
+                <div class="my-4">
+                    <i :class="['display-1', iconColorClass, 'bi', iconMap[status] || 'bi-info-circle']"></i>
+                </div>
 
-            <div class="my-3">
-                <i :class="['display-1', iconColorClass, 'bi', iconMap[status] || 'bi-info-circle']"></i>
+                <h5 class="modal-title fs-3 fw-bold">{{ title }}</h5>
+                <p class="text-secondary mt-2">{{ message }}</p>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" @click="$emit('answer', false)">Cancel</button>
+                    <button type="button" class="btn btn-primary px-4" @click="$emit('answer', true)">Confirm</button>
+                </div>
             </div>
-
-            <h5 class="modal-title fs-3 fw-bold">{{ title }}</h5>
-            <p class="text-secondary mt-2">{{ message }}</p>
-
-            <div class="d-flex justify-content-center gap-3 mt-4">
-                <button type="button" class="btn btn-outline-secondary px-4" @click="$emit('answer', false)" >
-                    Cancel
-                </button>
-                <button type="button" class="btn btn-primary px-4" @click="$emit('answer', true)">
-                    Confirm
-                </button>
-            </div>
-        </div>
         </div>
     </div>
 </template>
@@ -28,39 +23,42 @@ export default {
     props: {
         show: {
             type: Boolean,
-            required: true
+            required: true,
         },
         status: {
             type: String,
-            default: 'info'
+            default: "info",
         },
         title: {
             type: String,
-            default: 'Are you sure?'
+            default: "Are you sure?",
         },
         message: {
             type: String,
-            default: 'Do you want to proceed with this action?'
-        }
+            default: "Do you want to proceed with this action?",
+        },
     },
     computed: {
         iconMap() {
-        return {
-            success: 'bi-check-circle',
-            error: 'bi-x-circle',
-            warning: 'bi-exclamation-triangle',
-            info: 'bi-info-circle'
-        }
+            return {
+                success: "bi-check-circle",
+                error: "bi-x-circle",
+                warning: "bi-exclamation-triangle",
+                info: "bi-info-circle",
+            };
         },
         iconColorClass() {
-        return {
-            success: 'text-success',
-            error: 'text-danger',
-            warning: 'text-warning',
-            info: 'text-primary'
-        }[this.status] || 'text-primary'
-        }
+            return (
+                {
+                    success: "text-success",
+                    error: "text-danger",
+                    warning: "text-warning",
+                    info: "text-primary",
+                }[this.status] || "text-primary"
+            );
+        },
     },
-    emits: ['close', 'answer'],
-}
+    emits: ["close", "answer"],
+};
 </script>
+

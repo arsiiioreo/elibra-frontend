@@ -43,31 +43,52 @@ const routes = [
                 path: "dashboard",
                 name: "SuperAdminDashboard",
                 component: () => import("../pages/super/DashboardPage.vue"),
-                meta: { requiresAuth: true, title: "Dashboard", breadcrumb: "Dashboard" },
+                meta: { title: "Dashboard", breadcrumb: "Dashboard" },
             },
             {
                 path: "campus",
                 name: "SuperAdminCampus",
                 component: () => import("../pages/super/CampusPage.vue"),
-                meta: { requiresAuth: true, title: "Campus", breadcrumb: "Campus" },
+                meta: { title: "Campus", breadcrumb: "Campus" },
             },
             {
                 path: "users",
                 name: "SuperAdminUsers",
                 component: () => import("../pages/super/UsersPage.vue"),
-                meta: { requiresAuth: true, title: "Users", breadcrumb: "Users" },
+                meta: { title: "Users", breadcrumb: "Users" },
             },
             {
                 path: "my-profile",
                 name: "SuperAdminProfile",
                 component: () => import("../pages/super/ProfilePage.vue"),
-                meta: { requiresAuth: true, title: "My Profile", breadcrumb: "My Profile" },
+                meta: { title: "My Profile", breadcrumb: "My Profile" },
             },
             {
                 path: "settings",
                 name: "SuperAdminSettings",
                 component: () => import("../pages/super/SettingsPage.vue"),
-                meta: { requiresAuth: true, title: "Settings", breadcrumb: "Settings" },
+                meta: { title: "Settings", breadcrumb: "Settings" },
+            },
+        ],
+    },
+
+    // Admin Pages
+    {
+        path: "/a",
+        component: () => import("../layouts/AdminLayout.vue"),
+        meta: { requiresAuth: true, breadcrumb: "Admin" },
+
+        children: [
+            {
+                path: "",
+                name: "Admin",
+                redirect: { name: "AdminDashboard" },
+            },
+            {
+                path: "dashboard",
+                name: "AdminDashboard",
+                component: () => import("../pages/admin/DashboardPage.vue"),
+                meta: { requiresAuth: true, title: "Dashboard", breadcrumb: "Dashboard" },
             },
         ],
     },
@@ -75,9 +96,22 @@ const routes = [
     // User Pages
     {
         path: "/s",
-        name: "Student",
-        component: () => import("../pages/student/HomePage.vue"),
-        meta: { title: "Home", requiresAuth: true },
+        component: () => import("../layouts/StudentLayout.vue"),
+        meta: { requiresAuth: true, breadcrumb: "Student" },
+
+        children: [
+            {
+                path: "",
+                name: "Student",
+                redirect: { name: "StudentHome" },
+            },
+            {
+                path: "home",
+                name: "StudentHome",
+                component: () => import("../pages/student/HomePage.vue"),
+                meta: { requiresAuth: true, title: "Home", breadcrumb: "Dashboard" },
+            },
+        ],
     },
 
     // Error Pages
