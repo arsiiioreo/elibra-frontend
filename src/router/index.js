@@ -1,4 +1,7 @@
+import api from "@/plugins/axios";
 import { createRouter, createWebHistory } from "vue-router";
+import { user, token, setUser, clearAuth } from "@/stores/auth";
+import { showLoading, hideLoading } from "@/services/LoadingService";
 
 const routes = [
     // Public Pages
@@ -11,13 +14,13 @@ const routes = [
     {
         path: "/login",
         name: "login",
-        component: () => import("../pages/auth/LoginPage.vue"),
+        component: () => import("../views/auth/LoginPage.vue"),
         meta: { title: "Login", requiresAuth: false },
     },
     {
         path: "/register",
         name: "register",
-        component: () => import("../pages/auth/RegisterPage.vue"),
+        component: () => import("../views/auth/RegisterPage.vue"),
         meta: { title: "Register", requiresAuth: false },
     },
     {
@@ -25,6 +28,12 @@ const routes = [
         name: "OPAC",
         component: () => import("../views/OPAC.vue"),
         meta: { title: "OPAC", requiresAuth: false },
+    },
+    {
+        path: "/practice",
+        name: "Practice",
+        component: () => import("../views/PracticePage.vue"),
+        meta: { title: "Practice", requiresAuth: false },
     },
 
     // Super Admin Pages
@@ -42,19 +51,25 @@ const routes = [
             {
                 path: "dashboard",
                 name: "SuperAdminDashboard",
-                component: () => import("../pages/super/DashboardPage.vue"),
+                component: () => import("../pages/super/analytics/DashboardPage.vue"),
                 meta: { title: "Dashboard", breadcrumb: "Dashboard" },
+            },
+            {
+                path: "reports",
+                name: "SuperAdminReports",
+                component: () => import("../pages/super/analytics/ReportsPage.vue"),
+                meta: { title: "Reports", breadcrumb: "Reports" },
             },
             {
                 path: "campus",
                 name: "SuperAdminCampus",
-                component: () => import("../pages/super/CampusPage.vue"),
+                component: () => import("../pages/super/management/CampusPage.vue"),
                 meta: { title: "Campus", breadcrumb: "Campus" },
             },
             {
                 path: "users",
                 name: "SuperAdminUsers",
-                component: () => import("../pages/super/UsersPage.vue"),
+                component: () => import("../pages/super/management/UsersPage.vue"),
                 meta: { title: "Users", breadcrumb: "Users" },
             },
             {
@@ -135,40 +150,45 @@ const router = createRouter({
 });
 
 const routePrefix = {
-    // Super Admin Routes
-    0: ["/sup-ad"],
-
-    // Admin Routes
-    1: ["/a"],
-
-    // Student Routes
-    2: ["/s"],
+    0: ["/sup-ad"], // Super Admin Routes
+    1: ["/a"], // Admin Routes
+    2: ["/s"], // Student Routes
 };
 
-router.beforeEach((to, from, next) => {
-    let user = null;
-
-    try {
-        user = JSON.parse(localStorage.getItem("user"));
-    } catch (error) {
-        user = null;
+router.beforeEach(async (to, from, next) => {
+    if (token.value && user.value === null) {
+        try {
+            showLoading({ message: "Fetching user data..." });
+            const res = await api.get("/user", {
+                headers: {
+                    Authorization: `Bearer ${token.value}`,
+                },
+            });
+            await new Promise((resolve) => {
+                setUser(res.data);
+                resolve();
+            });
+        } catch (error) {
+            clearAuth();
+        } finally {
+            hideLoading();
+        }
     }
 
-    const isLoggedIn = !!user;
+    const isLoggedIn = !(user.value === null);
     const publicPages = ["landing", "login", "register"];
     const isPublicPage = publicPages.includes(to.name);
 
-    // Set title early (optional)
     document.title = to.meta?.title || "E-Libra";
 
-    // Redirect logged-in users away from login/register
+    // Prevent logged-in users from accessing login/register again
     if (isPublicPage && isLoggedIn) {
         const roleRedirects = {
             0: "SuperAdmin",
             1: "Admin",
             2: "Student",
         };
-        const redirectRoute = roleRedirects[user.role];
+        const redirectRoute = roleRedirects[user.value.role];
         return next({ name: redirectRoute });
     }
 
@@ -182,21 +202,18 @@ router.beforeEach((to, from, next) => {
     // Role-based access control
     if (user && requiresAuth) {
         const goingTo = to.fullPath;
-        const accessiblePrefix = routePrefix[user.role] || [];
+        const accessiblePrefix = routePrefix[user.value.role] || [];
 
         const isAllowed = accessiblePrefix.some((prefix) => {
-            return (
-                goingTo === prefix || // exact match
-                goingTo.startsWith(prefix + "/") // child path match
-            );
+            return goingTo === prefix || goingTo.startsWith(prefix + "/");
         });
 
         if (!isAllowed) {
-            return next({ name: "PageUnauthorized" }); // 401 page
+            return next({ name: "PageUnauthorized" });
         }
     }
 
-    return next(); // All clear
+    return next();
 });
 
 export default router;

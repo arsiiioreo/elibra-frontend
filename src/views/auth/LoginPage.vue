@@ -63,6 +63,7 @@
 <script>
 import LoadingModal from "@/components/Modals/LoadingModal.vue";
 import StatusPopup from "@/components/Modals/StatusPopup.vue";
+import { token, setUser, user } from "@/stores/auth";
 
 export default {
     data() {
@@ -95,20 +96,19 @@ export default {
 
                 if (loginResponse) {
                     if (loginResponse.data.status === "success") {
-                        localStorage.setItem("token", loginResponse.data.token);
-                        const user = {
-                            id: loginResponse.data.user.id,
-                            name: loginResponse.data.user.name,
-                            role: loginResponse.data.user.role,
-                        };
-                        localStorage.setItem("user", JSON.stringify(user));
+                        token.value = loginResponse.data.token;
+
+                        localStorage.setItem("token", btoa(loginResponse.data.token));
+                        setUser(loginResponse.data.user);
+
                         const home = {
                             0: "SuperAdmin",
                             1: "Admin",
                             2: "Student",
                         };
+
                         this.$router.push({
-                            name: home[loginResponse.data.user.role],
+                            name: home[user.value.role],
                         });
                     } else {
                         console.log(loginResponse.data.message);

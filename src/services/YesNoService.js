@@ -18,12 +18,12 @@ export function confirm({ title, message }) {
                     message,
                     status: "warning",
                     onAnswer: (answer) => {
-                        this.show = false;
                         resolve(answer);
-                        setTimeout(() => {
-                            app.unmount();
-                            container.remove();
-                        }, 300);
+                        this.show = false;
+                        app.unmount();
+                        container.remove();
+                        // setTimeout(() => {
+                        // }, 300);
                     },
                 });
             },

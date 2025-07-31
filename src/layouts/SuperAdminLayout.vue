@@ -10,13 +10,22 @@
                 <span class="fs-5 fw-bold">e-Libra</span>
             </a>
 
-            <hr class="mb-5" />
+            <hr />
 
             <!-- TOP ROUTES -->
             <div class="flex-grow-1 overflow-auto">
+                <p class="text-light" style="font-size: 0.75rem">Analytics</p>
+                <ul class="nav flex-column mb-auto">
+                    <li class="nav-item" v-for="(route, key) in analytics" :key="key">
+                        <router-link :to="{ name: route.path }" class="nav-link text-white mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
+                            <i class="me-2" :class="route.icon"></i>
+                            {{ route.name }}
+                        </router-link>
+                    </li>
+                </ul>
                 <p class="text-light" style="font-size: 0.75rem">Management</p>
                 <ul class="nav flex-column mb-auto">
-                    <li class="nav-item" v-for="(route, key) in sideBarRoutes" :key="key">
+                    <li class="nav-item" v-for="(route, key) in management" :key="key">
                         <router-link :to="{ name: route.path }" class="nav-link text-white mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
                             <i class="me-2" :class="route.icon"></i>
                             {{ route.name }}
@@ -28,20 +37,22 @@
             <hr />
 
             <!-- BOTTOM ROUTES -->
-            <ul class="nav flex-column mt-auto">
-                <li class="nav-item" v-for="(route, key) in lowerRoutes" :key="key">
-                    <router-link :to="{ name: route.path }" class="nav-link text-white mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
-                        <i class="me-2" :class="route.icon"></i>
-                        {{ route.name }}
-                    </router-link>
-                </li>
-                <li class="nav-item">
-                    <button type="button" class="nav-link text-white mb-2" @click="promptLogout" style="font-size: 0.85rem">
-                        <i class="bi bi-door-open me-2"></i>
-                        Logout
-                    </button>
-                </li>
-            </ul>
+            <div class="mt-auto">
+                <ul class="nav flex-column">
+                    <li class="nav-item" v-for="(route, key) in lowerRoutes" :key="key">
+                        <router-link :to="{ name: route.path }" class="nav-link text-light mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
+                            <i class="me-2" :class="route.icon"></i>
+                            {{ route.name }}
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link text-white mb-2 w-100 text-start" @click="this.$logout" style="font-size: 0.85rem">
+                            <i class="bi bi-door-open me-2"></i>
+                            Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
         <!-- Main content -->
@@ -59,26 +70,32 @@
                     </ol>
                 </nav>
                 <div class="d-flex gap-2" style="font-size: 0.85rem">
-                    <span class="px-3 border-end">Hey there, {{ user.name }}</span>
+                    <span class="px-3 border-end">Hey there, {{ user?.name.split(" ", 1)[0] }}</span>
                     <span class="px-1">Super Admin</span>
                 </div>
             </header>
 
             <!-- Page content -->
-            <main class="flex-grow-1 bg-secondary-subtle d-flex flex-column">
-                <!-- Fixed Title Bar -->
-                <div class="page-header d-flex justify-content-start align-items-center bg-white p-3 border-bottom shadow-sm flex-shrink-0" style="z-index: 1">
-                    <span class="p-2 bg-light border border-success-subtle rounded shadow-sm me-3">
-                        <img src="@/assets/book-green.png" alt="" style="width: 25px; height: auto" />
-                    </span>
-                    <div style="font-size: 0.85rem">
-                        <h5 class="fw-bold mb-0">{{ pageTitle }}</h5>
-                    </div>
+            <!-- Scrollable Content -->
+            <!-- <main class="flex-grow-1 bg-secondary-subtle d-flex flex-column">
+                <div class="flex-grow-1 overflow-auto bg-secondary-subtle h-100" style="scrollbar-width: thin">
+                    <router-view />
                 </div>
+            </main> -->
 
-                <!-- Scrollable Content -->
-                <div class="flex-grow-1 overflow-auto bg-light" style="scrollbar-width: thin">
-                    <router-view class="h-100 p-3" />
+            <!-- Fixed Title Bar -->
+            <div class="page-header d-flex justify-content-start align-items-center bg-white p-3 border-bottom shadow-sm flex-shrink-0" style="z-index: 1">
+                <span class="p-2 bg-light border border-success-subtle rounded shadow-sm me-3">
+                    <img src="@/assets/book-green.png" alt="" style="width: 25px; height: auto" />
+                </span>
+                <div style="font-size: 0.85rem">
+                    <h5 class="fw-bold mb-0">{{ pageTitle }}</h5>
+                </div>
+            </div>
+
+            <main class="flex-grow-1 overflow-auto bg-secondary-subtle" style="scrollbar-width: thin">
+                <div class="p-3 h-100">
+                    <router-view />
                 </div>
             </main>
         </div>
@@ -93,6 +110,7 @@
 <script>
 import YesNoModal from "@/components/Modals/YesNoModal.vue";
 import LoadingModal from "@/components/Modals/LoadingModal.vue";
+import { user } from "@/stores/auth";
 
 export default {
     name: "AdminLayout",
@@ -113,9 +131,7 @@ export default {
         return {
             // Variables
             pageTitle: "",
-            user: {
-                name: "",
-            },
+            user: user,
 
             // Objects
             yesNoModal: {
@@ -131,12 +147,19 @@ export default {
                 show: false,
                 message: "",
             },
-            sideBarRoutes: {
+            analytics: {
                 dashboard: {
                     name: "Dashboard",
                     path: "SuperAdminDashboard",
                     icon: "bi bi-speedometer2",
                 },
+                reports: {
+                    name: "Reports",
+                    path: "SuperAdminReports",
+                    icon: "bi bi-folder2-open",
+                },
+            },
+            management: {
                 campus: {
                     name: "Campus",
                     path: "SuperAdminCampus",
@@ -211,8 +234,6 @@ export default {
     },
     mounted() {
         this.pageTitle = this.$route.meta.title || "Super Admin";
-
-        this.user = JSON.parse(localStorage.getItem("user"));
 
         // if (user && user.role !== 2) {
         //     this.$router.push({ name: "PageUnauthorized" });
