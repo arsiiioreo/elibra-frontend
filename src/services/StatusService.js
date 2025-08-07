@@ -18,14 +18,14 @@ export function showStatus({ status, title, message }) {
                     status,
                     title,
                     message,
-                    hideStatus: () => {
-                        setTimeout(() => {
-                            this.show = false;
-                            app.unmount();
-                            container.remove();
-                        }, 2500);
-                    },
                 });
+            },
+            mounted() {
+                setTimeout(() => {
+                    this.show = false;
+                    app.unmount();
+                    container.remove();
+                }, 3000);
             },
         });
 

@@ -1,6 +1,5 @@
-import api from "@/plugins/axios";
 import { createRouter, createWebHistory } from "vue-router";
-import { user, token, setUser, clearAuth } from "@/stores/auth";
+import { user, token, setUser, clearAuth, thisIsMe } from "@/stores/auth";
 import { showLoading, hideLoading } from "@/services/LoadingService";
 
 const routes = [
@@ -68,9 +67,33 @@ const routes = [
             },
             {
                 path: "users",
-                name: "SuperAdminUsers",
                 component: () => import("../pages/super/management/UsersPage.vue"),
-                meta: { title: "Users", breadcrumb: "Users" },
+                meta: { breadcrumb: "Users" },
+                children: [
+                    {
+                        path: "",
+                        name: "SuperAdminUsers",
+                        redirect: { name: "SuperAdminUsersList" },
+                    },
+                    {
+                        path: "list",
+                        name: "SuperAdminUsersList",
+                        component: () => import("../pages/super/management/users/ListPage.vue"),
+                        meta: { title: "User List", breadcrumb: "User List" },
+                    },
+                    {
+                        path: "approvals",
+                        name: "SuperAdminUsersApprovals",
+                        component: () => import("../pages/super/management/users/ApprovalsPage.vue"),
+                        meta: { title: "For Approvals", breadcrumb: "For Approvals" },
+                    },
+                    {
+                        path: "roles",
+                        name: "SuperAdminUsersRoles",
+                        component: () => import("../pages/super/management/users/RolesPage.vue"),
+                        meta: { title: "Roles Distribution", breadcrumb: "Roles Distribution" },
+                    },
+                ],
             },
             {
                 path: "my-profile",
@@ -156,22 +179,21 @@ const routePrefix = {
 };
 
 router.beforeEach(async (to, from, next) => {
-    if (token.value && user.value === null) {
-        try {
-            showLoading({ message: "Fetching user data..." });
-            const res = await api.get("/user", {
-                headers: {
-                    Authorization: `Bearer ${token.value}`,
-                },
-            });
-            await new Promise((resolve) => {
-                setUser(res.data);
-                resolve();
-            });
-        } catch (error) {
-            clearAuth();
-        } finally {
-            hideLoading();
+    if (token.value) {
+        if (user.value === null) {
+            try {
+                showLoading({ message: "Fetching user data..." });
+                const res = await thisIsMe();
+
+                await new Promise((resolve) => {
+                    setUser(res.data);
+                    resolve();
+                });
+            } catch (error) {
+                clearAuth();
+            } finally {
+                hideLoading();
+            }
         }
     }
 

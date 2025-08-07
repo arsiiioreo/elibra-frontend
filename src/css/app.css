@@ -2,6 +2,10 @@
     This is a customized bootstrap classes
 */
 
+* {
+    scrollbar-width: thin;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -31,5 +35,27 @@ body {
 /* Prime Green Background */
 .bg-prime-secondary {
     background-color: #1e5416 !important;
+}
+
+/* Table Customizations */
+td {
+    vertical-align: middle;
+}
+
+th {
+    cursor: pointer;
+}
+
+/* Input Customizations */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0eb55c !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 166, 84, 0.25) !important;
+}
+
+.form-select,
+option {
+    cursor: pointer;
 }
 

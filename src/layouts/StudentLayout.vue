@@ -13,7 +13,7 @@
             <div class="d-flex align-items-center gap-2">
                 <div class="btn-group">
                     <button type="button" class="btn d-flex align-items-center dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                        <img class="me-2 rounded-circle p-1 border border-success" :src="student.profile" alt="logo" style="width: 30px; height: auto" />
+                        <img class="me-2 rounded-circle p-1 border border-success" :src="my.profile_picture" alt="logo" style="width: 30px; height: auto" />
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end mt-2" style="width: 300px">
                         <div class="container">
@@ -22,8 +22,8 @@
                                     <div class="d-flex text-prime mb-3">
                                         <small class="fw-bold me-auto">Profile Card</small>
                                     </div>
-                                    <img class="p-1 rounded-circle border border-success mb-3" :src="student.profile" alt="" style="width: 75px; height: 75px" />
-                                    <h6 class="card-title fw-bold mb-1">{{ student.name }}</h6>
+                                    <img class="p-1 rounded-circle border border-success mb-3" :src="my.profile_picture" alt="profile_logo" style="width: 75px; height: 75px" />
+                                    <h6 class="card-title fw-bold mb-1">{{ my.name }}</h6>
                                     <small class="card-subtitle mb-2 text-body-secondary">Student</small>
                                 </div>
                             </div>
@@ -52,14 +52,17 @@
 </template>
 
 <script>
+import { thisIsMe } from "@/stores/auth";
+import profile_default from "@/assets/profile_default.png";
+
 export default {
-    name: "StudentLayout",
+    created() {
+        this.loadMe();
+    },
     data() {
         return {
             pageTitle: "",
-            student: {
-                name: "Student",
-            },
+            my: [],
         };
     },
     mounted() {
@@ -72,7 +75,12 @@ export default {
             this.pageTitle = to.meta.title || "Student Portal";
         },
     },
-    methods: {},
+    methods: {
+        async loadMe() {
+            this.my = await thisIsMe();
+            this.my.profile_picture = this.my.profile_picture ? this.my.profile_picture : profile_default;
+        },
+    },
 };
 </script>
 

@@ -3,7 +3,7 @@
 
     <div class="overflow-hidden d-none d-sm-flex" id="admin-layout" style="max-height: 100vh; min-height: 100vh">
         <!-- Sidebar -->
-        <nav id="sidebar" class="bg-black d-flex flex-column text-white p-3" style="width: 230px; height: 100vh">
+        <nav id="sidebar" class="bg-black d-flex flex-column text-white p-3" style="min-width: 230px; height: 100vh">
             <!-- Logo/Header -->
             <a href="/sup-ad/dashboard" class="d-flex justify-content-center align-items-center mb-md-0 me-md-auto text-decoration-none text-prime">
                 <img src="@/assets/LOGO.png" alt="" style="width: 50px; height: 50px" class="me-2" />
@@ -75,26 +75,8 @@
                 </div>
             </header>
 
-            <!-- Page content -->
-            <!-- Scrollable Content -->
-            <!-- <main class="flex-grow-1 bg-secondary-subtle d-flex flex-column">
-                <div class="flex-grow-1 overflow-auto bg-secondary-subtle h-100" style="scrollbar-width: thin">
-                    <router-view />
-                </div>
-            </main> -->
-
-            <!-- Fixed Title Bar -->
-            <div class="page-header d-flex justify-content-start align-items-center bg-white p-3 border-bottom shadow-sm flex-shrink-0" style="z-index: 1">
-                <span class="p-2 bg-light border border-success-subtle rounded shadow-sm me-3">
-                    <img src="@/assets/book-green.png" alt="" style="width: 25px; height: auto" />
-                </span>
-                <div style="font-size: 0.85rem">
-                    <h5 class="fw-bold mb-0">{{ pageTitle }}</h5>
-                </div>
-            </div>
-
             <main class="flex-grow-1 overflow-auto bg-secondary-subtle" style="scrollbar-width: thin">
-                <div class="p-3 h-100">
+                <div class="h-100">
                     <router-view />
                 </div>
             </main>
@@ -111,12 +93,16 @@
 import YesNoModal from "@/components/Modals/YesNoModal.vue";
 import LoadingModal from "@/components/Modals/LoadingModal.vue";
 import { user } from "@/stores/auth";
+import { fetchCampuses, fetchUsers } from "@/stores/apiCache";
 
 export default {
     name: "AdminLayout",
     components: {
         YesNoModal,
         LoadingModal,
+    },
+    created() {
+        this.fetchAllData();
     },
     computed: {
         breadcrumbs() {
@@ -194,6 +180,11 @@ export default {
         toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("d-none");
+        },
+
+        async fetchAllData() {
+            await fetchCampuses();
+            await fetchUsers();
         },
 
         handleYesNo(answer) {

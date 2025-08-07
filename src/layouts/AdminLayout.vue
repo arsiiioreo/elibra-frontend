@@ -11,11 +11,11 @@
 
             <div class="d-flex me-auto">
                 <div class="avatar rounded-circle overflow-hidden me-3 ms-2 border border-light p-1" style="height: 50px; width: 50px">
-                    <img :src="user.profile" alt="" class="rounded-circle" style="width: 100%; height: auto" />
+                    <img :src="my.profile_picture" alt="" class="rounded-circle" style="width: 100%; height: auto" />
                 </div>
                 <div class="d-flex flex-column justify-content-center" style="font-size: 0.85rem">
                     <span class="small text-white-50">Welcome!</span>
-                    <span>{{ user.name }}</span>
+                    <span>{{ my.name }}</span>
                 </div>
             </div>
 
@@ -45,7 +45,7 @@
                     </router-link>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link text-white mb-2" @click="promptLogout" style="font-size: 0.85rem">
+                    <button type="button" class="nav-link text-white mb-2" @click="this.$logout" style="font-size: 0.85rem">
                         <i class="bi bi-door-open me-2"></i>
                         Logout
                     </button>
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="d-flex gap-2" style="font-size: 0.85rem">
-                    <span class="px-3 border-end">Hey there, {{ user.name }}</span>
+                    <span class="px-3 border-end">Hey there, {{ my.name }}</span>
                     <span class="px-1">Admin</span>
                 </div>
             </div>
@@ -103,12 +103,17 @@
 <script>
 import YesNoModal from "@/components/Modals/YesNoModal.vue";
 import LoadingModal from "@/components/Modals/LoadingModal.vue";
+import profile_default from "@/assets/profile_default.png";
+import { thisIsMe } from "@/stores/auth";
 
 export default {
     name: "AdminLayout",
     components: {
         YesNoModal,
         LoadingModal,
+    },
+    created() {
+        this.loadUser();
     },
     computed: {
         breadcrumbs() {
@@ -124,10 +129,8 @@ export default {
             // Variables
             pageTitle: "",
             sideBarOpen: localStorage.getItem("sba-state") === "true",
-            user: {
-                name: "",
-                profile: "",
-            },
+
+            my: [],
 
             // Objects
             yesNoModal: {
@@ -180,6 +183,10 @@ export default {
         },
     },
     methods: {
+        async loadUser() {
+            this.my = await thisIsMe();
+            this.my.profile_picture = this.my.profile_picture ? this.my.profile_picture : profile_default;
+        },
         toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("d-none");
@@ -237,7 +244,6 @@ export default {
         }
 
         this.pageTitle = this.$route.meta.title || "Super Admin";
-        this.user = JSON.parse(localStorage.getItem("user"));
     },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
     <button class="btn btn-secondary" @click="promptLogout">Logout</button>
-    <h1>Student: {{ user.name }}</h1>
+    <h1>Student: {{ my.name }}</h1>
 
     <LoadingModal :show="isLoading" :message="loadingModal.message" />
     <YesNoModal :show="isYesNoModal" :status="yesNoModal.status" :title="yesNoModal.title" :message="yesNoModal.message" @answer="handleYesNo" />
@@ -9,15 +9,16 @@
 <script>
 import LoadingModal from "@/components/Modals/LoadingModal.vue";
 import YesNoModal from "@/components/Modals/YesNoModal.vue";
+import { thisIsMe } from "@/stores/auth";
 
 export default {
+    async created() {
+        this.my = await thisIsMe();
+    },
     data() {
         return {
-            user: {
-                id: "",
-                name: "",
-                role: "",
-            },
+            my: [],
+
             loadingModal: {
                 message: "",
             },
