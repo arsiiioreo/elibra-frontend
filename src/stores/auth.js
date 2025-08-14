@@ -4,8 +4,8 @@ import { showStatus } from "@/services/StatusService";
 import { ref } from "vue";
 
 export const user = ref(null);
-const rawToken = localStorage.getItem("token");
-export const token = ref(rawToken ? atob(rawToken) : null);
+// const rawToken = localStorage.getItem("token");
+export const token = ref(atob(localStorage.getItem("token")));
 
 export const setUser = (userData) => {
     user.value = userData;
@@ -16,13 +16,13 @@ export const thisIsMe = async () => {
 
     try {
         const res = await api.get("user", {
-            Authorization: `Bearer ${token.value}`,
+            headers: {
+                Authorization: `Bearer ${token.value}`,
+            },
         });
 
-        if (res) {
-            setUser(res.data);
-            return user.value;
-        }
+        setUser(res.data);
+        return user.value;
     } catch (e) {
         showStatus({ status: "error", title: "Error", message: e });
     }

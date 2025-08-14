@@ -167,6 +167,9 @@
                             <td>
                                 <p class="placeholder-glow mb-0"><span class="placeholder col-12"></span></p>
                             </td>
+                            <td>
+                                <p class="placeholder-glow mb-0"><span class="placeholder col-12"></span></p>
+                            </td>
                         </tr>
 
                         <tr v-if="isEmpty(usersList) && !isFetchingUsers">
@@ -181,8 +184,8 @@
                             <td>{{ u.email }}</td>
                             <td>{{ u.campus?.campus }}</td>
                             <td class="justify-content-center hstack gap-2">
-                                <button class="btn btn-sm btn-danger"><i class="bi bi-x"></i></button>
-                                <button class="btn btn-sm btn-success"><i class="bi bi-check"></i></button>
+                                <button @click="takeUserAnd(false, u.id)" class="btn btn-sm btn-danger"><i class="bi bi-x"></i></button>
+                                <button @click="takeUserAnd(true, u.id)" class="btn btn-sm btn-success"><i class="bi bi-check"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -206,6 +209,10 @@
 </template>
 
 <script>
+import api from "@/plugins/axios";
+import { hideLoading, showLoading } from "@/services/LoadingService";
+import { showStatus } from "@/services/StatusService";
+import { confirm } from "@/services/YesNoService";
 import { fetchCampuses, fetchUsers, loading, storage } from "@/stores/apiCache";
 import { filter, search, sort } from "@/utilities/dataManipulation";
 import { countArray, getLabel, isEmpty } from "@/utilities/dataMap";
@@ -272,7 +279,10 @@ export default {
         async loadUsers(refresh = false) {
             this.usersList = [];
 
-            if (refresh) storage.users = null;
+            if (refresh) {
+                storage.users = null;
+                this.usersForApproval = null;
+            }
             this.usersList = await fetchUsers();
 
             this.usersList = this.usersList.filter((e) => (e.pending_registration_approval === "1" ? e.pending_registration_approval : ""));
@@ -316,6 +326,29 @@ export default {
 
             const sorted = sort(this.usersList, this.sortKeys);
             this.usersList = sorted;
+        },
+
+        async takeUserAnd(action = false, id) {
+            const decision = await confirm({ title: action ? "Approve?" : "Reject?", message: `Are you sure you want to ${action ? "approve" : "reject"} this application?` });
+
+            if (decision) {
+                const formData = new FormData();
+                formData.append("action", action);
+                formData.append("id", id);
+
+                showLoading({ message: "Updating user's registration, please wait..." });
+                try {
+                    const res = await api.post("/udpate-user-registration/", formData);
+
+                    showStatus({ status: res.data.status, title: res.data.status, message: res.data.message });
+                } catch (e) {
+                    showStatus({ status: "error", title: "Error", message: e });
+                } finally {
+                    hideLoading();
+                    await this.loadUsers(true);
+                    this.applyUserFilters();
+                }
+            }
         },
     },
     watch: {

@@ -245,6 +245,7 @@ export default {
 
             campuses: [],
             usersList: [],
+            usersForThisPage: [],
 
             sortKeys: {},
         };
@@ -266,10 +267,14 @@ export default {
 
             if (refresh) storage.users = null;
             this.usersList = await fetchUsers();
+
+            this.usersForThisPage = storage.users.filter((e) => (e.pending_registration_approval === "0" ? e.pending_registration_approval : ""));
+
+            this.usersList = this.usersForThisPage;
         },
 
         applyUserFilters(reset = false) {
-            let users = storage.users;
+            let users = this.usersForThisPage;
 
             if (reset) {
                 this.c = "";

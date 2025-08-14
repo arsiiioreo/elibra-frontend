@@ -90,17 +90,11 @@
 <!-- breadcrumbs -->
 
 <script>
-import YesNoModal from "@/components/Modals/YesNoModal.vue";
-import LoadingModal from "@/components/Modals/LoadingModal.vue";
 import { user } from "@/stores/auth";
 import { fetchCampuses, fetchUsers } from "@/stores/apiCache";
 
 export default {
     name: "AdminLayout",
-    components: {
-        YesNoModal,
-        LoadingModal,
-    },
     created() {
         this.fetchAllData();
     },
@@ -186,49 +180,9 @@ export default {
             await fetchCampuses();
             await fetchUsers();
         },
-
-        handleYesNo(answer) {
-            this.yesNoModal.show = false;
-
-            if (!answer) return;
-
-            switch (this.yesNoModal.action) {
-                case "logout":
-                    localStorage.clear();
-                    this.loadingModal = {
-                        show: true,
-                        message: "Logging out, please wait...",
-                    };
-
-                    setTimeout(() => {
-                        this.loadingModal = {
-                            show: false,
-                            message: "",
-                        };
-                        this.$router.push({ name: "login" });
-                    }, 3000);
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        promptLogout() {
-            this.yesNoModal = {
-                action: "logout",
-                status: "warning",
-                title: "Logout Confirmation",
-                message: "Are you sure you want to logout?",
-                show: true,
-            };
-        },
     },
     mounted() {
         this.pageTitle = this.$route.meta.title || "Super Admin";
-
-        // if (user && user.role !== 2) {
-        //     this.$router.push({ name: "PageUnauthorized" });
-        // }
     },
 };
 </script>
@@ -239,10 +193,6 @@ export default {
     max-width: 100vh;
     transition: all 0.3s;
 }
-
-/* .nav-link:hover {
-  background-color: #0b964c !important;
-} */
 
 @media (max-width: 768px) {
     #sidebar {

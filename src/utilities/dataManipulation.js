@@ -1,19 +1,26 @@
+import Fuse from "fuse.js";
+
 // Helper to get nested array value
 const getValue = (obj, path) => {
     return path.split(".").reduce((acc, key) => acc?.[key], obj);
 };
 
-// This function handles search queries
 export const search = (query, data, keys = []) => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim();
+    if (!q) return data;
 
-    return data.filter((item) => {
-        return keys.some((key) => {
-            const val = item[key];
-            if (val == null) return false;
-            return val.toString().toLowerCase().includes(q);
-        });
+    const fuse = new Fuse(data, {
+        keys: keys,
+        threshold: 0.6,
+        ignoreLocation: true,
+        useExtendedSearch: true, // para sa multi-word matching
     });
+
+    const terms = q
+        .split(/\s+/)
+        .map((word) => `'${word}`)
+        .join(" ");
+    return fuse.search(terms).map((result) => result.item);
 };
 
 export const filter = (data, category = {}) => {
