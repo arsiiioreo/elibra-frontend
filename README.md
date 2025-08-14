@@ -1,4 +1,4 @@
-# frontend
+# E-Libra Frontend Codebase
 
 ## Project setup
 ```
