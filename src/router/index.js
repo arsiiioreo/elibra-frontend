@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { user, token, setUser, clearAuth, thisIsMe } from "@/stores/auth";
+import { user, token, clearAuth, thisIsMe } from "@/stores/auth";
 import { showLoading, hideLoading } from "@/services/LoadingService";
 
 const routes = [
@@ -180,15 +180,10 @@ const routePrefix = {
 
 router.beforeEach(async (to, from, next) => {
     if (token.value) {
-        if (user.value === null) {
+        if (!user.value) {
             try {
                 showLoading({ message: "Fetching user data..." });
-                const res = await thisIsMe();
-
-                await new Promise((resolve) => {
-                    setUser(res.data);
-                    resolve();
-                });
+                await thisIsMe();
             } catch (error) {
                 clearAuth();
             } finally {

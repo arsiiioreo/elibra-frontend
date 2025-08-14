@@ -6,7 +6,7 @@
                     <i :class="['display-1', iconColorClass, 'bi', iconMap[status] || 'bi-info-circle']"></i>
                 </div>
 
-                <h5 class="modal-title fs-3 fw-bold">{{ title }}</h5>
+                <h5 class="modal-title fs-3 fw-bold">{{ title.charAt(0).toUpperCase() + title.slice(1) }}</h5>
                 <p class="text-secondary mt-2">{{ message }}</p>
             </div>
         </div>
