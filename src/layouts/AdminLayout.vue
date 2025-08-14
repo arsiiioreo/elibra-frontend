@@ -22,16 +22,32 @@
             <hr />
 
             <!-- TOP ROUTES -->
-            <div class="flex-grow-1 overflow-auto overflow-x-hidden">
-                <p class="text-light" style="font-size: 0.75rem">Management</p>
-                <ul class="nav flex-column mb-auto">
-                    <li class="nav-item" v-for="(route, key) in sideBarRoutes" :key="key">
-                        <router-link :to="{ name: route.path }" class="nav-link text-white mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
-                            <i class="me-2" :class="route.icon"></i>
+            <div class="accordion w-100 vstack flex-grow-1 overflow-auto overflow-x-hidden" id="sidebarAccordion" style="scrollbar-width: none">
+                <div class="accordion-item" v-for="(route, key) in sideBarRoutes" :key="key">
+                    <!-- Accordion Header -->
+                    <h2 class="accordion-header" :id="'heading' + key">
+                        <button class="accordion-button collapsed bg-prime-secondary text-light" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + key" aria-expanded="false" :aria-controls="'collapse' + key">
                             {{ route.name }}
-                        </router-link>
-                    </li>
-                </ul>
+                        </button>
+                    </h2>
+
+                    <!-- Accordion Body -->
+                    <div :id="'collapse' + key" class="accordion-collapse collapse" :class="route.name === 'Management' ? 'show' : ''" :aria-labelledby="'heading' + key" data-bs-parent="#sidebarAccordion">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column mb-auto">
+                                <li v-if="!route.child || route.child.length === 0" class="nav-item">
+                                    <p class="nav-link p-3 mb-0 rounded-0 bg-dark-subtle text-dark" style="font-size: 0.85rem">No selections to show</p>
+                                </li>
+                                <li v-else class="nav-item" v-for="(child, index) in route.child" :key="index">
+                                    <router-link :to="{ name: child.path }" class="nav-link p-3 rounded-0" :class="[$route.name === child.path ? 'active bg-dark text-light' : 'bg-dark-subtle text-dark']" exact style="font-size: 0.85rem; border-radius: 2px">
+                                        <i class="mx-2" :class="child.icon"></i>
+                                        {{ child.name }}
+                                    </router-link>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <hr />
@@ -93,25 +109,16 @@
             </main>
         </div>
     </div>
-
-    <LoadingModal :show="loadingModal.show" :message="loadingModal.message" />
-    <YesNoModal :show="yesNoModal.show" :status="yesNoModal.status" :title="yesNoModal.title" :message="yesNoModal.message" @answer="handleYesNo" />
 </template>
 
 <!-- breadcrumbs -->
 
 <script>
-import YesNoModal from "@/components/Modals/YesNoModal.vue";
-import LoadingModal from "@/components/Modals/LoadingModal.vue";
 import profile_default from "@/assets/profile_default.png";
 import { thisIsMe } from "@/stores/auth";
 
 export default {
     name: "AdminLayout",
-    components: {
-        YesNoModal,
-        LoadingModal,
-    },
     created() {
         this.loadUser();
     },
@@ -147,20 +154,69 @@ export default {
                 message: "",
             },
             sideBarRoutes: {
-                dashboard: {
-                    name: "Files",
-                    path: "SuperAdminDashboard",
-                    icon: "bi bi-folder2-open",
+                management: {
+                    name: "Management",
+                    child: {
+                        dashboard: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                        reports: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                        analytics: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                    },
                 },
-                campus: {
-                    name: "Campus",
-                    path: "SuperAdminCampus",
-                    icon: "bi bi-buildings",
+                general: {
+                    name: "General",
+                    child: {
+                        dashboard: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                        reports: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                        analytics: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                    },
                 },
                 users: {
                     name: "Users",
-                    path: "SuperAdminUsers",
-                    icon: "bi bi-people",
+                    child: {
+                        dashboard: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                        reports: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                        analytics: {
+                            name: "Dashboard",
+                            path: "AdminDashboard",
+                            icon: "bi bi-folder2-open",
+                        },
+                    },
+                },
+                manual: {
+                    name: "Manual",
+                    child: [],
                 },
             },
             lowerRoutes: {
@@ -187,50 +243,15 @@ export default {
             this.my = await thisIsMe();
             this.my.profile_picture = this.my.profile_picture ? this.my.profile_picture : profile_default;
         },
+
         toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("d-none");
         },
 
-        handleYesNo(answer) {
-            this.yesNoModal.show = false;
-
-            if (!answer) return;
-
-            switch (this.yesNoModal.action) {
-                case "logout":
-                    localStorage.clear();
-                    this.loadingModal = {
-                        show: true,
-                        message: "Logging out, please wait...",
-                    };
-
-                    setTimeout(() => {
-                        this.loadingModal = {
-                            show: false,
-                            message: "",
-                        };
-                        this.$router.push({ name: "login" });
-                    }, 3000);
-                    break;
-                default:
-                    break;
-            }
-        },
-
         setSideBarState() {
             this.sideBarOpen = !this.sideBarOpen;
             localStorage.setItem("sba-state", this.sideBarOpen);
-        },
-
-        promptLogout() {
-            this.yesNoModal = {
-                action: "logout",
-                status: "warning",
-                title: "Logout Confirmation",
-                message: "Are you sure you want to logout?",
-                show: true,
-            };
         },
     },
     mounted() {
@@ -254,6 +275,14 @@ export default {
     white-space: nowrap; /* Optional: stops text wrapping */
     min-height: 100vh;
     transition: all 0.3s;
+}
+
+.accordion-button:focus {
+    box-shadow: none !important;
+}
+
+.accordion-button::after {
+    filter: brightness(0) invert(1);
 }
 
 @media (max-width: 768px) {

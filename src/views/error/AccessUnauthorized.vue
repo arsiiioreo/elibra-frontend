@@ -26,8 +26,8 @@
                     <h1 class="display-1 fw-bold text-prime">401</h1>
                     <p class="fs-3"><span class="text-prime">Oops!</span> This is not yours..</p>
                     <p class="lead">
-                        You currently do not have access to the page you're trying to access. <br />
-                        If you think this is an error, please contact the developers to adjust permissions.
+                        It seems like you're trying to access something that's not yours, please go back. <br />
+                        If you think this is an error, please contact the developers and ask for access permission.
                     </p>
 
                     <router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> 📚 Back to Home </router-link>
