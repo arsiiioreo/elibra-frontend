@@ -19,12 +19,17 @@
                         </div>
                         <!-- Right Side -->
                         <div class="col-md-6 p-lg-5 p-4 d-flex flex-column justify-content-center">
-                            <div class="d-flex align-items-center justify-content-evenly mb-4 my-md-3">
+                            <div class="d-flex align-items-center justify-content-evenly mb-3 my-md-1">
                                 <img src="@/assets/ISU.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
-                                <h2 class="fw-bold text-center mb-2" style="color: #222">LOGIN</h2>
+                                <h2 class="fw-bold text-center" style="color: #222">LOGIN</h2>
                                 <img src="@/assets/LIBRARY.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
                             </div>
                             <form class="d-flex flex-column gap-2 mt-md-4" @submit.prevent="login" method="POST">
+                                <div class="btn-group btn-group-sm border border-1 border-success p-1 mb-2 rounded" role="group" aria-label="Role selection">
+                                    <button type="button" class="btn" :class="[form.role === 'admin' ? 'btn-success' : '']" @click="form.role = 'admin'">Admin</button>
+                                    <button type="button" class="btn" :class="[form.role === 'student' ? 'btn-success' : '']" @click="form.role = 'student'">Student</button>
+                                </div>
+
                                 <label class="fw-medium">Username</label>
                                 <input type="text" class="form-control mb-2" v-model="form.user" placeholder="Enter your username" autocomplete="email" required />
                                 <label class="fw-medium">Password</label>
@@ -54,16 +59,12 @@
             </div>
         </div>
     </div>
-
-    <!-- Components -->
-    <LoadingModal :show="isLoading" message="Logging in, please wait..." />
-    <StatusPopup :show="showPopup" :status="statPop.status" :title="statPop.title" :message="statPop.message" />
 </template>
 
 <script>
-import LoadingModal from "@/components/Modals/LoadingModal.vue";
-import StatusPopup from "@/components/Modals/StatusPopup.vue";
-import { token, setUser, user } from "@/stores/auth";
+import { hideLoading, showLoading } from "@/services/LoadingService";
+import { showStatus } from "@/services/StatusService";
+import { token } from "@/stores/auth";
 
 export default {
     data() {
@@ -71,6 +72,7 @@ export default {
             form: {
                 user: "",
                 password: "",
+                role: "admin",
             },
             isLoading: false,
             showPassword: false,
@@ -84,22 +86,17 @@ export default {
             },
         };
     },
-    components: {
-        LoadingModal,
-        StatusPopup,
-    },
     methods: {
         async login() {
-            this.isLoading = true;
             try {
-                const loginResponse = await this.$api.post("/login", this.form);
+                showLoading({ message: "Logging in, please wait..." });
+                const loginResponse = await this.$api.post("/auth/login", this.form);
 
                 if (loginResponse) {
                     if (loginResponse.data.status === "success") {
-                        token.value = loginResponse.data.token;
+                        token.value = loginResponse.data.access_token;
 
-                        localStorage.setItem("token", btoa(loginResponse.data.token));
-                        setUser(loginResponse.data.user);
+                        localStorage.setItem("token", btoa(loginResponse.data.access_token));
 
                         const home = {
                             0: "SuperAdmin",
@@ -108,23 +105,16 @@ export default {
                         };
 
                         this.$router.push({
-                            name: home[user.value.role],
+                            name: home[loginResponse.data.redirect],
                         });
                     } else {
                         console.log(loginResponse.data.message);
                     }
                 }
             } catch (error) {
-                this.showPopup = true;
-                this.statPop.status = error.response?.data?.status || "error";
-                this.statPop.title = error.response?.data?.status === "error" ? "Login Failed" : "Error";
-                this.statPop.message = error.response?.data?.message || "An unexpected error occurred. Please try again later.";
-
-                setTimeout(() => {
-                    this.showPopup = false;
-                }, 3000);
+                showStatus({ status: "error", title: "Login Failed", message: error.response?.data?.message || "An unexpected error occurred. Please try again later." });
             } finally {
-                this.isLoading = false;
+                hideLoading();
             }
         },
     },

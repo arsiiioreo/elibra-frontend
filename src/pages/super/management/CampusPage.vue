@@ -1,5 +1,9 @@
 <template>
     <div class="p-3">
+        <div class="d-flex flex-column">
+            <strong>Manage Users</strong>
+            <small>View list, approve registration requests, and manage role distribution.</small>
+        </div>
         <div class="row mb-3">
             <div class="col-6">
                 <form class="hstack gap-2 align-items-center" @submit.prevent="filterSearch">
@@ -15,14 +19,14 @@
                     </button>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCampus">
                         <i class="bi bi-plus"></i>
-                        Add Campus
+                        New Campus
                     </button>
                 </div>
             </div>
         </div>
         <div class="">
             <div class="d-flex w-100 overflow-hidden bg-light rounded">
-                <table class="table table-striped text-center m-0">
+                <table class="table table-sm table-striped text-center m-0">
                     <thead class="table-dark">
                         <tr>
                             <th style="width: 75px">No.</th>
@@ -65,7 +69,7 @@
                             <td>{{ campus.campus }}</td>
                             <td>{{ campus.address }}</td>
                             <td>
-                                <select name="activated" :id="'activated' + campus.id" class="form-select" @change="updateCampusStatus(campus.id, campus.is_active)" v-model="campus.is_active">
+                                <select name="activated" :id="'activated' + campus.id" class="form-select form-select-sm" @change="updateCampusStatus(campus.id, campus.is_active)" v-model="campus.is_active">
                                     <option value="1">{{ getLabel("campusStatus", 1) }}</option>
                                     <option value="0">{{ getLabel("campusStatus", 0) }}</option>
                                 </select>

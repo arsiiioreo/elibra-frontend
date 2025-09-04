@@ -19,7 +19,7 @@ export const fetchCampuses = async () => {
 
     loading.campuses = true;
     try {
-        const res = await api.get("/all-campus");
+        const res = await api.get("/all-c");
         storage.campus = res.data;
         return storage.campus;
     } catch (err) {
