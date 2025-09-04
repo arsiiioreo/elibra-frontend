@@ -4,7 +4,6 @@ import { showStatus } from "@/services/StatusService";
 import { ref } from "vue";
 
 export const user = ref(null);
-// const rawToken = localStorage.getItem("token");
 export const token = ref(atob(localStorage.getItem("token")));
 
 export const setUser = (userData) => {

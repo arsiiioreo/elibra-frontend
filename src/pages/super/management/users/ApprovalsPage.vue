@@ -133,10 +133,10 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex flex-column p-3 h-100 overflow-hidden">
-            <div class="h-100 bg-light rounded overflow-auto">
+        <div class="d-flex flex-column h-100 overflow-hidden bg-white">
+            <div class="h-100 bg-secondary-subtle overflow-auto shadow-sm">
                 <table class="table table-hover align-middle table-striped text-nowrap m-0 p-2 position-relative" style="font-size: small; z-index: 1">
-                    <thead class="table-secondary sticky-top">
+                    <thead class="table-dark sticky-top">
                         <tr>
                             <th class="text-center">No.</th>
                             <th>Name</th>
@@ -173,7 +173,7 @@
                         </tr>
 
                         <tr v-if="isEmpty(usersList) && !isFetchingUsers">
-                            <td colspan="6" class="text-center">No data to show.</td>
+                            <td colspan="7" class="text-center">No data to show.</td>
                         </tr>
 
                         <tr v-else v-for="(u, i) in paginatedUsers" :key="u.id">
@@ -192,7 +192,7 @@
                 </table>
             </div>
             <!-- Footer Summary -->
-            <div class="d-flex justify-content-between align-items-center small text-muted mt-2">
+            <div class="d-flex justify-content-between align-items-center small text-muted p-3 bg-white border-top">
                 <div class="hstack gap-2">
                     <span> Showing {{ paginatedUsers.length.toLocaleString() }} of {{ usersList.length.toLocaleString() }} users.</span>
                 </div>
