@@ -1,102 +1,65 @@
 <template>
     <div class="d-flex d-sm-none justify-content-center align-items-center w-100" style="height: 100vh">Sorry, this page is not accessible on mobile devices.</div>
-
     <div class="overflow-hidden d-none d-sm-flex" id="admin-layout" style="max-height: 100vh; min-height: 100vh">
         <!-- Sidebar -->
-        <nav id="sidebar" class="bg-black d-flex flex-column text-white p-3" style="min-width: 230px; height: 100vh">
-            <!-- Logo/Header -->
-            <a href="/sup-ad/dashboard" class="d-flex justify-content-center align-items-center mb-md-0 me-md-auto text-decoration-none text-prime">
-                <img src="@/assets/LOGO.png" alt="" style="width: 50px; height: 50px" class="me-2" />
-                <span class="fs-5 fw-bold">e-Libra</span>
-            </a>
-
-            <hr />
-
-            <!-- TOP ROUTES -->
-            <div class="flex-grow-1 overflow-auto">
-                <p class="text-light" style="font-size: 0.75rem">Analytics</p>
-                <ul class="nav flex-column mb-auto">
-                    <li class="nav-item" v-for="(route, key) in analytics" :key="key">
-                        <router-link :to="{ name: route.path }" class="nav-link text-white mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
-                            <i class="me-2" :class="route.icon"></i>
-                            {{ route.name }}
-                        </router-link>
-                    </li>
-                </ul>
-                <p class="text-light" style="font-size: 0.75rem">Management</p>
-                <ul class="nav flex-column mb-auto">
-                    <li class="nav-item" v-for="(route, key) in management" :key="key">
-                        <router-link :to="{ name: route.path }" class="nav-link text-white mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
-                            <i class="me-2" :class="route.icon"></i>
-                            {{ route.name }}
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
-
-            <hr />
-
-            <!-- BOTTOM ROUTES -->
-            <div class="mt-auto">
-                <ul class="nav flex-column">
-                    <li class="nav-item" v-for="(route, key) in lowerRoutes" :key="key">
-                        <router-link :to="{ name: route.path }" class="nav-link text-light mb-2" active-class="active border-end border-4 border-success bg-dark" exact style="font-size: 0.85rem; border-radius: 2px">
-                            <i class="me-2" :class="route.icon"></i>
-                            {{ route.name }}
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <button type="button" class="nav-link text-white mb-2 w-100 text-start" @click="this.$logout" style="font-size: 0.85rem">
-                            <i class="bi bi-door-open me-2"></i>
-                            Logout
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <SideBar :user="user" :sideBarOpen="sideBarOpen" />
 
         <!-- Main content -->
         <div class="flex-grow-1 d-flex flex-column vh-100">
+            <!-- Fixed Title Bar -->
+            <div class="page-header d-flex justify-content-between align-items-center bg-white p-3 flex-shrink-0" style="z-index: 1">
+                <div class="d-flex align-items-center">
+                    <span class="p-2 py-1 bg-light border rounded me-3 text-prime" @click="setSideBarState" style="cursor: pointer">
+                        <i class="bi bi-list"></i>
+                    </span>
+                    <div style="font-size: 0.85rem">
+                        <h5 class="fw-bold mb-0">{{ pageTitle }}</h5>
+                    </div>
+                </div>
+                <div class="d-flex gap-2" style="font-size: 0.85rem">
+                    <span class="px-3 border-end">Hey there, {{ my.name }}</span>
+                    <span class="px-1">Admin</span>
+                </div>
+            </div>
+
             <!-- Top navbar -->
-            <header class="navbar d-flex align-items-center w-100 bg-black shadow p-3 text-light">
+            <header class="navbar d-flex align-items-center w-100 bg-secondary-subtle p-2 text-dark">
                 <nav style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E')" aria-label="breadcrumb">
-                    <ol class="breadcrumb m-0 align-items-center" style="font-size: 0.85rem">
-                        <i class="bi bi-house-fill"></i>
+                    <ol class="breadcrumb m-0 align-items-center" style="font-size: 0.85rem !important">
+                        <i class="bi bi-house-fill ms-2"></i>
                         <p class="mx-2 mb-0" style="background: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E') no-repeat center; width: 10px; height: 8px"></p>
-                        <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item text-light" :class="{ active: !crumb.to }">
-                            <router-link v-if="crumb.to" :to="crumb.to" class="text-decoration-none text-prime">{{ crumb.text }}</router-link>
-                            <span v-else class="fw-semibold">{{ crumb.text }}</span>
+                        <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item text-dark" :class="{ active: !crumb.to }">
+                            <router-link v-if="crumb.to" :to="crumb.to" class="text-decoration-none text-black">{{ crumb.text }}</router-link>
+                            <span v-else>{{ crumb.text }}</span>
                         </li>
                     </ol>
                 </nav>
-                <div class="d-flex gap-2" style="font-size: 0.85rem">
-                    <span class="px-3 border-end">Hey there, {{ user?.name.split(" ", 1)[0] }}</span>
-                    <span class="px-1">Super Admin</span>
-                </div>
             </header>
 
-            <main class="flex-grow-1 overflow-auto bg-secondary-subtle" style="scrollbar-width: thin">
-                <div class="h-100">
+            <!-- Page content -->
+            <main class="flex-grow-1 bg-light-subtle overflow-auto bg-light" style="scrollbar-width: thin">
+                <div class="p-0">
                     <router-view />
                 </div>
             </main>
         </div>
     </div>
-
-    <LoadingModal :show="loadingModal.show" :message="loadingModal.message" />
-    <YesNoModal :show="yesNoModal.show" :status="yesNoModal.status" :title="yesNoModal.title" :message="yesNoModal.message" @answer="handleYesNo" />
 </template>
 
 <!-- breadcrumbs -->
 
 <script>
-import { user } from "@/stores/auth";
-import { fetchCampuses, fetchUsers } from "@/stores/apiCache";
+import profile_default from "@/assets/profile_default.png";
+import SideBar from "../components/SideBar.vue";
+import { jwtDecode } from "jwt-decode";
+import { token } from "@/stores/auth";
+
+// import { thisIsMe } from "@/stores/auth";
 
 export default {
     name: "AdminLayout",
     created() {
-        this.fetchAllData();
+        this.loadUser();
     },
     computed: {
         breadcrumbs() {
@@ -107,11 +70,20 @@ export default {
             }));
         },
     },
+    components: {
+        SideBar,
+    },
     data() {
         return {
             // Variables
             pageTitle: "",
-            user: user,
+            user: {
+                name: "Reign",
+                role: "",
+            },
+            sideBarOpen: localStorage.getItem("sba-state") === "true",
+
+            my: [],
 
             // Objects
             yesNoModal: {
@@ -127,42 +99,6 @@ export default {
                 show: false,
                 message: "",
             },
-            analytics: {
-                dashboard: {
-                    name: "Dashboard",
-                    path: "SuperAdminDashboard",
-                    icon: "bi bi-speedometer2",
-                },
-                reports: {
-                    name: "Reports",
-                    path: "SuperAdminReports",
-                    icon: "bi bi-folder2-open",
-                },
-            },
-            management: {
-                campus: {
-                    name: "Campus",
-                    path: "SuperAdminCampus",
-                    icon: "bi bi-buildings",
-                },
-                users: {
-                    name: "Users",
-                    path: "SuperAdminUsers",
-                    icon: "bi bi-people",
-                },
-            },
-            lowerRoutes: {
-                profile: {
-                    name: "Profile",
-                    path: "SuperAdminProfile",
-                    icon: "bi bi-person",
-                },
-                settings: {
-                    name: "Settings",
-                    path: "SuperAdminSettings",
-                    icon: "bi bi-gear",
-                },
-            },
         };
     },
     watch: {
@@ -171,46 +107,30 @@ export default {
         },
     },
     methods: {
-        toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            sidebar.classList.toggle("d-none");
+        async loadUser() {
+            // this.my = await thisIsMe();
+            this.my.profile_picture = this.my.profile_picture ? this.my.profile_picture : profile_default;
         },
 
-        async fetchAllData() {
-            await fetchCampuses();
-            await fetchUsers();
+        setSideBarState() {
+            this.sideBarOpen = !this.sideBarOpen;
+            localStorage.setItem("sba-state", this.sideBarOpen);
         },
     },
     mounted() {
+        const locSide = localStorage.getItem("sba-state");
+        const u = jwtDecode(token.value);
+        this.user.role = u.role;
+
+        if (!locSide) {
+            localStorage.setItem("sba-state", true);
+            this.sideBarOpen = true;
+        } else {
+            this.sideBarOpen = locSide === "true";
+        }
+
         this.pageTitle = this.$route.meta.title || "Super Admin";
     },
 };
 </script>
-
-<style scoped>
-#sidebar {
-    min-height: 100vh;
-    max-width: 100vh;
-    transition: all 0.3s;
-}
-
-@media (max-width: 768px) {
-    #sidebar {
-        position: fixed;
-        z-index: 1030;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        transform: translateX(-100%);
-        width: 250px;
-        transition: transform 0.3s ease-in-out;
-    }
-    #sidebar.d-none {
-        transform: translateX(-100%);
-    }
-    #sidebar:not(.d-none) {
-        transform: translateX(0);
-    }
-}
-</style>
 

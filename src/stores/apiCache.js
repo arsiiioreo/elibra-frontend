@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import api from "@/plugins/axios";
+import { token } from "./auth";
 
 // Booleans for loading data
 export const loading = reactive({
@@ -19,7 +20,11 @@ export const fetchCampuses = async () => {
 
     loading.campuses = true;
     try {
-        const res = await api.get("/all-c");
+        const res = await api.get("/all-c", {
+            headers: {
+                Authorization: `Bearer ${token.value}`,
+            },
+        });
         storage.campus = res.data;
         return storage.campus;
     } catch (err) {
@@ -35,7 +40,11 @@ export const fetchUsers = async () => {
 
     loading.users = true;
     try {
-        const res = await api.get("/all-users");
+        const res = await api.get("/all-users", {
+            headers: {
+                Authorization: `Bearer ${token.value}`,
+            },
+        });
 
         storage.users = res.data;
         return storage.users;
@@ -50,4 +59,3 @@ export const clearCache = () => {
     storage.users = null;
     storage.campus = null;
 };
-

@@ -25,9 +25,9 @@ export default {
     data() {
         return {
             tabRoutes: [
-                { name: "User List", path: "SuperAdminUsersList" },
-                { name: "For Approvals", path: "SuperAdminUsersApprovals" },
-                { name: "Role Distribution", path: "SuperAdminUsersRoles" },
+                { name: "User List", path: "AdminUsersList" },
+                { name: "For Approvals", path: "AdminUsersApprovals" },
+                { name: "Role Distribution", path: "AdminUsersRoles" },
             ],
         };
     },
