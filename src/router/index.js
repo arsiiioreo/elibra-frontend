@@ -1,7 +1,8 @@
-import { jwtDecode } from "jwt-decode";
 import { createRouter, createWebHistory } from "vue-router";
-import { user, token, clearAuth, thisIsMe } from "@/stores/auth";
-import { showLoading, hideLoading } from "@/services/LoadingService";
+import { librarianRoutes } from "./librarianRoutes";
+// import { jwtDecode } from "jwt-decode";
+// import { user, token, clearAuth, thisIsMe } from "@/stores/auth";
+// import { showLoading, hideLoading } from "@/services/LoadingService";
 
 const routes = [
     // Public Pages
@@ -51,24 +52,24 @@ const routes = [
             {
                 path: "dashboard",
                 name: "AdminDashboard",
-                component: () => import("../pages/super/analytics/DashboardPage.vue"),
+                component: () => import("../pages/admin/analytics/DashboardPage.vue"),
                 meta: { title: "Dashboard", breadcrumb: "Dashboard" },
             },
             {
                 path: "reports",
                 name: "AdminReports",
-                component: () => import("../pages/super/analytics/ReportsPage.vue"),
+                component: () => import("../pages/admin/analytics/ReportsPage.vue"),
                 meta: { title: "Reports", breadcrumb: "Reports" },
             },
             {
                 path: "campus",
                 name: "AdminCampus",
-                component: () => import("../pages/super/management/CampusPage.vue"),
+                component: () => import("../pages/admin/management/CampusPage.vue"),
                 meta: { title: "Campus", breadcrumb: "Campus" },
             },
             {
                 path: "users",
-                component: () => import("../pages/super/management/UsersPage.vue"),
+                component: () => import("../pages/admin/management/UsersPage.vue"),
                 meta: { breadcrumb: "Users" },
                 children: [
                     {
@@ -79,19 +80,19 @@ const routes = [
                     {
                         path: "list",
                         name: "AdminUsersList",
-                        component: () => import("../pages/super/management/users/ListPage.vue"),
+                        component: () => import("../pages/admin/management/users/ListPage.vue"),
                         meta: { title: "User List", breadcrumb: "User List" },
                     },
                     {
                         path: "approvals",
                         name: "AdminUsersApprovals",
-                        component: () => import("../pages/super/management/users/ApprovalsPage.vue"),
+                        component: () => import("../pages/admin/management/users/ApprovalsPage.vue"),
                         meta: { title: "For Approvals", breadcrumb: "For Approvals" },
                     },
                     {
                         path: "roles",
                         name: "AdminUsersRoles",
-                        component: () => import("../pages/super/management/users/RolesPage.vue"),
+                        component: () => import("../pages/admin/management/users/RolesPage.vue"),
                         meta: { title: "Roles Distribution", breadcrumb: "Roles Distribution" },
                     },
                 ],
@@ -99,13 +100,13 @@ const routes = [
             {
                 path: "my-profile",
                 name: "AdminProfile",
-                component: () => import("../pages/super/ProfilePage.vue"),
+                component: () => import("../pages/admin/ProfilePage.vue"),
                 meta: { title: "My Profile", breadcrumb: "My Profile" },
             },
             {
                 path: "settings",
                 name: "AdminSettings",
-                component: () => import("../pages/super/SettingsPage.vue"),
+                component: () => import("../pages/admin/SettingsPage.vue"),
                 meta: { title: "Settings", breadcrumb: "Settings" },
             },
         ],
@@ -114,34 +115,10 @@ const routes = [
     // Librarian Pages
     {
         path: "/l",
-        component: () => import("../layouts/SuperAdminLayout.vue"),
-        meta: { requiresAuth: true, breadcrumb: "Admin" },
+        component: () => import("../layouts/AdminLayout.vue"),
+        meta: { requiresAuth: true, breadcrumb: "Librarian" },
 
-        children: [
-            {
-                path: "",
-                name: "Librarian",
-                redirect: { name: "LibrarianDashboard" },
-            },
-            {
-                path: "dashboard",
-                name: "LibrarianDashboard",
-                component: () => import("../pages/admin/DashboardPage.vue"),
-                meta: { requiresAuth: true, title: "Dashboard", breadcrumb: "Dashboard" },
-            },
-            {
-                path: "profile",
-                name: "LibrarianProfile",
-                component: () => import("../pages/admin/DashboardPage.vue"),
-                meta: { requiresAuth: true, title: "Profile", breadcrumb: "Profile" },
-            },
-            {
-                path: "Settings",
-                name: "LibrarianSettings",
-                component: () => import("../pages/admin/DashboardPage.vue"),
-                meta: { requiresAuth: true, title: "Settings", breadcrumb: "Settings" },
-            },
-        ],
+        children: librarianRoutes,  
     },
 
     // User Pages
@@ -185,65 +162,64 @@ const router = createRouter({
     routes,
 });
 
-const routePrefix = {
-    0: ["/a"], // Super Admin Routes
-    1: ["/l"], // Admin Routes
-};
+// const routePrefix = {
+//     0: ["/a"], // Super Admin Routes
+//     1: ["/l"], // Admin Routes
+// };
 
-router.beforeEach(async (to, from, next) => {
-    if (token.value) {
-        if (!user.value) {
-            try {
-                showLoading({ message: "Fetching user data..." });
-                await thisIsMe();
-            } catch (error) {
-                clearAuth();
-            } finally {
-                hideLoading();
-            }
-        }
-    }
+// router.beforeEach(async (to, from, next) => {
+//     if (token.value) {
+//         if (!user.value) {
+//             try {
+//                 showLoading({ message: "Fetching user data..." });
+//                 await thisIsMe();
+//             } catch (error) {
+//                 clearAuth();
+//             } finally {
+//                 hideLoading();
+//             }
+//         }
+//     }
 
-    const isLoggedIn = !(user.value === null);
-    const publicPages = ["landing", "login", "register"];
-    const isPublicPage = publicPages.includes(to.name);
+//     const isLoggedIn = !(user.value === null);
+//     const publicPages = ["landing", "login", "register"];
+//     const isPublicPage = publicPages.includes(to.name);
 
-    document.title = to.meta?.title || "E-Libra";
+//     document.title = to.meta?.title || "E-Libra";
 
-    // Prevent logged-in users from accessing login/register again
-    if (isPublicPage && isLoggedIn) {
-        const roleRedirects = {
-            0: "Admin",
-            1: "Librarian",
-        };
-        const redirectRoute = roleRedirects[user.value.role];
-        return next({ name: redirectRoute });
-    }
+//     // Prevent logged-in users from accessing login/register again
+//     if (isPublicPage && isLoggedIn) {
+//         const roleRedirects = {
+//             0: "Admin",
+//             1: "Librarian",
+//         };
+//         const redirectRoute = roleRedirects[user.value.role];
+//         return next({ name: redirectRoute });
+//     }
 
-    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+//     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-    // Block access to protected pages for guests
-    if (requiresAuth && !isLoggedIn) {
-        return next({ name: "login" });
-    }
+//     // Block access to protected pages for guests
+//     if (requiresAuth && !isLoggedIn) {
+//         return next({ name: "login" });
+//     }
 
-    // Role-based access control
-    if (user && requiresAuth) {
-        const goingTo = to.fullPath;
-        const decoded = jwtDecode(token.value);
-        const accessiblePrefix = routePrefix[decoded.role] || [];
+//     // Role-based access control
+//     if (user && requiresAuth) {
+//         const goingTo = to.fullPath;
+//         const decoded = jwtDecode(token.value);
+//         const accessiblePrefix = routePrefix[decoded.role] || [];
 
-        const isAllowed = accessiblePrefix.some((prefix) => {
-            return goingTo === prefix || goingTo.startsWith(prefix + "/");
-        });
+//         const isAllowed = accessiblePrefix.some((prefix) => {
+//             return goingTo === prefix || goingTo.startsWith(prefix + "/");
+//         });
 
-        if (!isAllowed) {
-            return next({ name: "PageUnauthorized" });
-        }
-    }
+//         if (!isAllowed) {
+//             return next({ name: "PageUnauthorized" });
+//         }
+//     }
 
-    return next();
-});
+//     return next();
+// });
 
 export default router;
-
