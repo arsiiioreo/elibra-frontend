@@ -15,8 +15,10 @@
     "core-js": "^3.8.3",
     "fuse.js": "^7.1.0",
     "jwt-decode": "^4.0.0",
+    "sweetalert2": "^11.23.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
+    "vue-toastification": "^2.0.0-rc.5",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

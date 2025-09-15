@@ -50,7 +50,7 @@
 
 <script>
 import profile_default from "@/assets/profile_default.png";
-import SideBar from "../components/SideBar.vue";
+import SideBar from "../components/SideBar/SideBar.vue";
 import { jwtDecode } from "jwt-decode";
 import { token } from "@/stores/auth";
 
@@ -133,4 +133,3 @@ export default {
     },
 };
 </script>
-

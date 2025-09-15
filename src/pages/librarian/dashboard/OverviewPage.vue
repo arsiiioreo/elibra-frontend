@@ -1,7 +1,7 @@
 <template>
-    <div class="dashboard-page container">
+    <div class="dashboard-page">
         <div class="overview-section mb-5">
-            <h2 class="mb-3">Overview</h2>
+            <h4 class="mb-3 fw-bold">Overview</h4>
             <div class="row">
                 <div class="col-md-4">
                     <div class="card text-center">
@@ -133,9 +133,7 @@ export default {
 </script>
 
 <style scoped>
-.dashboard-page {
-    padding: 20px;
-}
+
 
 .card {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

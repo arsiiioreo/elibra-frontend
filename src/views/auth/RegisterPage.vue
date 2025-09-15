@@ -20,12 +20,12 @@
                         <!-- Right Side -->
                         <div class="col-md-6 p-lg-5 p-3 d-flex flex-column align-items-center">
                             <div class="d-flex align-items-center justify-content-evenly my-2 w-100">
-                                <img src="@/assets/ISU.png" alt="ISU Logo" style="width:55px; height:auto; object-fit:contain;" />
+                                <img src="@/assets/isu.png" alt="ISU Logo" style="width:55px; height:auto; object-fit:contain;" />
                                 <div class="text-center">
                                     <h2 class="fs-4 fs-md-2 fw-bold text-center mb-0">REGISTER</h2>
                                     <p class="text-muted small m-0">Student Registration Form</p>
                                 </div>
-                                <img src="@/assets/LIBRARY.png" alt="ISU Logo" style="width:55px; height:auto; object-fit:contain;" />
+                                <img src="@/assets/library.png" alt="ISU Logo" style="width:55px; height:auto; object-fit:contain;" />
                             </div>
                             <form class="d-flex flex-column gap-2 mt-md-4 w-100" @submit.prevent>
                                 <div class="col-12">

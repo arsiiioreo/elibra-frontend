@@ -3,7 +3,7 @@
 */
 
 * {
-    scrollbar-width: thin;
+    scrollbar-width: thin !important;
     --bs-accordion-btn-focus-box-shadow: none !important;
     --bs-accordion-bg: none;
     --bs-accordion-active-bg: none;

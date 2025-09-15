@@ -1,21 +1,34 @@
+// All named imports
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import api from "@/plugins/axios";
+import swal from "sweetalert2";
+import { jwtDecode } from "jwt-decode";
+import Toast, { POSITION, useToast } from "vue-toastification";
+
+// CSS imports
+import "vue-toastification/dist/index.css";
 import "./css/app.css";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
 
-import { user, token, setUser, clearAuth } from "@/stores/auth";
+// Service imports
+import { token, clearAuth } from "@/stores/auth";
 import { confirm } from "@/services/YesNoService";
 import { showLoading, hideLoading } from "./services/LoadingService";
 import { showStatus } from "./services/StatusService";
 
 const app = createApp(App);
+const toast = useToast();
 
+// Global properties
+app.config.globalProperties.$jwtDecode = jwtDecode;
 app.config.globalProperties.$api = api;
 app.config.globalProperties.$token = token;
+app.config.globalProperties.$swal = swal;
+app.config.globalProperties.$toast = toast;
 
 app.config.globalProperties.$logout = async () => {
     try {
@@ -46,24 +59,11 @@ app.config.globalProperties.$logout = async () => {
     }
 };
 
-const loadUser = () => {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
-    showLoading({ message: "Loading user data..." });
-    try {
-        api.get("/user")
-            .then(async (res) => {
-                setUser(res.data);
-            })
-            .catch(() => clearAuth());
-    } catch (error) {
-        console.log(error);
-    } finally {
-        hideLoading();
-    }
+const options = {
+    position: POSITION.BOTTOM_RIGHT,
+    timeout: 3000,
+    pauseOnHover: true,
+    pauseOnFocusLoss: true,
 };
 
-if (token.value && !!user.value) {
-    loadUser();
-}
-
-app.use(router).mount("#app");
+app.use(router).use(Toast, options).mount("#app");

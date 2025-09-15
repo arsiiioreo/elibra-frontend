@@ -2,7 +2,7 @@
     <div class="w-100 h-100 d-flex flex-column" style="height: 100vh; max-height: 100vh; overflow: hidden">
         <nav class="d-flex align-items-center justify-content-between w-100 p-5" style="height: 10vh">
             <div class="d-flex gap-4 align-items-center">
-                <img src="@/assets/LOGO.png" alt="" style="height: 50px; width: auto" />
+                <img src="@/assets/logo.png" alt="" style="height: 50px; width: auto" />
                 <h4 class="text-prime fw-bolder m-0">e-Libra OPAC</h4>
             </div>
             <div v-if="!user.id" class="d-flex gap-3 align-items-center">
@@ -20,7 +20,7 @@
         <section class="d-flex align-items-center justify-content-center" style="height: 25vh">
             <div class="section-header container-fluid d-flex flex-column align-items-center gap-4">
                 <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-                    <img src="@/assets/ISU.png" alt="" style="height: 60px; width: auto" />
+                    <img src="@/assets/isu.png" alt="" style="height: 60px; width: auto" />
                     <h3 v-if="user.name" class="text-prime fw-bolder m-0">ISU Online Public Access Catalogue</h3>
                 </div>
                 <div class="search-bar w-100">
