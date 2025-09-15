@@ -1,5 +1,5 @@
 import api from "@/plugins/axios";
-import { hideLoading, showLoading } from "@/services/LoadingService";
+import {showLoading } from "@/services/LoadingService";
 import { showStatus } from "@/services/StatusService";
 
 export const modifyCampus = async (formData, action) => {
@@ -24,7 +24,7 @@ export const modifyCampus = async (formData, action) => {
     } catch (error) {
         showStatus({ status: "error", title: "Error", message: error });
     } finally {
-        hideLoading();
+        // hideLoading();
     }
 };
 

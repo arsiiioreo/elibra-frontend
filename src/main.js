@@ -16,9 +16,7 @@ import "bootstrap-icons/font/bootstrap-icons.min.css";
 
 // Service imports
 import { token, clearAuth } from "@/stores/auth";
-import { confirm } from "@/services/YesNoService";
-import { showLoading, hideLoading } from "./services/LoadingService";
-import { showStatus } from "./services/StatusService";
+import { showLoading } from "./services/LoadingService";
 
 const app = createApp(App);
 const toast = useToast();
@@ -32,13 +30,29 @@ app.config.globalProperties.$toast = toast;
 
 app.config.globalProperties.$logout = async () => {
     try {
-        const answer = await confirm({
+        const result = await swal.fire({
             title: "Logout Confirmation",
-            message: "Are you sure you want to logout?",
+            text: "Are you sure you want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Logout",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
         });
 
-        if (answer) {
-            showLoading({ message: "Logging out..." });
+        if (result.isConfirmed) {
+            // Show loading
+            showLoading({ message: "Logging out, please wait..." });
+            // swal.fire({
+            //     html: `
+            //         <img src="/spinner.gif" alt="loading" width="150" />
+            //         <h2 class="mb-0">Logging out, please wait...</h2>
+            //     `,
+            //     showConfirmButton: false,
+            //     allowOutsideClick: false,
+            //     allowEscapeKey: false,
+            //     backdrop: true,
+            // });
 
             await new Promise((resolve) => {
                 setTimeout(() => {
@@ -47,15 +61,22 @@ app.config.globalProperties.$logout = async () => {
                     resolve();
                 }, 1500);
             });
+
+            // Success alert after logout
+            swal.fire({
+                icon: "success",
+                title: "Logged Out",
+                text: "You have been successfully logged out.",
+                timer: 1500,
+                showConfirmButton: false,
+            });
         }
     } catch (error) {
-        showStatus({
-            status: "error",
-            message: "Error logging out, please try again.",
+        swal.fire({
+            icon: "error",
             title: "Logout Error",
+            text: "Error logging out, please try again.",
         });
-    } finally {
-        hideLoading();
     }
 };
 
