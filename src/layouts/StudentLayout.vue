@@ -7,7 +7,7 @@
         <!-- Top App Bar -->
         <header class="d-flex justify-content-between align-items-center bg-white shadow-sm px-4 py-3 flex-shrink-0">
             <div class="d-flex align-items-center gap-3">
-                <img src="@/assets/LOGO.png" alt="logo" style="width: 30px; height: auto" />
+                <img src="@/assets/logo.png" alt="logo" style="width: 30px; height: auto" />
                 <h6 class="mb-0 fw-bold">{{ pageTitle }}</h6>
             </div>
             <div class="d-flex align-items-center gap-2">

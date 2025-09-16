@@ -2,7 +2,7 @@
     <div style="height: 100vh">
         <nav class="d-flex align-items-center justify-content-between w-100 p-5" style="height: 10%">
             <div class="d-flex gap-4 align-items-center">
-                <img src="@/assets/LOGO.png" alt="" style="height: 50px; width: auto" />
+                <img src="@/assets/logo.png" alt="" style="height: 50px; width: auto" />
                 <h4 class="text-prime fw-bolder m-0">e-Libra OPAC</h4>
             </div>
             <div v-if="!user.id" class="d-flex gap-3 align-items-center">

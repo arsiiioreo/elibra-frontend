@@ -20,16 +20,11 @@
                         <!-- Right Side -->
                         <div class="col-md-6 p-lg-5 p-4 d-flex flex-column justify-content-center">
                             <div class="d-flex align-items-center justify-content-evenly mb-3 my-md-1">
-                                <img src="@/assets/ISU.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
+                                <img src="@/assets/isu.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
                                 <h2 class="fw-bold text-center" style="color: #222">LOGIN</h2>
-                                <img src="@/assets/LIBRARY.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
+                                <img src="@/assets/library.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
                             </div>
                             <form class="d-flex flex-column gap-2 mt-md-4" @submit.prevent="login" method="POST">
-                                <!-- <div class="btn-group btn-group-sm border border-1 border-success p-1 mb-2 rounded" role="group" aria-label="Role selection">
-                                    <button type="button" class="btn" :class="[form.role === 'admin' ? 'btn-success' : '']" @click="form.role = 'admin'">Admin</button>
-                                    <button type="button" class="btn" :class="[form.role === 'student' ? 'btn-success' : '']" @click="form.role = 'student'">Student</button>
-                                </div> -->
-
                                 <label class="fw-medium">Username</label>
                                 <input type="text" class="form-control mb-2" v-model="form.user" placeholder="Enter your username" autocomplete="email" required />
                                 <label class="fw-medium">Password</label>
@@ -40,7 +35,12 @@
                                     </div>
                                 </div>
                                 <a href="#" class="text-primary text-decoration-none small text-end w-100">Forgot Password?</a>
-                                <button type="submit" class="btn btn-success fw-bold mt-2">LOGIN</button>
+                                <button type="submit" class="btn btn-success mt-2 text-center">
+                                    <div class="spinner-border" role="status" v-if="isLoading" style="width: 1rem; height: 1rem; border-width: 0.15em; vertical-align: middle; margin-right: 5px">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <span v-else>Login</span>
+                                </button>
                             </form>
                             <div class="text-center mt-3 text-muted small">Don’t have an account yet? <a href="/register" class="fw-bold text-decoration-none text-success">Register</a></div>
                         </div>
@@ -62,9 +62,7 @@
 </template>
 
 <script>
-import { hideLoading, showLoading } from "@/services/LoadingService";
-import { showStatus } from "@/services/StatusService";
-import { token } from "@/stores/auth";
+import { justLoggedIn, token } from "@/stores/auth";
 import { jwtDecode } from "jwt-decode";
 
 export default {
@@ -88,8 +86,8 @@ export default {
     },
     methods: {
         async login() {
+            this.isLoading = true;
             try {
-                showLoading({ message: "Logging in, please wait..." });
                 const loginResponse = await this.$api.post("/auth/login", this.form);
 
                 if (loginResponse) {
@@ -102,6 +100,7 @@ export default {
                             0: "Admin",
                             1: "Librarian",
                         };
+                        justLoggedIn.value = true;
 
                         this.$router.push({
                             name: home[decoded.role],
@@ -111,9 +110,9 @@ export default {
                     }
                 }
             } catch (error) {
-                showStatus({ status: "error", title: "Login Failed", message: error.response?.data?.message || "An unexpected error occurred. Please try again later." });
+                this.$toast.error(error.response?.data?.message || "An error occurred during login.");
             } finally {
-                hideLoading();
+                this.isLoading = false;
             }
         },
     },

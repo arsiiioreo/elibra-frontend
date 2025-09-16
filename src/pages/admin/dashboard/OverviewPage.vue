@@ -1,33 +1,7 @@
 <template>
-    <div class="dashboard-page container">
-        <div class="overview-section mb-5">
-            <h2 class="mb-3">Overview</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Campuses</h5>
-                            <p class="card-text display-4">3</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Students</h5>
-                            <p class="card-text display-4">12,345</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Active Staff</h5>
-                            <p class="card-text display-4">25</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="container-fluid">
+        <div class="overview-section mb-3">
+            <OverviewComponent :data="cardsData"/>
         </div>
 
         <div class="performance-section mb-5">
@@ -81,9 +55,23 @@
 <script>
 import { onMounted } from "vue";
 import Chart from "chart.js/auto";
+import OverviewComponent from "@/components/pages/admin/dashboard/overview/StatusCards.vue";
 
 export default {
     name: "DashboardPage",
+    components: {
+        OverviewComponent,
+    },
+    data() {
+        return {
+            cardsData: {
+                users: 1245,
+                orders: 345,
+                revenue: "$12,345",
+                feedback: 123,
+            },
+        }
+    },
     setup() {
         onMounted(() => {
             const studentsCtx = document.getElementById("studentsChart").getContext("2d");
@@ -133,10 +121,6 @@ export default {
 </script>
 
 <style scoped>
-.dashboard-page {
-    padding: 20px;
-}
-
 .card {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
