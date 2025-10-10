@@ -1,46 +1,36 @@
 <template>
-    <div class="d-flex flex-column w-100 rounded-top overflow-hidden h-100 bg-white">
-        <div class="nav align-items-center justify-content-between p-3">
-            <div class="d-flex flex-column">
-                <strong>Manage Users</strong>
-                <small>View list, approve registration requests, and manage role distribution.</small>
-            </div>
-            <div class="btn-group" role="group" aria-label="Routes">
-                <router-link v-for="(tab, index) in tabRoutes" :key="index" :to="{ name: tab.path }" class="btn btn-sm btn-outline-primary px-3" active-class="btn-primary text-light" exact>
-                    {{ tab.name }}
-                </router-link>
+    <div class="card w-100 h-100">
+        <div class="card-header hstack justify-content-between align-items-center p-3">
+            <h4 class="mb-0"><i class="bi bi-person-circle me-2 fs-4"></i>All Users</h4>
+            <div class="hstack gap-2">
+                <!-- <div class="position-relative overflow-hidden">
+                    <i class="bi bi-search position-absolute mt-2 start-0" :style="{ marginLeft: searchFocused ? '0.75rem' : '-2rem' }"></i>
+                    <input type="text" class="form-control" placeholder="Search user..." style="width: 350px" :style="{ paddingLeft: searchFocused ? '2.5rem' : '0.75rem' }" @focus="searchFocused = false" @blur="searchFocused = true" />
+                </div> -->
+                <SearchInput v-model:query="params.query" />
+                <button class="btn btn-outline-secondary"><i class="bi bi-filter me-2"></i>Filter</button>
+                <button class="btn btn-primary"><i class="bi bi-plus me-2"></i>Add User</button>
             </div>
         </div>
-
-        <div class="flex-grow-1 overflow-hidden bg-body-secondary" style="scrollbar-width: thin">
-            <div class="h-100">
-                <router-view />
+        <div class="card-body">
+            <div class="">
+                {{ params.query }}
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import SearchInput from "@/components/inputs/SearchInput.vue";
 export default {
+    name: "LibraryInformationPage",
     data() {
         return {
-            tabRoutes: [
-                { name: "User List", path: "AdminUsersList" },
-                { name: "For Approvals", path: "AdminUsersApprovals" },
-                { name: "Role Distribution", path: "AdminUsersRoles" },
-            ],
+            params: {
+                query: "",
+            },
         };
     },
+    components: { SearchInput },
 };
 </script>
-
-<style scoped>
-.nav-link {
-    color: rgba(0, 0, 0, 0.35);
-}
-.nav-link:hover {
-    color: rgba(0, 0, 0, 0.5);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
-}
-</style>
-

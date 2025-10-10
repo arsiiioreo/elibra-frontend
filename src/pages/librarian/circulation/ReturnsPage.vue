@@ -1,103 +1,79 @@
 <template>
-  <div class="d-flex justify-content-between align-items-center mb-3">
-      <input v-model="searchQuery" type="text" class="form-control w-50" placeholder="Search by borrower name or book title..." />
-      <select v-model="sortKey" class="form-select w-25">
-          <option value="borrower">Sort by Borrower</option>
-          <option value="book">Sort by Book</option>
-          <option value="date">Sort by Return Date</option>
-      </select>
-  </div>
-  <table class="table table-bordered table-hover">
-      <thead class="table-light">
-          <tr>
-              <th>#</th>
-              <th>Accession Code</th>
-              <th>Book</th>
-              <th>Borrower</th>
-              <th>Return Date</th>
-              <th class="text-center">Actions</th>
-          </tr>
-      </thead>
-      <tbody>
-          <tr v-for="(item, index) in filteredAndSortedReturns" :key="index">
-              <td>{{ index + 1 }}</td>
-              <td>{{ item.accession }}</td>
-              <td>{{ item.book }}</td>
-              <td>{{ item.borrower }}</td>
-              <td>{{ item.returnDate }}</td>
-              <td class="text-center">
-                  <button class="btn btn-sm btn-warning" @click="undoReturn(index)">Undo</button>
-              </td>
-          </tr>
-      </tbody>
-  </table>
-  <p v-if="filteredAndSortedReturns.length === 0" class="text-center text-muted">No returned borrowings found.</p>
+    <div class="p-4" ref="dropdownWrapper">
+        <div class="card">
+            <div class="dropdown">
+                <input type="text" class="form-control" v-model="searchQuery" @input="debouncedSearch" @focus="focusOnItem = true" />
+                <ul v-show="focusOnItem" class="dropdown-menu w-100 show" style="max-height: 300px; overflow-y: auto">
+                    <li><h6 class="dropdown-header">Items List</h6></li>
+
+                    <!-- kapag may results -->
+                    <li v-for="(i, index) in filteredReturns" :key="index" class="dropdown-item" @click="selectItem(i)">
+                        <div class="vstack">
+                            <span class="small mb-0">{{ i.accession }}</span>
+                            <h6 class="fw-bold">{{ i.book }}</h6>
+                        </div>
+                    </li>
+
+                    <!-- kapag walang results -->
+                    <li v-if="filteredReturns.length === 0" class="dropdown-item text-muted">No results found</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Debug: show selected -->
+        <div class="mt-3" v-if="selectedItem"><strong>Selected:</strong> {{ selectedItem.book }} ({{ selectedItem.accession }})</div>
+    </div>
 </template>
 
 <script>
 export default {
     data() {
         return {
+            focusOnItem: false,
+            selectedItem: null,
             searchQuery: "",
-            sortKey: "borrower",
+            timeout: null,
             returns: [
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
-                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: 'GT000045', returnDate: "2023-10-01" },
-                { borrower: "Bob Smith", book: "1984", accession: 'GT000045', returnDate: "2023-10-02" }, 
-                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: 'GT000045', returnDate: "2023-10-03" },
+                { borrower: "Alice Johnson", book: "The Great Gatsby", accession: "GT000045", returnDate: "2023-10-01" },
+                { borrower: "Bob Smith", book: "1984", accession: "GT000046", returnDate: "2023-10-02" },
+                { borrower: "Charlie Brown", book: "To Kill a Mockingbird", accession: "GT000047", returnDate: "2023-10-03" },
             ],
+            filteredReturns: [],
         };
     },
-    computed: {
-        filteredAndSortedReturns() {
-            const filtered = this.returns.filter((item) => item.borrower.toLowerCase().includes(this.searchQuery.toLowerCase()) || item.book.toLowerCase().includes(this.searchQuery.toLowerCase()));
-
-            return filtered.sort((a, b) => {
-                if (this.sortKey === "borrower") {
-                    return a.borrower.localeCompare(b.borrower);
-                } else if (this.sortKey === "book") {
-                    return a.book.localeCompare(b.book);
-                } else if (this.sortKey === "date") {
-                    return new Date(a.returnDate) - new Date(b.returnDate);
-                }
-            });
-        },
+    mounted() {
+        document.addEventListener("click", this.handleClickOutside);
+    },
+    beforeUnmount() {
+        document.removeEventListener("click", this.handleClickOutside);
     },
     methods: {
-        undoReturn(index) {
-            const item = this.filteredAndSortedReturns[index];
-            // Logic to handle undo action, e.g., moving the item back to borrowing
-            alert(`Undoing return for ${item.book} borrowed by ${item.borrower}`);
-            // Example: Remove the item from the returns list
-            this.returns.splice(this.returns.indexOf(item), 1);
+        handleClickOutside(e) {
+            if (!this.$refs.dropdownWrapper.contains(e.target)) {
+                this.focusOnItem = false;
+            }
+        },
+        debouncedSearch() {
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+                this.searchData();
+            }, 300);
+        },
+        searchData() {
+            this.filteredReturns = this.returns.filter((item) => {
+                if (!this.searchQuery) {
+                    return null;
+                }
+
+                return item.accession.toLowerCase().includes(this.searchQuery.toLowerCase());
+            });
+        },
+        selectItem(item) {
+            this.selectedItem = item;
+            this.focusOnItem = false; // close dropdown
+            this.searchQuery = item.accession; // fill input
+            console.log("Selected:", item);
         },
     },
 };
 </script>
-
-<style scoped>
-.container {
-    max-width: 900px;
-    margin: auto;
-}
-</style>

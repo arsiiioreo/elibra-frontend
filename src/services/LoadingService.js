@@ -44,15 +44,20 @@
 // }
 import swal from "sweetalert2";
 
-export const showLoading = ({message = "Loading, please wait..."}) => {
+export const showLoading = ({ message = "Loading, please wait..." }) => {
     swal.fire({
         html: `
             <img src="/spinner.gif" alt="loading" width="150" />
             <h2>${message}</h2>
         `,
+        width: 500,
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
         backdrop: true,
     });
+};
+
+export const hideLoading = () => {
+    swal.close();
 };

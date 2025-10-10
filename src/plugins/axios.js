@@ -1,11 +1,20 @@
 // src/plugins/axios.js
+import { token } from "@/stores/auth";
 import axios from "axios";
 
-// console.log(process.env.VUE_APP_API_BASE_URL)
-
 const api = axios.create({
-    baseURL: "http://127.0.0.1:8000/api",
-    // withCredentials: true, // Enable sending cookies with requests
+    baseURL: "http://127.0.0.1:8000/",
 });
+
+// Request interceptor: inject token if exists
+api.interceptors.request.use(
+    async (config) => {
+        if (token) {
+            config.headers.Authorization = `Bearer ${token.value}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 export default api;

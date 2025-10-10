@@ -20,28 +20,12 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import { postRequest } from "@/stores/requestService";
 
 const photo = ref(null);
 const preview = ref(null);
 const uploadedUrl = ref(null);
 const user = ref(null);
-
-const thisUser = async () => {
-    try {
-        const res = await axios.get("http://localhost:8000/api/user", {
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-        });
-
-        user.value = res.data;
-    } catch (error) {
-        console.log("Error", error);
-    }
-};
-
-thisUser();
 
 const onFileChange = (e) => {
     photo.value = e.target.files[0];
@@ -53,7 +37,7 @@ const uploadPhoto = async () => {
     formData.append("photo", photo.value);
 
     try {
-        const response = await axios.post("http://localhost:8000/api/upload-photo", formData, {
+        const response = await postRequest("http://localhost:8000/api/upload-pfp", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -65,4 +49,35 @@ const uploadPhoto = async () => {
     }
 };
 </script>
+
+<!-- <template>
+    <button @click="show = !show">Toggle</button>
+    <Transition>
+        <p v-if="show">hello</p>
+    </Transition>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            show: false,
+        };
+    },
+};
+</script>
+
+<style>
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+</style>
+ -->
 

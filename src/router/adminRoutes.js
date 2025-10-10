@@ -33,9 +33,16 @@ export const adminRoutes = [
     {
         path: "management",
         name: "AdminManagement",
-        redirect: { name: "AdminAccounts" },
+        redirect: { name: "AdminItemTypes" },
         meta: { requiresAuth: true, title: "Management", breadcrumb: "Management", description: "Manage users and campuses." },
         children: [
+            // Item Types Management
+            {
+                path: "item-types",
+                name: "AdminItemTypes",
+                component: () => import("@/pages/admin/management/ItemTypesPage.vue"),
+                meta: { title: "Item Types", breadcrumb: "Item Types", description: "Manage types of item for the library." },
+            },
             // User Management
             {
                 path: "users",

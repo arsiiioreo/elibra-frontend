@@ -1,21 +1,20 @@
 <template>
-    <div class="d-flex d-sm-none justify-content-center align-items-center w-100" style="height: 100vh">Sorry, this page is not accessible on mobile devices.</div>
-    <div class="overflow-hidden d-none d-sm-flex flex-column" id="admin-layout" style="max-height: 100vh; min-height: 100vh">
-        <!-- Fixed Title Bar -->
-        <div class="page-header d-flex justify-content-between align-items-center bg-white p-2 px-3 flex-shrink-0 border-bottom" style="z-index: 1">
+    <div class="d-flex flex-column vh-100 overflow-hidden">
+        <div class="page-header d-flex justify-content-between align-items-center bg-white p-2 px-3 border-bottom" style="z-index: 1">
             <div class="d-flex align-items-center">
                 <span class="p-2 py-1 bg-light border rounded me-3 text-prime" @click="setSideBarState" style="cursor: pointer">
                     <i class="bi bi-list"></i>
                 </span>
+                <img class="me-3" :src="isu" alt="" width="30" height="auto" />
                 <div style="font-size: 0.85rem">
-                    <h5 class="fw-bold mb-0">{{ `Isabela State University - ${user.role === "0" ? "Admin" : "Librarian"}` }}</h5>
+                    <h5 class="fw-bold mb-0">{{ "Isabela State University - " + (user.campus?.name || "Global") + (user.branch?.name ? " (" + user.branch?.name + ")" : "") }}</h5>
                 </div>
             </div>
             <div class="d-flex gap-2 align-items-center" style="font-size: 0.85rem">
                 <div class="btn-group">
                     <button type="button" class="btn d-flex align-items-center dropdown-toggle border" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                        <span class="px-1 me-2">Admin</span>
-                        <img class="me-2 rounded-circle p-1 border border-success" :src="my.profile_picture" alt="logo" style="width: 30px; height: auto" />
+                        <span class="px-1 me-2">{{ user.role === "0" ? "Admin" : "Librarian" }}</span>
+                        <img class="me-2 rounded-circle p-1 border border-success" :src="user.profile_picture || profile_default" alt="logo" style="width: 30px; height: 30px" />
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end mt-2" style="width: 300px">
                         <div class="container">
@@ -24,9 +23,9 @@
                                     <div class="d-flex text-prime mb-3">
                                         <small class="fw-bold me-auto">Profile Card</small>
                                     </div>
-                                    <img class="p-1 rounded-circle border border-success mb-3" :src="my.profile_picture" alt="profile_logo" style="width: 75px; height: 75px" />
-                                    <h6 class="card-title fs-5 fw-bold mb-0">{{ my.name ?? "Reign" }}</h6>
-                                    <small class="card-subtitle mb-2 text-body-secondary">{{ my.role === "0" ? "Admin" : "Librarian" }}</small>
+                                    <img class="p-1 rounded-circle border border-success mb-3" :src="user.profile_picture || profile_default" alt="profile_logo" style="width: 75px; height: 75px" />
+                                    <h6 class="card-title fs-5 fw-bold mb-0">{{ user.name }}</h6>
+                                    <small class="card-subtitle mb-2 text-body-secondary">{{ user.role === "0" ? "Admin" : "Librarian" }}</small>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +50,7 @@
         </div>
 
         <!-- Breadcrumb Section -->
-        <header class="navbar d-flex align-items-center w-100 bg-secondary-subtle p-2 text-dark">
+        <header class="navbar d-flex align-items-center w-100 bg-body-tertiary p-2 text-dark border-bottom">
             <nav style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E')" aria-label="breadcrumb">
                 <ol class="breadcrumb m-0 align-items-center" style="font-size: 0.85rem !important">
                     <i class="bi bi-house-fill ms-2"></i>
@@ -65,42 +64,42 @@
             </nav>
         </header>
 
-        <!-- Main content -->
-        <div class="flex-grow-1 d-flex vh-100">
-            <!-- Sidebar -->
+        <div class="d-flex w-100 p-0 h-100 overflow-hidden">
             <SideBar :user="user" :sideBarOpen="sideBarOpen" />
-
-            <!-- Page content -->
-            <main class="flex-grow-1 bg-light-subtle overflow-auto bg-body-tertiary" style="scrollbar-width: thin">
-                <div class="p-3">
-                    <div class="d-flex justify-content-between align-items-center p-2 mb-2">
-                        <div class="">
-                            <h2 class="fw-semibold pb-0">{{ page.title }}</h2>
-                            <p>{{ page.description }}</p>
-                        </div>
-                        <div class="text-end">
-                            <h2 class="fw-semibold pb-0">{{ page.time }}</h2>
-                            <p>{{ page.date }}</p>
-                        </div>
+            <div class="d-flex flex-column h-100 bg-white overflow-hidden w-100">
+                <div class="d-flex justify-content-between align-items-center p-4 mb-0 border-bottom">
+                    <div class="">
+                        <h2 class="fw-semibold pb-0 mb-0">{{ page.title }}</h2>
+                        <p class="mb-0">{{ page.description }}</p>
                     </div>
-                    <router-view />
+                    <div class="text-end">
+                        <h2 class="fw-semibold pb-0 mb-0">{{ page.time }}</h2>
+                        <p class="mb-0">{{ page.date }}</p>
+                    </div>
                 </div>
-            </main>
+                <main class="container-fluid overflow-auto h-100 p-4 bg-body-secondary">
+                    <router-view />
+                </main>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import profile_default from "@/assets/profile_default.png";
-import SideBar from "../components/SideBar/SideBar.vue";
+import { justLoggedIn, thisIsMe, token, user } from "@/stores/auth";
+import SideBar from "../components/sidebar/SideBar.vue";
+import isu from "@/assets/isu.png";
 import { jwtDecode } from "jwt-decode";
-import { justLoggedIn, token } from "@/stores/auth";
-import { thisIsMe } from "@/stores/auth";
+import profile_default from "@/assets/profile_default.png";
 
 export default {
     name: "AdminLayout",
-    created() {
+    async created() {
         this.loadUser();
+    },
+    components: {
+        SideBar,
+        // AdminHeader,
     },
     computed: {
         breadcrumbs() {
@@ -113,9 +112,6 @@ export default {
         profileCardRoutes() {
             return this.routesByRole[this.user.role] || {};
         },
-    },
-    components: {
-        SideBar,
     },
     watch: {
         $route: {
@@ -140,13 +136,13 @@ export default {
     },
     data() {
         return {
-            // Variables
             user: {
-                name: "",
-                email: "",
-                role: "",
-                profile_picture: "",
+                name: null,
+                role: null,
             },
+            profile_default: profile_default,
+            isu: isu,
+            sideBarOpen: localStorage.getItem("sba-state") === "true",
             page: {
                 title: "",
                 description: "",
@@ -162,10 +158,6 @@ export default {
                     second: "2-digit",
                 }),
             },
-            sideBarOpen: localStorage.getItem("sba-state") === "true",
-
-            my: [],
-
             routesByRole: {
                 0: {
                     profile: { name: "Profile", path: "AdminProfile", icon: "bi bi-person" },
@@ -176,16 +168,13 @@ export default {
                     settings: { name: "Settings", path: "LibrarianSettings", icon: "bi bi-gear" },
                 },
             },
-            loadingModal: {
-                show: false,
-                message: "",
-            },
         };
     },
     methods: {
         async loadUser() {
-            this.my = await thisIsMe();
-            this.my.profile_picture = this.my.profile_picture ? this.my.profile_picture : profile_default;
+            this.user = await thisIsMe();
+            const u = jwtDecode(token.value);
+            this.user.role = u.role;
         },
 
         setSideBarState() {
@@ -195,7 +184,7 @@ export default {
 
         welcome() {
             if (justLoggedIn.value) {
-                this.$toast.info("Welcome back, " + this.user.name + "!", {
+                this.$toast.info("Welcome back, " + user.value.first_name + "!", {
                     closeOnClick: true,
                     showCloseButtonOnHover: false,
                     hideProgressBar: true,
@@ -208,12 +197,6 @@ export default {
         },
     },
     mounted() {
-        const u = jwtDecode(token.value);
-        this.user.name = u.name;
-        this.user.email = u.email;
-        this.user.role = u.role;
-        this.user.profile_picture = u.profile_picture;
-
         const locSide = localStorage.getItem("sba-state");
         if (!locSide) {
             localStorage.setItem("sba-state", true);
@@ -226,4 +209,3 @@ export default {
     },
 };
 </script>
-
