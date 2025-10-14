@@ -118,7 +118,7 @@
             </div>
         </div>
 
-        <div class="modal" id="addNewCampus">
+        <div class="modal fade" id="addNewCampus">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import { storage } from "@/stores/apiCache";
+import { storage } from "@/stores/adminCache";
 import { getLabel, isEmpty } from "@/utilities/dataMap";
 import { getRequest } from "@/stores/requestService";
 

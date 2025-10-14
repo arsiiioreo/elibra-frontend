@@ -36,30 +36,17 @@
                                 <!-- Page 0 -->
                                 <div v-if="page === 0" class="vstack gap-4 justify-content-center align-items-center">
                                     <h4 class="fw-bold text-prime">Create an account as</h4>
-                                    <div class="hstack gap-4 mb-5">
+                                    <img class="my-4" src="spinner.gif" alt="Loading..." width="75" height="75" v-if="!types" />
+                                    <div class="hstack justify-content-center gap-4 my-4" v-else>
                                         <button
-                                            class="vstack text-center btn btn-outline-success shadow-sm p-4"
+                                            class="btn btn-outline-success shadow-sm p-4 flex-shrink-0"
+                                            v-for="type in types"
+                                            :key="type.id"
                                             @click="
                                                 page = 1;
-                                                type = 'student';
+                                                selectedType = type;
                                             ">
-                                            <i class="bi bi-mortarboard fs-2"></i>Student
-                                        </button>
-                                        <button
-                                            class="vstack text-center btn btn-outline-success shadow-sm p-4"
-                                            @click="
-                                                page = 1;
-                                                type = 'faculty';
-                                            ">
-                                            <i class="bi bi-briefcase fs-2"></i>Faculty
-                                        </button>
-                                        <button
-                                            class="vstack text-center btn btn-outline-success shadow-sm p-4"
-                                            @click="
-                                                page = 1;
-                                                type = 'guest';
-                                            ">
-                                            <i class="bi bi-person-lines-fill fs-2"></i>Guest
+                                            {{ type?.name }}
                                         </button>
                                     </div>
                                 </div>
@@ -71,7 +58,7 @@
                                             {{ page === 1 ? "Setup Personal Information" : page === 2 ? "Setup Account Information" : "Verify OTP" }}
                                         </p>
                                         <small class="text-muted">
-                                            {{ "Step " + (page + 1) + " of 4 - " + type.charAt(0).toUpperCase() + type.slice(1) }}
+                                            {{ "Step " + (page + 1) + " of 4 - " + selectedType.name.charAt(0).toUpperCase() + selectedType.name.slice(1) }}
                                         </small>
                                     </div>
                                     <div class="body overflow-auto mb-auto">
@@ -79,26 +66,27 @@
                                             <!-- Page 1 -->
                                             <div v-if="page === 1" key="page1" class="m-1">
                                                 <form @submit.prevent="changePage('+')">
-                                                    <BaseInput v-model="form.lastName" label="Last Name" placeholder="Enter last name" :rules="['required', 'min:2']" :r="true" :minlength="2" />
-                                                    <BaseInput v-model="form.firstName" label="First Name" placeholder="Enter first name" :rules="['required', 'min:2']" :r="true" :minlength="2" />
-                                                    <BaseInput v-model="form.middleInitial" label="Middle Name" placeholder="Enter middle initial" :maxlength="1" />
+                                                    <BaseInput v-model="form.last_name" label="Last Name" placeholder="Enter last name" :rules="['required', 'min:2']" :r="true" :minlength="2" />
+                                                    <BaseInput v-model="form.first_name" label="First Name" placeholder="Enter first name" :rules="['required', 'min:2']" :r="true" :minlength="2" />
+                                                    <BaseInput v-model="form.middle_initial" label="Middle Name" placeholder="Enter middle initial" :maxlength="1" />
                                                     <BaseSelect
                                                         v-model="form.sex"
                                                         label="Gender"
                                                         :options="[
                                                             { value: 'male', label: 'Male' },
                                                             { value: 'female', label: 'Female' },
+                                                            { value: 'other', label: 'Other' },
                                                         ]"
-                                                        placeholder="Select Gender"
+                                                        placeholder="Select gender"
                                                         :rules="['required']"
                                                         :r="true" />
-                                                    <BaseInput v-model="form.idNumber" label="ID Number" placeholder="Enter ID Number" :rules="['required', 'min:2']" :r="true" :minlength="2" />
-                                                    <BaseInput v-if="type === 'guest'" v-model="form.campus" label="Campus" placeholder="Enter campus" :rules="['required', 'min2']" :r="true" :minlength="2" />
+                                                    <BaseInput v-model="form.id_number" label="ID Number" placeholder="Enter ID Number" :rules="['required', 'min:2']" :r="true" :minlength="2" />
+                                                    <BaseInput v-if="selectedType.name === 'Guest'" v-model="form.campus" label="Campus" placeholder="Enter campus" :rules="['required', 'min2']" :r="true" :minlength="2" />
                                                     <BaseSelect v-else v-model="form.campus" label="Campus" :options="campuses.map((c) => ({ value: c.id, label: c.name }))" placeholder="Select Campus" :rules="['required']" :r="true" />
 
                                                     <div class="footer w-100 pt-2" style="max-height: fit-content !important">
                                                         <div class="hstack gap-2 justify-content-center text-center">
-                                                            <button class="w-50 btn btn-outline-primary rounded-1" @click="changePage('-')"><i class="bi bi-arrow-left me-2"></i>Previous</button>
+                                                            <button class="w-50 btn btn-outline-primary rounded-1" type="button" @click="changePage('-')"><i class="bi bi-arrow-left me-2"></i>Previous</button>
                                                             <button class="w-50 btn btn-outline-success rounded-1" type="submit">Next<i class="bi bi-arrow-right ms-2"></i></button>
                                                         </div>
                                                     </div>
@@ -110,11 +98,11 @@
                                                 <form @submit.prevent="submitForm">
                                                     <BaseInput v-model="form.email" label="Email" placeholder="Enter your email" :rules="['required', 'email']" :r="true" />
                                                     <BaseInput v-model="form.password" label="Password" type="password" placeholder="Enter your password" :rules="['required', 'min6']" :r="true" :minlength="8" :form="form" />
-                                                    <BaseInput v-model="form.confirmPassword" label="Confirm Password" type="password" placeholder="Confirm your password" :rules="['required', 'match:password']" :form="form" :r="true" />
+                                                    <BaseInput v-model="form.password_confirmation" label="Confirm Password" type="password" placeholder="Confirm your password" :rules="['required', 'match:password']" :form="form" :r="true" />
 
                                                     <div class="footer w-100 pt-2" style="max-height: fit-content !important">
                                                         <div class="hstack gap-2 justify-content-center text-center">
-                                                            <button class="w-50 btn btn-outline-primary rounded-1" @click="changePage('-')"><i class="bi bi-arrow-left me-2"></i>Previous</button>
+                                                            <button class="w-50 btn btn-outline-primary rounded-1" type="button" @click="changePage('-')"><i class="bi bi-arrow-left me-2"></i>Previous</button>
                                                             <button class="w-50 btn btn-outline-success rounded-1" type="submit">Submit<i class="bi bi-arrow-right ms-2"></i></button>
                                                         </div>
                                                     </div>
@@ -122,19 +110,38 @@
                                             </div>
 
                                             <div v-else-if="page === 3" class="m-1">
-                                                <form action="">
-                                                    <BaseInput label="OTP" placeholder="Enter the 6 number OTP code sent to your email" />
-                                                    <p class="text-center">
-                                                        We've sent an email to your email <i class="text-prime fw-bold">{{ form.email }}</i
-                                                        >. Please check it.
-                                                    </p>
-                                                    <div class="footer w-100 pt-2" style="max-height: fit-content !important">
-                                                        <div class="hstack gap-2 justify-content-center text-center">
-                                                            <button class="w-50 btn btn-outline-primary rounded-1" :disabled="ctdwn.remaining > 0" @click.prevent="resendOtp">
-                                                                <span v-if="ctdwn.remaining > 0">Re-send OTP in {{ ctdwn.remaining }}s</span>
-                                                                <span v-else>Re-send OTP</span>
+                                                <form @submit.prevent="verifyEmailNow">
+                                                    <div class="vstack gap-2" v-if="!verifyEmail">
+                                                        <p class="text-center">
+                                                            Please verify you email <i class="text-prime fw-bold">"{{ form.email }}"</i>, this will increase the speed of your account's approval.
+                                                        </p>
+                                                        <div class="hstack gap-2 justify-content-center" v-if="!verifyEmail">
+                                                            <button type="button" class="btn btn-outline-secondary">Skip Verification</button>
+                                                            <button
+                                                                type="button"
+                                                                @click="
+                                                                    verifyEmail = true;
+                                                                    sendOtp();
+                                                                "
+                                                                class="btn btn-primary">
+                                                                Verify Now!
                                                             </button>
-                                                            <button class="w-50 btn btn-outline-success rounded-1" type="submit">Submit<i class="bi bi-arrow-right ms-2"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="vstack gap-2" v-else>
+                                                        <p class="text-center">
+                                                            Nice! We've sent an email to your email <i class="text-prime fw-bold">{{ form.email }}</i
+                                                            >. Please check it.
+                                                        </p>
+                                                        <BaseInput label="OTP" placeholder="Enter the 6 number OTP code sent to your email" />
+                                                        <div class="footer w-100 pt-2" style="max-height: fit-conten !important">
+                                                            <div class="hstack gap-2 justify-content-center text-center">
+                                                                <button class="w-50 btn btn-outline-primary rounded-1" :disabled="ctdwn.remaining > 0" @click.prevent="resendOtp">
+                                                                    <span v-if="ctdwn.remaining > 0">Re-send OTP in {{ ctdwn.remaining }}s</span>
+                                                                    <span v-else>Re-send OTP</span>
+                                                                </button>
+                                                                <button class="w-50 btn btn-outline-success rounded-1" type="submit">Submit<i class="bi bi-arrow-right ms-2"></i></button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -162,24 +169,28 @@ import BaseInput from "@/components/inputs/BaseInput.vue";
 import BaseSelect from "@/components/inputs/BaseSelect.vue";
 import api from "@/plugins/axios";
 import { hideLoading, showLoading } from "@/services/LoadingService";
+import { token } from "@/stores/auth";
 
 export default {
     name: "RegisterPage",
     components: { BaseInput, BaseSelect },
     data() {
         return {
+            verifyEmail: false,
             page: 0,
-            type: "",
+            types: null,
+            selectedType: null,
             form: {
-                lastName: "",
-                firstName: "",
-                middleInitial: "",
+                last_name: "",
+                first_name: "",
+                middle_initial: "" || null,
                 sex: "",
-                idNumber: "",
+                id_number: "",
                 campus: "",
                 email: "",
                 password: "",
-                confirmPassword: "",
+                password_confirmation: "",
+                role: 2,
             },
             campuses: [],
             ctdwn: {
@@ -187,6 +198,7 @@ export default {
                 remaining: 0,
                 timer: null,
             },
+            tok: null,
         };
     },
     methods: {
@@ -231,10 +243,25 @@ export default {
             }, 1000);
         },
 
+        async verifyEmailNow() {
+            //
+        },
+
+        async verifyOtp() {
+            //
+        },
+
         // Call this when user submits OTP or requests resend
-        resendOtp() {
-            console.log("Resending OTP to", this.form.email);
-            this.startCountdown();
+        async sendOtp() {
+            try {
+                const res = await api.get("/api/auth/send-otp");
+                this.tok = res.data.token;
+            } catch (e) {
+                this.verifyEmail = false;
+                console.log(e);
+            } finally {
+                this.startCountdown();
+            }
         },
 
         changePage(direction) {
@@ -250,33 +277,56 @@ export default {
             }
         },
 
-        submitForm() {
-            if (this.form.password !== this.form.confirmPassword) {
-                return;
+        async submitForm() {
+            // if (this.form.password !== this.form.confirmPassword) {
+            //     return;
+            // }
+
+            try {
+                showLoading({ message: "Registering account..." });
+                const formData = { ...this.form, patron_type: this.selectedType.id };
+                const res = await api.post("/api/auth/register", formData);
+                token.value = res.data.access_token;
+                localStorage.setItem("token", token.value);
+
+                console.log(res.data);
+            } catch (e) {
+                console.log(e);
+                this.changePage("-");
+            } finally {
+                hideLoading();
+                this.changePage("+");
             }
-            const formData = { ...this.form, type: this.type };
-            console.log("Form submitted:", formData);
-            this.changePage("+");
         },
     },
     watch: {
-        async type(newType) {
-            if (newType && newType !== "guest") {
+        async "selectedType.name"(newType) {
+            if (newType && newType !== "Guest") {
                 showLoading({ message: "Fetching campuses..." });
                 if (this.campuses && this.campuses.length > 0) hideLoading();
                 else {
-                    const res = await api.get("/all-c", {
-                        params: { sort: "name", order: "asc" },
-                    });
-                    if (res.status === 200) {
+                    try {
+                        const res = await api.get("/api/all-c", {
+                            params: { sort: "name", order: "asc" },
+                        });
                         this.campuses = res.data.data;
-                    } else {
-                        console.error("Failed to fetch campuses:", res);
+                    } catch (e) {
+                        console.log(e);
+                        this.changePage("-");
+                        this.selectedType = "";
                     }
                 }
                 hideLoading();
             }
         },
+    },
+    async mounted() {
+        try {
+            const res = await api.get("/api/patron-types");
+            this.types = res.data;
+        } catch (e) {
+            console.log(e);
+        }
     },
 };
 </script>

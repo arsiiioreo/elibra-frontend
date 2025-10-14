@@ -1,5 +1,5 @@
 <template>
-    <div class="position-relative overflow-hidden">
+    <div class="position-relative overflow-hidden w-100">
         <!-- Search Icon (only when query is empty) -->
         <i v-if="query === ''" class="bi bi-search position-absolute mt-2 start-0" :style="{ marginLeft: searchFocused ? '0.75rem' : '-2rem' }"></i>
 
@@ -7,7 +7,7 @@
         <i v-if="query !== ''" class="bi bi-x-lg position-absolute mt-2 end-0 me-2" @click="clearSearch"></i>
 
         <!-- Input -->
-        <input type="text" class="form-control pe-3" placeholder="Search user..." style="width: 350px" :style="{ paddingLeft: searchFocused ? '2.5rem' : '0.75rem' }" v-model="internalQuery" @focus="searchFocused = false" @blur="searchFocused = true" />
+        <input type="text" class="form-control pe-3 w-100" placeholder="Search user..." :style="{ paddingLeft: searchFocused ? '2.5rem' : '0.75rem' }" v-model="internalQuery" @focus="searchFocused = false" @blur="searchFocused = true" />
     </div>
 </template>
 

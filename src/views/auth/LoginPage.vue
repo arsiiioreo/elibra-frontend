@@ -65,6 +65,7 @@
 import { justLoggedIn, token } from "@/stores/auth";
 import { postRequest } from "@/stores/requestService";
 import { jwtDecode } from "jwt-decode";
+import { thisIsMe } from "../../stores/auth";
 
 export default {
     data() {
@@ -93,6 +94,8 @@ export default {
                         0: "Admin",
                         1: "Librarian",
                     };
+
+                    await thisIsMe();
 
                     this.$router.push({ name: home[decoded.role] });
                 }

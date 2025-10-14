@@ -74,7 +74,7 @@ import { reactive } from "vue";
 import { showLoading, hideLoading } from "@/services/LoadingService";
 import { showStatus } from "@/services/StatusService";
 import { getRequest, postRequest, putRequest, deleteRequest } from "@/stores/requestService";
-import { storage } from "@/stores/apiCache";
+import { storage } from "@/stores/adminCache";
 import { toTitleCase } from "@/utilities/dataManipulation";
 
 export default {
