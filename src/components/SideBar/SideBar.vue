@@ -1,30 +1,37 @@
 <template>
-    <!-- Logo/Header -->
-    <aside id="sidebar" class="d-flex flex-column text-white vh-100 bg-white border-end sidebar" :class="{ open: sideBarOpen }">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="d-flex flex-column h-100 bg-white border-end sidebar overflow-hidden" :class="{ open: sideBarOpen }">
         <!-- Logo/Header -->
-        <router-link :to="{ name: 'login' }" class="d-flex align-items-center p-3 text-decoration-none text-black w-100" :class="{ 'justify-content-center': !sideBarOpen }">
-            <img src="@/assets/logo.png" alt="Logo" style="width: 30px; height: auto" />
-            <span class="fw-bold sidebar-text ms-2" v-if="sideBarOpen">e-Libra</span>
+        <router-link :to="{ name: 'landing' }" class="d-flex align-items-center p-3 text-decoration-none text-black w-100" :class="{ 'justify-content-center': !sideBarOpen }">
+            <img src="@/assets/logo.png" alt="Logo" style="width: 30px; height: 30px" />
+            <span class="fw-bold sidebar-text ms-2 text-prime" v-if="sideBarOpen"> e-Libra </span>
         </router-link>
 
         <!-- User Profile -->
-        <div class="d-flex align-items-center border-bottom overflow-hidden p-3 sidebar-profile" :class="[{ open: sideBarOpen }, sideBarOpen ? 'd-flex' : 'd-none']">
-            <div class="avatar rounded-circle overflow-hidden me-3 ms-2 border border-success p-1">
-                <img :src="profilePic" alt="Profile Picture" class="rounded-circle" />
+        <div class="d-flex align-items-center p-2 sidebar-profile overflow-hidden" :class="[{ open: sideBarOpen }, sideBarOpen ? 'd-flex' : 'd-none']">
+            <div class="avatar rounded-circle me-3 ms-2 border border-success p-1 overflow-hidden" style="width: 45px; height: 45px">
+                <img :src="profilePic" alt="Profile Picture" class="rounded-circle" style="background-position: center" />
             </div>
             <div class="d-flex flex-column sidebar-text">
                 <span class="small text-dark">Welcome!</span>
-                <span class="text-prime fw-bold">{{ user?.name }}</span>
+                <span class="fs-5 text-prime fw-bold pe-1 text-nowrap">{{ user?.first_name }}</span>
             </div>
         </div>
 
+        <hr class="text-secondary mb-0" />
+
         <!-- Navigation Links -->
-        <nav class="overflow-auto flex-grow-1">
+        <nav class="overflow-auto h-100 flex-grow-1 pb-5">
             <div class="nav flex-column" v-for="route in sideBarRoutes" :key="route.name">
-                <small class="text-secondary fw-bold sidebar-text mt-2 pb-2" v-if="sideBarOpen" style="padding: 10px">{{ route.name }}</small>
-                <router-link class="nav-link d-flex align-items-center w-100 p-3 text-secondary" active-class="active text-success fw-bold bg-secondary-subtle border-end border-4 border-success" v-for="r in route.child" :key="r.path" :to="{ name: r.path }" exact>
+                <small class="text-secondary fw-bold sidebar-text pb-2" v-if="sideBarOpen" style="padding: 10px">
+                    {{ route.name }}
+                </small>
+
+                <router-link class="nav-link d-flex align-items-center w-100 p-3 text-secondary" active-class="active text-success fw-bold bg-secondary-subtle border-end border-4 border-success" v-for="r in route.child" :key="r.path" :to="{ name: r.path }" exact data-bs-container="body" :data-bs-toggle="!sideBarOpen ? 'popover' : null" :data-bs-trigger="!sideBarOpen ? 'hover' : null" data-bs-placement="right" :data-bs-content="r.name">
                     <i :class="[r.icon, sideBarOpen ? 'mx-3' : 'mx-auto']"></i>
-                    <span class="text-truncate sidebar-text" v-if="sideBarOpen">{{ r.name }}</span>
+                    <span class="text-truncate sidebar-text" v-if="sideBarOpen">
+                        {{ r.name }}
+                    </span>
                 </router-link>
             </div>
         </nav>
@@ -32,6 +39,7 @@
 </template>
 
 <script>
+import { Popover } from "bootstrap";
 import profile_default from "@/assets/profile_default.png";
 import { routesByRole } from "./SidebarRoutes.js";
 
@@ -54,18 +62,43 @@ export default {
             return routesByRole[this.user.role] || {};
         },
     },
-    data() {},
     methods: {
         toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("d-none");
         },
-
         isActiveGroup(route) {
             if (!route.child) return false;
-            // convert child object to array
             const children = Object.values(route.child);
             return children.some((child) => child.path === this.$route.name);
+        },
+        initPopovers() {
+            // Dispose all old popovers
+            document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => {
+                if (el._popover) {
+                    el._popover.dispose();
+                    el._popover = null;
+                }
+            });
+
+            // Reinitialize popovers ONLY if sidebar is closed
+            if (!this.sideBarOpen) {
+                document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => {
+                    el._popover = new Popover(el, {
+                        trigger: "hover", // Only show on hover
+                        placement: "right",
+                        delay: { show: 100, hide: 100 },
+                    });
+                });
+            }
+        },
+    },
+    mounted() {
+        this.$nextTick(() => this.initPopovers());
+    },
+    watch: {
+        sideBarOpen() {
+            this.$nextTick(() => this.initPopovers());
         },
     },
 };
@@ -74,14 +107,13 @@ export default {
 <style scoped>
 /* Base Sidebar */
 .sidebar {
-    width: 75px;
-    transition: width 0.3s ease, transform 0.3s ease;
-    overflow: hidden;
-    white-space: nowrap;
+    min-width: 75px;
+    transition: all 0.3s ease;
 }
 
 .sidebar.open {
-    width: 300px;
+    transition: all 0.3s ease;
+    min-width: 300px;
 }
 
 /* Sidebar profile transition */
@@ -124,7 +156,6 @@ export default {
         z-index: 1030;
         top: 0;
         left: 0;
-        height: 100vh;
         transform: translateX(-100%);
         width: 250px;
     }

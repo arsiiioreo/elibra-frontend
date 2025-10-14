@@ -1,6 +1,6 @@
 <template>
-    <div class="d-flex flex-column align-items-center justify-content-start bg-light text-dark">
-        <div v-if="notifications.length" class="w-100">
+    <div class="d-flex flex-column align-items-center justify-content-start bg-light text-dark overflow-auto">
+        <div v-if="notifications.length" class="w-100 h-100">
             <div v-for="(notification, index) in notifications" :key="index" class="notification-item p-3 mb-3 border rounded shadow-sm bg-white" :class="{ 'bg-light': notification.read }" @click="openNotification(notification)">
                 <h5 class="fw-bold">
                     {{ notification.title }}

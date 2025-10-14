@@ -21,6 +21,19 @@ body {
     background-color: #006012 !important;
 }
 
+.btn,
+label {
+    min-width: fit-content !important;
+}
+
+.swal2-cancel {
+    background-color: #d90a0a !important;
+}
+
+.swal2-confirm {
+    background-color: #037e1a !important;
+}
+
 /* Prime Green Text */
 .text-prime {
     color: #0eb55c !important;
@@ -44,10 +57,6 @@ body {
 /* Table Customizations */
 td {
     vertical-align: middle;
-}
-
-th {
-    cursor: pointer;
 }
 
 /* Input Customizations */

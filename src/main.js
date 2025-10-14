@@ -16,7 +16,6 @@ import "bootstrap-icons/font/bootstrap-icons.min.css";
 
 // Service imports
 import { token, clearAuth } from "@/stores/auth";
-import { showLoading } from "./services/LoadingService";
 
 const app = createApp(App);
 const toast = useToast();
@@ -41,35 +40,7 @@ app.config.globalProperties.$logout = async () => {
         });
 
         if (result.isConfirmed) {
-            // Show loading
-            showLoading({ message: "Logging out, please wait..." });
-            // swal.fire({
-            //     html: `
-            //         <img src="/spinner.gif" alt="loading" width="150" />
-            //         <h2 class="mb-0">Logging out, please wait...</h2>
-            //     `,
-            //     showConfirmButton: false,
-            //     allowOutsideClick: false,
-            //     allowEscapeKey: false,
-            //     backdrop: true,
-            // });
-
-            await new Promise((resolve) => {
-                setTimeout(() => {
-                    clearAuth();
-                    router.replace({ name: "login" });
-                    resolve();
-                }, 1500);
-            });
-
-            // Success alert after logout
-            swal.fire({
-                icon: "success",
-                title: "Logged Out",
-                text: "You have been successfully logged out.",
-                timer: 1500,
-                showConfirmButton: false,
-            });
+            clearAuth();
         }
     } catch (error) {
         swal.fire({

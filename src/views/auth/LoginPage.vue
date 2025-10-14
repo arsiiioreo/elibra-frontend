@@ -21,7 +21,7 @@
                         <div class="col-md-6 p-lg-5 p-4 d-flex flex-column justify-content-center">
                             <div class="d-flex align-items-center justify-content-evenly mb-3 my-md-1">
                                 <img src="@/assets/isu.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
-                                <h2 class="fw-bold text-center" style="color: #222">LOGIN</h2>
+                                <h2 class="fw-bold text-center mx-3" style="color: #222">LOGIN</h2>
                                 <img src="@/assets/library.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
                             </div>
                             <form class="d-flex flex-column gap-2 mt-md-4" @submit.prevent="login" method="POST">
@@ -34,8 +34,8 @@
                                         <i class="bi" :class="showPassword ? 'bi-eye' : 'bi-eye-slash'" @click="showPassword = !showPassword" style="cursor: pointer"></i>
                                     </div>
                                 </div>
-                                <a href="#" class="text-primary text-decoration-none small text-end w-100">Forgot Password?</a>
-                                <button type="submit" class="btn btn-success mt-2 text-center">
+                                <a href="#" class="text-decoration-none small text-end w-100 text-prime">Forgot Password?</a>
+                                <button type="submit" class="btn btn-success mt-2 text-center" :disabled="isLoading">
                                     <div class="spinner-border" role="status" v-if="isLoading" style="width: 1rem; height: 1rem; border-width: 0.15em; vertical-align: middle; margin-right: 5px">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
@@ -63,7 +63,9 @@
 
 <script>
 import { justLoggedIn, token } from "@/stores/auth";
+import { postRequest } from "@/stores/requestService";
 import { jwtDecode } from "jwt-decode";
+import { thisIsMe } from "../../stores/auth";
 
 export default {
     data() {
@@ -74,43 +76,39 @@ export default {
             },
             isLoading: false,
             showPassword: false,
-
-            // Status Popup Props
-            showPopup: false,
-            statPop: {
-                status: "",
-                title: "",
-                message: "",
-            },
         };
     },
     methods: {
         async login() {
             this.isLoading = true;
             try {
-                const loginResponse = await this.$api.post("/auth/login", this.form);
+                const loginResponse = await postRequest("auth/login", this.form);
 
-                if (loginResponse) {
-                    if (loginResponse.data.status === "success") {
-                        token.value = loginResponse.data.access_token;
-                        localStorage.setItem("token", btoa(loginResponse.data.access_token));
-                        const decoded = jwtDecode(token.value);
+                if (loginResponse.data.status === "success") {
+                    token.value = loginResponse.data.access_token;
+                    localStorage.setItem("token", loginResponse.data.access_token);
+                    justLoggedIn.value = true;
 
-                        const home = {
-                            0: "Admin",
-                            1: "Librarian",
-                        };
-                        justLoggedIn.value = true;
+                    const decoded = jwtDecode(token.value);
+                    const home = {
+                        0: "Admin",
+                        1: "Librarian",
+                    };
 
-                        this.$router.push({
-                            name: home[decoded.role],
-                        });
-                    } else {
-                        console.log(loginResponse.data.message);
-                    }
+                    await thisIsMe();
+
+                    this.$router.push({ name: home[decoded.role] });
                 }
             } catch (error) {
-                this.$toast.error(error.response?.data?.message || "An error occurred during login.");
+                const data = error.response?.data;
+                console.log(data);
+
+                if (data.errors) {
+                    const firstError = Object.values(data.errors)[0];
+                    this.$toast.error(firstError);
+                } else {
+                    this.$toast.error("An error occured, please try again.");
+                }
             } finally {
                 this.isLoading = false;
             }

@@ -25,19 +25,19 @@
                 <th>#</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Status</th>
+                <th>Section</th>
                 <th>Joining Date</th>
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(staff, index) in filteredAndSortedStaff" :key="staff.id">
+            <tr v-for="(staff, index) in staffs" :key="staff.id">
                 <td>{{ index + 1 }}</td>
-                <td>{{ staff.name }}</td>
-                <td>{{ staff.email }}</td>
-                <td>{{ staff.status }}</td>
-                <td>{{ staff.joiningDate }}</td>
+                <td>{{ staff.user.name }}</td>
+                <td>{{ staff.user.email }}</td>
+                <td>{{ staff.sections.name }}</td>
+                <td>{{ new Date(staff.user.created_at).toUTCString() }}</td>
             </tr>
-            <tr v-if="filteredAndSortedStaff.length === 0">
+            <tr v-if="staffLength.length === 0">
                 <td colspan="5" class="text-center">No staff found</td>
             </tr>
         </tbody>
@@ -45,57 +45,49 @@
 </template>
 
 <script>
+import api from '@/plugins/axios';
+import { token } from '@/stores/auth';
+
 export default {
+    created() {
+        this.fetchStaffs();
+    },
     data() {
         return {
-            searchQuery: "",
-            filterStatus: "",
-            sortOption: "name",
-            staff: [
-                { id: 1, name: "John Doe", email: "john@example.com", status: "active", joiningDate: "2023-01-15" },
-                { id: 2, name: "Jane Smith", email: "jane@example.com", status: "inactive", joiningDate: "2023-02-10" },
-                { id: 3, name: "Alice Johnson", email: "alice@example.com", status: "active", joiningDate: "2023-03-05" },
-                // Add more staff as needed
-            ],
+            staffs: [],
+            isFetchingStaff: false,
         };
     },
     computed: {
-        filteredAndSortedStaff() {
-            let result = this.staff;
-
-            // Filter by status
-            if (this.filterStatus) {
-                result = result.filter((staff) => staff.status === this.filterStatus);
-            }
-
-            // Search by name or email
-            if (this.searchQuery) {
-                const query = this.searchQuery.toLowerCase();
-                result = result.filter((staff) => staff.name.toLowerCase().includes(query) || staff.email.toLowerCase().includes(query));
-            }
-
-            // Sort by selected option
-            if (this.sortOption === "name") {
-                result = result.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (this.sortOption === "date") {
-                result = result.sort((a, b) => new Date(a.joiningDate) - new Date(b.joiningDate));
-            }
-
-            return result;
+        staffLength() {
+            return this.staffs;
         },
     },
     methods: {
+        async fetchStaffs() {
+            this.isFetchingStaff = true;
+            this.staffs = [];
+
+            try {
+                const librarianData = await api.get("/all-librarians", {
+                    headers: {
+                        Authorization: `Bearer ${token.value}`,
+                    },
+                });
+
+                this.staffs = librarianData.data.data;
+            } catch (error) {
+                console.log(error);
+            } finally {
+                this.isFetchingStaff = false;
+            }
+        },
+
         searchStaff() {
-            // Triggered when the search button is clicked
-            // This method is optional since the computed property handles the filtering
+            setTimeout(() => {
+                this.fetchStaffs();
+            }, 500);
         },
     },
 };
 </script>
-
-<style scoped>
-.container {
-    max-width: 1200px;
-    margin: auto;
-}
-</style>

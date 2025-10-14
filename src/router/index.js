@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { librarianRoutes } from "./librarianRoutes";
 import { adminRoutes } from "./adminRoutes";
 import { jwtDecode } from "jwt-decode";
-import { user, token } from "@/stores/auth";
+import { token, verifyExistence, thisIsMe } from "@/stores/auth";
 
 const routes = [
     // Public Pages
@@ -43,7 +43,7 @@ const routes = [
         component: () => import("../layouts/AdminLayout.vue"),
         meta: { requiresAuth: true, breadcrumb: "Administrator" },
 
-        children: adminRoutes
+        children: adminRoutes,
     },
 
     // Librarian Pages
@@ -52,7 +52,7 @@ const routes = [
         component: () => import("../layouts/AdminLayout.vue"),
         meta: { requiresAuth: true, breadcrumb: "Librarian" },
 
-        children: librarianRoutes,  
+        children: librarianRoutes,
     },
 
     // Error Pages
@@ -81,14 +81,36 @@ const routePrefix = {
 };
 
 router.beforeEach(async (to, from, next) => {
-    const decodedToken = token.value ? jwtDecode(token.value) || null : null;
+    let decodedToken = null;
+
+    try {
+        decodedToken = token.value ? jwtDecode(token.value) : null;
+    } catch (e) {
+        decodedToken = null;
+    }
 
     const isLoggedIn = !(token.value === null); // Check if token exists
     const publicPages = ["landing", "login", "register"]; // Publicly accessible pages
     const isPublicPage = publicPages.includes(to.name); // Check if the target page is public
 
-    // Set page title
-    document.title = to.meta?.title || "E-Libra";
+    // Check if the route requires authentication
+    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+    // Block access to protected pages for guests
+    if (requiresAuth && !isLoggedIn) {
+        return next({ name: "login" });
+    }
+
+    if (isLoggedIn) {
+        try {
+            await verifyExistence();
+            if (decodedToken && decodedToken.exp >= Date.now()) {
+                await thisIsMe();
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     // Prevent logged-in users from accessing login/register again
     if (isPublicPage && isLoggedIn) {
@@ -99,16 +121,11 @@ router.beforeEach(async (to, from, next) => {
         return next({ name: decodedToken ? roleRedirects[decodedToken.role] : "landing" }); // Redirects to role based route, default to landing if role is unknown
     }
 
-    // Check if the route requires authentication
-    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-
-    // Block access to protected pages for guests
-    if (requiresAuth && !isLoggedIn) {
-        return next({ name: "login" });
-    }
+    // Set page title
+    document.title = to.meta?.title || "E-Libra";
 
     // Role-based access control
-    if (user && requiresAuth) {
+    if (requiresAuth) {
         const goingTo = to.fullPath;
         const decoded = jwtDecode(token.value);
         const accessiblePrefix = routePrefix[decoded.role] || [];

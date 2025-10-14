@@ -213,7 +213,7 @@ import api from "@/plugins/axios";
 import { hideLoading, showLoading } from "@/services/LoadingService";
 import { showStatus } from "@/services/StatusService";
 import { confirm } from "@/services/YesNoService";
-import { fetchCampuses, fetchUsers, loading, storage } from "@/stores/apiCache";
+import { fetchCampuses, fetchUsers, loading, storage } from "@/stores/adminCache";
 import { filter, search, sort } from "@/utilities/dataManipulation";
 import { countArray, getLabel, isEmpty } from "@/utilities/dataMap";
 import { Dropdown } from "bootstrap";
@@ -361,4 +361,3 @@ export default {
     },
 };
 </script>
-
