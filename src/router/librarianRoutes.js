@@ -25,6 +25,12 @@ export const librarianRoutes = [
                 component: () => import("@/pages/librarian/dashboard/NotificationsPage.vue"),
                 meta: { title: "Notifications", breadcrumb: "Notifications", description: "System alerts and important updates for librarians" },
             },
+            {
+                path: "activities",
+                name: "LibrarianDashboardActivities",
+                component: () => import("@/pages/librarian/dashboard/ActivitiesPage.vue"),
+                meta: { title: "Activities", breadcrumb: "Activities", description: "Librarian's activity log." },
+            },
         ],
     },
 

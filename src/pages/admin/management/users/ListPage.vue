@@ -5,13 +5,14 @@
                 <th class="tdh px-4">#</th>
                 <th class="w-50">Name</th>
                 <th>Role</th>
+                <th>Status</th>
                 <th class="text-center" style="width: 10%">Actions</th>
             </tr>
         </thead>
         <tbody>
             <!-- show placeholder when loading -->
             <tr v-if="fetching">
-                <td colspan="4">
+                <td colspan="5">
                     <p class="placeholder-glow mb-0">
                         <span class="placeholder col-12"></span>
                     </p>
@@ -34,52 +35,42 @@
                     </div>
                 </td>
                 <td>{{ user.roleText || user.role || "Human" }}</td>
+                <!-- <td>{{ user.status === "0" ? "Active" : user.status === "1" ? "For Approval" : "Inactive" }}</td> -->
+                <td>{{ user.pending_registration_approval === "1" ? "Pending Approval" : user.status }}</td>
                 <td>
                     <div class="hstack justify-content-center gap-2">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userInformation" @click="data = user">Details</button>
+                        <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userInformation" @click="details">Details</button> -->
+                        <button class="btn btn-primary" @click="details(user.id)">Details</button>
                     </div>
                 </td>
             </tr>
 
             <!-- show empty message -->
             <tr v-else>
-                <td colspan="4" class="text-center text-muted py-3">No data to show.</td>
+                <td colspan="5" class="text-center text-muted py-3">No data to show.</td>
             </tr>
         </tbody>
     </table>
-    <div class="modal fade" id="userInformation">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="mb-0"><i class="bi bi-person me-2 fs-5"></i>{{ data?.first_name + " " + (data?.middle_initial ? data?.middle_initial + "." : "") + data?.last_name + "'s Information" }}</h5>
-                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4 overflow-auto" style="max-height: 500px">
-                    <UserInformationPage :user="data" />
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </template>
 
 <script>
 import pfp from "@/assets/logo.png";
-import UserInformationPage from "./UserInformationPage.vue";
 
 export default {
     props: {
         users: Array,
         fetching: Boolean,
     },
-    components: { UserInformationPage },
     data() {
         return {
             pfp,
             data: [],
         };
+    },
+    methods: {
+        details(id) {
+            this.$emit("selected-id", id);
+        },
     },
     mounted() {
         console.log(this.fetching);

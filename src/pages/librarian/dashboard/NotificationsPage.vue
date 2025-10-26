@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-column align-items-center justify-content-start bg-light text-dark overflow-auto">
+    <div class="d-flex flex-column align-items-center justify-content-start text-dark overflow-auto h-100">
         <div v-if="notifications.length" class="w-100 h-100">
             <div v-for="(notification, index) in notifications" :key="index" class="notification-item p-3 mb-3 border rounded shadow-sm bg-white" :class="{ 'bg-light': notification.read }" @click="openNotification(notification)">
                 <h5 class="fw-bold">
@@ -35,18 +35,18 @@ export default {
     data() {
         return {
             notifications: [
-            { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false, },
-            { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false, },
-            { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false, },
-            { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false, },
-            { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false, },
-            { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false, },
-            { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false, },
-            { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false, },
-            { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false, },
-            { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false, },
-            { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false, },
-            { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false, },
+                { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false },
+                { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false },
+                { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false },
+                { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false },
+                { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false },
+                { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false },
+                { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false },
+                { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false },
+                { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false },
+                { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false },
+                { title: "New Book Added", message: "The book 'JavaScript: The Good Parts' has been added to the library.", date: "2023-10-01", read: false },
+                { title: "Overdue Reminder", message: "The book 'Clean Code' is overdue. Please return it as soon as possible.", date: "2023-09-28", read: false },
             ],
             selectedNotification: null,
         };
@@ -97,4 +97,3 @@ export default {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 </style>
-

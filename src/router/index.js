@@ -49,7 +49,7 @@ const routes = [
     // Librarian Pages
     {
         path: "/l",
-        component: () => import("../layouts/AdminLayout.vue"),
+        component: () => import("../layouts/LibrarianLayout.vue"),
         meta: { requiresAuth: true, breadcrumb: "Librarian" },
 
         children: librarianRoutes,

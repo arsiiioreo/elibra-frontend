@@ -1,6 +1,5 @@
 // stores/auth.js
 import router from "@/router";
-import Swal from "sweetalert2";
 import api from "@/plugins/axios";
 
 import { showLoading, hideLoading } from "@/services/LoadingService";
@@ -9,6 +8,8 @@ import { jwtDecode } from "jwt-decode";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { getRequest } from "./requestService";
+import { clearCache as clearAdminCache } from "./adminCache";
+import { clearCache as clearLibrarianCache } from "./librarianCache";
 
 export const user = ref(null);
 export const token = ref(localStorage.getItem("token") || null);
@@ -41,7 +42,7 @@ export const thisIsMe = async () => {
 export const refreshToken = async () => {
     console.log("executed");
 
-    showLoading({ message: "Validating session, please wait..." });
+    showLoading({ message: "Validating Session" });
     try {
         const res = await api.get("api/auth/refresh", {
             headers: {
@@ -54,7 +55,7 @@ export const refreshToken = async () => {
         localStorage.setItem("token", res.data.access_token);
     } catch (e) {
         await clearAuth();
-        useToast().error("Session expired, please log in again.");
+        useToast().error("Session expired, please login again.");
     } finally {
         hideLoading();
     }
@@ -101,22 +102,23 @@ export const verifyExistence = async () => {
 export const clearAuth = async () => {
     // Show loading
     showLoading({ message: "Logging out, please wait..." });
-    await new Promise((resolve) => {
-        setTimeout(() => {
-            user.value = null;
-            token.value = null;
-            localStorage.clear();
-            router.replace({ name: "login" });
-            resolve();
-        }, 1500);
-    });
+    try {
+        const res = await api.get("api/auth/logout", {
+            headers: {
+                Authorization: `Bearer ${token.value}`,
+            },
+        });
 
-    // Success alert after logout
-    Swal.fire({
-        icon: "success",
-        title: "Logged Out",
-        text: "You have been successfully logged out.",
-        timer: 1500,
-        showConfirmButton: false,
-    });
+        // Success alert after logout
+        showStatus({ status: "success", title: "Logged Out", message: res.data.message });
+    } catch (e) {
+        showStatus({ status: "error", title: "Logged Out", message: e.message });
+    } finally {
+        user.value = null;
+        token.value = null;
+        router.replace({ name: "login" });
+        localStorage.clear();
+        clearAdminCache();
+        clearLibrarianCache();
+    }
 };

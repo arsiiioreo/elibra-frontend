@@ -11,6 +11,7 @@ export const storage = reactive({
     campus: null,
     users: null,
     item_type: null,
+    activities: null,
 });
 
 export const clearCache = () => {

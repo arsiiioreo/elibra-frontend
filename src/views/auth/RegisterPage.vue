@@ -95,7 +95,7 @@
 
                                             <!-- Page 2 -->
                                             <div v-else-if="page === 2" key="page2" class="m-1">
-                                                <form @submit.prevent="submitForm">
+                                                <form @submit.prevent="changePage('+')">
                                                     <BaseInput v-model="form.email" label="Email" placeholder="Enter your email" :rules="['required', 'email']" :r="true" />
                                                     <BaseInput v-model="form.password" label="Password" type="password" placeholder="Enter your password" :rules="['required', 'min6']" :r="true" :minlength="8" :form="form" />
                                                     <BaseInput v-model="form.password_confirmation" label="Confirm Password" type="password" placeholder="Confirm your password" :rules="['required', 'match:password']" :form="form" :r="true" />
@@ -110,18 +110,18 @@
                                             </div>
 
                                             <div v-else-if="page === 3" class="m-1">
-                                                <form @submit.prevent="verifyEmailNow">
+                                                <form @submit.prevent="">
                                                     <div class="vstack gap-2" v-if="!verifyEmail">
                                                         <p class="text-center">
                                                             Please verify you email <i class="text-prime fw-bold">"{{ form.email }}"</i>, this will increase the speed of your account's approval.
                                                         </p>
                                                         <div class="hstack gap-2 justify-content-center" v-if="!verifyEmail">
-                                                            <button type="button" class="btn btn-outline-secondary">Skip Verification</button>
+                                                            <button type="button" class="btn btn-outline-secondary" @click="skipVerification()">Skip Verification</button>
                                                             <button
                                                                 type="button"
                                                                 @click="
                                                                     verifyEmail = true;
-                                                                    sendOtp();
+                                                                    verifyEmailNow();
                                                                 "
                                                                 class="btn btn-primary">
                                                                 Verify Now!
@@ -133,14 +133,14 @@
                                                             Nice! We've sent an email to your email <i class="text-prime fw-bold">{{ form.email }}</i
                                                             >. Please check it.
                                                         </p>
-                                                        <BaseInput label="OTP" placeholder="Enter the 6 number OTP code sent to your email" />
-                                                        <div class="footer w-100 pt-2" style="max-height: fit-conten !important">
+                                                        <BaseInput label="OTP" placeholder="Enter the 6 number OTP code sent to your email" :disabled="this.otpSending" v-model="form.otp" />
+                                                        <div class="footer w-100 pt-2" style="max-height: fit-content !important">
                                                             <div class="hstack gap-2 justify-content-center text-center">
-                                                                <button class="w-50 btn btn-outline-primary rounded-1" :disabled="ctdwn.remaining > 0" @click.prevent="resendOtp">
+                                                                <button class="w-50 btn btn-outline-primary rounded-1" :disabled="ctdwn.remaining > 0" @click.prevent="sendOtp">
                                                                     <span v-if="ctdwn.remaining > 0">Re-send OTP in {{ ctdwn.remaining }}s</span>
                                                                     <span v-else>Re-send OTP</span>
                                                                 </button>
-                                                                <button class="w-50 btn btn-outline-success rounded-1" type="submit">Submit<i class="bi bi-arrow-right ms-2"></i></button>
+                                                                <button class="w-50 btn btn-outline-success rounded-1" type="submit" @click="verifyOtp">Submit<i class="bi bi-arrow-right ms-2"></i></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -169,7 +169,7 @@ import BaseInput from "@/components/inputs/BaseInput.vue";
 import BaseSelect from "@/components/inputs/BaseSelect.vue";
 import api from "@/plugins/axios";
 import { hideLoading, showLoading } from "@/services/LoadingService";
-import { token } from "@/stores/auth";
+import { showStatus } from "@/services/StatusService";
 
 export default {
     name: "RegisterPage",
@@ -177,9 +177,12 @@ export default {
     data() {
         return {
             verifyEmail: false,
+            otpSending: false,
             page: 0,
             types: null,
             selectedType: null,
+            tok: null,
+            verificationToken: localStorage.getItem("verification_token") || null,
             form: {
                 last_name: "",
                 first_name: "",
@@ -191,6 +194,7 @@ export default {
                 password: "",
                 password_confirmation: "",
                 role: 2,
+                otp: "",
             },
             campuses: [],
             ctdwn: {
@@ -198,7 +202,6 @@ export default {
                 remaining: 0,
                 timer: null,
             },
-            tok: null,
         };
     },
     methods: {
@@ -243,23 +246,65 @@ export default {
             }, 1000);
         },
 
-        async verifyEmailNow() {
-            //
+        async verifyOtp() {
+            try {
+                const res = await api.get(`/api/auth/verify-email?token=${this.verificationToken}&otp=${this.form.otp}`);
+                console.log(res.data);
+            } catch (e) {
+                console.log(e);
+            }
         },
 
-        async verifyOtp() {
-            //
+        async verifyEmailNow() {
+            const res = await this.submitForm();
+
+            if (res.status === "success") {
+                await this.sendOtp();
+            }
+        },
+
+        async skipVerification() {
+            const res = await this.submitForm();
+
+            console.log(res);
+
+            if (res.status === "success") {
+                showStatus({
+                    title: "Registration Successful",
+                    message: "Your account has been created successfully. Please wait for admin approval.",
+                    type: "success",
+                });
+                localStorage.clear();
+                this.$router.push({ name: "landing" });
+            } else {
+                showStatus({
+                    title: "Registration Failed",
+                    message: res.message || "An error occurred while creating your account.",
+                    type: "error",
+                });
+            }
         },
 
         // Call this when user submits OTP or requests resend
         async sendOtp() {
+            this.otpSending = true;
+            showLoading({ message: "Sending OTP..." });
+            console.log(this.tok);
+
             try {
-                const res = await api.get("/api/auth/send-otp");
-                this.tok = res.data.token;
+                const res = await api.get("/api/auth/send-otp", {
+                    headers: {
+                        Authorization: `Bearer ${this.tok}`,
+                    },
+                });
+                this.verificationToken = res.data.token;
+                localStorage.setItem("verification_token", this.verificationToken);
             } catch (e) {
                 this.verifyEmail = false;
                 console.log(e);
             } finally {
+                this.otpSending = false;
+                hideLoading();
                 this.startCountdown();
             }
         },
@@ -284,18 +329,16 @@ export default {
 
             try {
                 showLoading({ message: "Registering account..." });
-                const formData = { ...this.form, patron_type: this.selectedType.id };
+                const formData = { ...this.form, patron_type_id: this.selectedType.id };
                 const res = await api.post("/api/auth/register", formData);
-                token.value = res.data.access_token;
-                localStorage.setItem("token", token.value);
+                this.tok = res.data.access_token;
 
-                console.log(res.data);
+                return res.data;
             } catch (e) {
                 console.log(e);
                 this.changePage("-");
             } finally {
                 hideLoading();
-                this.changePage("+");
             }
         },
     },
@@ -318,6 +361,9 @@ export default {
                 }
                 hideLoading();
             }
+        },
+        page() {
+            console.log(this.page);
         },
     },
     async mounted() {
