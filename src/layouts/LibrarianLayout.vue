@@ -11,12 +11,13 @@
                 </div>
             </div>
             <div class="d-flex gap-2 align-items-center" style="font-size: 0.85rem">
+                <!-- Profile Card Dropdown -->
                 <div class="btn-group">
                     <button type="button" class="btn d-flex align-items-center dropdown-toggle border" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         <span class="px-1 me-2">{{ user.role === "0" ? "Admin" : "Librarian" }}</span>
                         <img class="me-2 rounded-circle p-1 border border-success" :src="user.profile_picture || profile_default" alt="logo" style="width: 30px; height: 30px" />
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end mt-2" style="width: 300px">
+                    <ul class="dropdown-menu dropdown-menu-end mt-2" style="width: 300px; z-index: 9999">
                         <div class="container">
                             <div class="card">
                                 <div class="card-body text-center">
@@ -77,7 +78,7 @@
                         <p class="mb-0">{{ page.date }}</p>
                     </div>
                 </div>
-                <main class="container-fluid overflow-hidden h-100 p-3 bg-body-secondary">
+                <main class="container-fluid overflow-hidden h-100 p-1 bg-body-secondary">
                     <router-view />
                 </main>
             </div>

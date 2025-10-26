@@ -1,13 +1,10 @@
 <template>
-    <div class="position-relative overflow-hidden w-100">
+    <div class="position-relative overflow-hidden" style="width: 350px">
         <!-- Search Icon (only when query is empty) -->
         <i v-if="query === ''" class="bi bi-search position-absolute mt-2 start-0" :style="{ marginLeft: searchFocused ? '0.75rem' : '-2rem' }"></i>
 
-        <!-- Close Icon (only when query has value) -->
-        <i v-if="query !== ''" class="bi bi-x-lg position-absolute mt-2 end-0 me-2" @click="clearSearch"></i>
-
         <!-- Input -->
-        <input type="text" class="form-control pe-3 w-100" placeholder="Search user..." :style="{ paddingLeft: searchFocused ? '2.5rem' : '0.75rem' }" v-model="internalQuery" @focus="searchFocused = false" @blur="searchFocused = true" />
+        <input id="query" name="query" type="search" class="form-control search" placeholder="Search user..." :style="{ paddingLeft: searchFocused ? '2.5rem' : '0.75rem' }" v-model="internalQuery" @focus="searchFocused = false" @blur="searchFocused = true" />
     </div>
 </template>
 
@@ -28,11 +25,6 @@ export default {
         query(newVal) {
             // sync when parent updates the prop
             this.internalQuery = newVal;
-        },
-    },
-    methods: {
-        clearSearch() {
-            this.internalQuery = "";
         },
     },
 };

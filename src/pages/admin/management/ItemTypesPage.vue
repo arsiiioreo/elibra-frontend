@@ -1,5 +1,5 @@
 <template>
-    <div class="card w-100 p-3 shadow-sm">
+    <div class="card w-100 p-3 shadow-sm mb-4" v-if="addItem">
         <div class="card-body">
             <h4 class="fw-bold mb-3 text-primary"><i class="bi bi-tags me-3"></i>Add New Item Type</h4>
 
@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <div class="card mt-4 shadow-sm">
+    <div class="card shadow-sm">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="m-0 fw-bold text-secondary"><i class="bi bi-list-ul me-3"></i>Item Type List</h5>
             <button class="btn btn-outline-secondary btn-sm" @click="fetchRecord"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
@@ -89,6 +89,7 @@ export default {
     data() {
         return {
             itemType: "",
+            addItem: false,
             editItemType: reactive({
                 id: null,
                 name: "",

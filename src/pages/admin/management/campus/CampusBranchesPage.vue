@@ -167,7 +167,7 @@ export default {
                 ...this.form,
                 campus_id: this.campus_id,
             };
-
+            showLoading({ message: "Saving branch, please wait..." });
             if (this.isEditing) {
                 const res = await Swal.fire({
                     title: "Update Branch?",
@@ -198,6 +198,8 @@ export default {
                 } catch (err) {
                     console.error(err);
                     Swal.fire("Error", "Failed to add branch.", "error");
+                } finally {
+                    hideLoading();
                 }
             }
 

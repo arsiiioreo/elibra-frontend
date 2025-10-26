@@ -72,6 +72,16 @@ option {
     cursor: pointer;
 }
 
+.dropdown-item:active {
+    background-color: #0eb55c !important;
+    color: #fff !important;
+
+    span {
+        background-color: white !important;
+        color: #0eb55c !important;
+    }
+}
+
 /* Remove borders from accordion */
 .accordion .accordion-item,
 /* .accordion .accordion-button, */

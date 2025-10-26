@@ -47,8 +47,9 @@ import swal from "sweetalert2";
 export const showLoading = ({ message = "Loading, please wait..." }) => {
     swal.fire({
         html: `
-            <img src="/spinner.gif" alt="loading" width="150" />
-            <h2>${message}</h2>
+            <img src="/spinner.gif" alt="loading" width="100" />
+            <h2 class="swal2-title" id="swal2-title" style="display: block;">${message}</h2>
+            <div class="swal2-html-container" id="swal2-html-container" style="display: block;">Please don't close or refresh the page.</div>
         `,
         width: 500,
         showConfirmButton: false,

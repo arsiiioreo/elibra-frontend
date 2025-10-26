@@ -38,6 +38,7 @@ export const routesByRole = {
             child: {
                 dashboard: { name: "Overview", path: "LibrarianDashboardOverview", icon: "bi bi-house" },
                 profile: { name: "Notifications", path: "LibrarianDashboardNotifications", icon: "bi bi-bell" },
+                activities: { name: "Activities", path: "LibrarianDashboardActivities", icon: "bi bi-list-check" },
             },
         },
         catalog: {

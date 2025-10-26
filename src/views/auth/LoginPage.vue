@@ -66,6 +66,7 @@ import { justLoggedIn, token } from "@/stores/auth";
 import { postRequest } from "@/stores/requestService";
 import { jwtDecode } from "jwt-decode";
 import { thisIsMe } from "../../stores/auth";
+import { showStatus } from "@/services/StatusService";
 
 export default {
     data() {
@@ -107,7 +108,10 @@ export default {
                     const firstError = Object.values(data.errors)[0];
                     this.$toast.error(firstError);
                 } else {
-                    this.$toast.error("An error occured, please try again.");
+                    if (error.status === 403) {
+                        return showStatus({ status: "error", title: "Account Locked", message: data.message });
+                    }
+                    this.$toast.error(data.message);
                 }
             } finally {
                 this.isLoading = false;
