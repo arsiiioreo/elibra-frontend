@@ -33,7 +33,7 @@
                         {{ r.name }}
                     </span>
                 </router-link>
-            </div>
+            </div> 
         </nav>
     </aside>
 </template>
@@ -41,7 +41,7 @@
 <script>
 import { Popover } from "bootstrap";
 import profile_default from "@/assets/profile_default.png";
-import { routesByRole } from "./SidebarRoutes.js";
+import { routesByRole } from "./SidebarRoutes";
 
 export default {
     props: {

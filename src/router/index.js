@@ -27,7 +27,7 @@ const routes = [
     {
         path: "/OPAC",
         name: "OPAC",
-        component: () => import("../views/OPAC.vue"),
+        component: () => import("../views/opac/OPAC.vue"),
         meta: { title: "OPAC", requiresAuth: false },
     },
     {

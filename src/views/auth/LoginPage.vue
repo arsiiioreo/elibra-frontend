@@ -18,7 +18,7 @@
                             </div>
                         </div>
                         <!-- Right Side -->
-                        <div class="col-md-6 p-lg-5 p-4 d-flex flex-column justify-content-center">
+                        <div class="col-md-6 p-md-5 p-4 d-flex flex-column justify-content-center">
                             <div class="d-flex align-items-center justify-content-evenly mb-3 my-md-1">
                                 <img src="@/assets/isu.png" alt="ISU Logo" style="width: 60px; height: 60px; object-fit: contain" />
                                 <h2 class="fw-bold text-center mx-3" style="color: #222">LOGIN</h2>

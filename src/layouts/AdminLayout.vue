@@ -87,9 +87,10 @@
 
 <script>
 import { justLoggedIn, thisIsMe, token, user } from "@/stores/auth";
-import SideBar from "../components/sidebar/SideBar.vue";
-import isu from "@/assets/isu.png";
 import { jwtDecode } from "jwt-decode";
+
+import SideBar from "@/components/sidebar/SideBar.vue";
+import isu from "@/assets/isu.png";
 import profile_default from "@/assets/profile_default.png";
 
 export default {

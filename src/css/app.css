@@ -44,6 +44,11 @@ label {
     background-color: #0eb55c !important;
 }
 
+.btn-prime {
+    background-color: #0eb55c !important;
+    color: #fff !important;
+}
+
 /* Prime Green Text */
 .text-prime-secondary {
     color: #1e5416 !important;
