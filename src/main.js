@@ -10,6 +10,8 @@ import Toast, { POSITION, useToast } from "vue-toastification";
 // CSS imports
 import "vue-toastification/dist/index.css";
 import "./css/app.css";
+import "@fontsource/open-sans";
+import "@fontsource/inter";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
@@ -28,34 +30,34 @@ app.config.globalProperties.$swal = swal;
 app.config.globalProperties.$toast = toast;
 
 app.config.globalProperties.$logout = async () => {
-    try {
-        const result = await swal.fire({
-            title: "Logout Confirmation",
-            text: "Are you sure you want to logout?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes, Logout",
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-        });
+	try {
+		const result = await swal.fire({
+			title: "Logout Confirmation",
+			text: "Are you sure you want to logout?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Yes, Logout",
+			cancelButtonText: "Cancel",
+			reverseButtons: true,
+		});
 
-        if (result.isConfirmed) {
-            clearAuth();
-        }
-    } catch (error) {
-        swal.fire({
-            icon: "error",
-            title: "Logout Error",
-            text: "Error logging out, please try again.",
-        });
-    }
+		if (result.isConfirmed) {
+			clearAuth();
+		}
+	} catch (error) {
+		swal.fire({
+			icon: "error",
+			title: "Logout Error",
+			text: "Error logging out, please try again.",
+		});
+	}
 };
 
 const options = {
-    position: POSITION.BOTTOM_RIGHT,
-    timeout: 3000,
-    pauseOnHover: true,
-    pauseOnFocusLoss: true,
+	position: POSITION.BOTTOM_RIGHT,
+	timeout: 3000,
+	pauseOnHover: true,
+	pauseOnFocusLoss: true,
 };
 
 app.use(router).use(Toast, options).mount("#app");

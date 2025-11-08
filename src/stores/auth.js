@@ -16,109 +16,131 @@ export const token = ref(localStorage.getItem("token") || null);
 export const justLoggedIn = ref(false);
 
 export const setUser = (userData) => {
-    user.value = userData;
+	user.value = userData;
 };
 
 export const thisIsMe = async () => {
-    showLoading({ message: "Loading data, please wait..." });
+	showLoading({ message: "Loading data, please wait..." });
 
-    if (user.value) {
-        hideLoading();
-        return user.value;
-    }
+	if (user.value) {
+		hideLoading();
+		return user.value;
+	}
 
-    try {
-        const res = await getRequest("user");
+	try {
+		const res = await getRequest("user");
 
-        setUser(res.data);
-        return user.value;
-    } catch (e) {
-        showStatus({ status: "error", title: "Error", message: e });
-    } finally {
-        hideLoading();
-    }
+		if (res) setUser(res.data);
+		if (res.data.role === "1") {
+			localStorage.setItem("branch_id", res.data.branch.id);
+		}
+		return user.value;
+	} catch (e) {
+		showStatus({ status: "error", title: "Error", message: e });
+	} finally {
+		hideLoading();
+	}
 };
 
 export const refreshToken = async () => {
-    console.log("executed");
+	console.log("executed");
 
-    showLoading({ message: "Validating Session" });
-    try {
-        const res = await api.get("api/auth/refresh", {
-            headers: {
-                Authorization: `Bearer ${token.value}`,
-            },
-        });
+	showLoading({ message: "Validating Session" });
+	try {
+		const res = await api.get("api/auth/refresh", {
+			headers: {
+				Authorization: `Bearer ${token.value}`,
+			},
+		});
 
-        console.log("refresh was executed");
-        token.value = res.data.access_token;
-        localStorage.setItem("token", res.data.access_token);
-    } catch (e) {
-        await clearAuth();
-        useToast().error("Session expired, please login again.");
-    } finally {
-        hideLoading();
-    }
+		console.log("refresh was executed");
+		token.value = res.data.access_token;
+		localStorage.setItem("token", res.data.access_token);
+	} catch (e) {
+		await clearAuth();
+		useToast().error("Session expired, please login again.");
+	} finally {
+		hideLoading();
+	}
 };
 
 export const checkTokenValidity = async () => {
-    const storedToken = token.value;
+	const storedToken = token.value;
 
-    if (!storedToken) {
-        console.log("no stored token");
-        return false;
-    }
+	if (!storedToken) {
+		console.log("no stored token");
+		return false;
+	}
 
-    const decoded = jwtDecode(storedToken);
+	const decoded = jwtDecode(storedToken);
 
-    if (!decoded || !decoded.exp) {
-        console.log("no stored decoded exp");
-        return false;
-    }
+	if (!decoded || !decoded.exp) {
+		console.log("no stored decoded exp");
+		return false;
+	}
 
-    const now = Date.now() / 1000; // seconds
+	const now = Date.now() / 1000; // seconds
 
-    if (decoded.exp <= now) {
-        console.log("token expired");
-        return false;
-    }
+	if (decoded.exp <= now) {
+		console.log("token expired");
+		return false;
+	}
 
-    return true;
+	return true;
 };
 
 export const verifyExistence = async () => {
-    const tokenValidity = await checkTokenValidity();
-    if (tokenValidity) {
-        // Token is valid, proceed
-        console.log("existence verified as valid");
-    } else {
-        console.log("existence verified as invalid");
-        await refreshToken();
-    }
+	const tokenValidity = await checkTokenValidity();
+	if (tokenValidity) {
+		// Token is valid, proceed
+		console.log("existence verified as valid");
+	} else {
+		console.log("existence verified as invalid");
+		await refreshToken();
+	}
 
-    return;
+	return;
+};
+
+export const login = async ({ user = null, password = null }) => {
+	showLoading({ message: "Logging in" });
+
+	try {
+		const res = await api.post("api/auth/login", { user, password });
+
+		if (res.data.status === "success") {
+			token.value = res.data.access_token;
+			localStorage.setItem("token", token.value);
+
+			return res;
+		} else {
+			return res;
+		}
+	} catch (e) {
+		return e;
+	}
 };
 
 export const clearAuth = async () => {
-    // Show loading
-    showLoading({ message: "Logging out, please wait..." });
-    try {
-        const res = await api.get("api/auth/logout", {
-            headers: {
-                Authorization: `Bearer ${token.value}`,
-            },
-        });
+	// Show loading
+	showLoading({ message: "Logging out, please wait..." });
+	try {
+		const res = await api.get("api/auth/logout", {
+			headers: {
+				Authorization: `Bearer ${token.value}`,
+			},
+		});
 
-        // Success alert after logout
-        showStatus({ status: "success", title: "Logged Out", message: res.data.message });
-    } catch (e) {
-        showStatus({ status: "error", title: "Logged Out", message: e.message });
-    } finally {
-        user.value = null;
-        token.value = null;
-        router.replace({ name: "login" });
-        localStorage.clear();
-        clearAdminCache();
-        clearLibrarianCache();
-    }
+		// Success alert after logout
+		showStatus({ status: "success", title: "Logged Out", message: res.data.message });
+	} catch (e) {
+		showStatus({ status: "error", title: "Logged Out", message: e.message });
+	} finally {
+		user.value = null;
+		token.value = null;
+		router.replace({ name: "login" });
+		localStorage.clear();
+		clearAdminCache();
+		clearLibrarianCache();
+	}
 };

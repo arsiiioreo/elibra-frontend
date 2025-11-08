@@ -14,7 +14,7 @@
 					<span>OPAC</span>
 				</router-link>
 
-				<router-link :to="{ name: 'attendance' }" class="app-btn" v-if="url">
+				<router-link :to="{ name: 'Attendance' }" class="app-btn" v-if="url">
 					<i class="bi bi-person-check display-5"></i>
 					<span>ATTENDANCE</span>
 				</router-link>
@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { checkTokenValidity, user } from "@/stores/auth";
+import { token } from "@/stores/auth";
+import { jwtDecode } from "jwt-decode";
 
 export default {
 	name: "AppChooser",
@@ -48,8 +49,10 @@ export default {
 	},
 	methods: {
 		generateUrl() {
-			if (checkTokenValidity()) {
-				const role = user.role;
+			const decodedToken = token.value ? jwtDecode(token.value) : null;
+
+			if (decodedToken && decodedToken.role) {
+				const role = decodedToken.role;
 				if (!role) {
 					this.url = null;
 				} else if (role === "0") {
@@ -57,6 +60,8 @@ export default {
 				} else if (role === "1") {
 					this.url = "Librarian";
 				}
+			} else {
+				this.url = null;
 			}
 			console.log(this.url);
 		},
@@ -83,7 +88,7 @@ export default {
 	text-decoration: none;
 	font-weight: 600;
 	background-color: white;
-	transition: all 0.25s ease;
+	transition: all 0.05s ease;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -95,7 +100,7 @@ export default {
 }
 
 .app-btn i {
-	transition: transform 0.25s ease;
+	transition: transform 0.05s ease;
 }
 
 .app-btn:hover i {

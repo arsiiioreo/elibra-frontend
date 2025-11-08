@@ -3,96 +3,117 @@
 */
 
 * {
-    scrollbar-width: thin !important;
-    --bs-accordion-btn-focus-box-shadow: none !important;
-    --bs-accordion-bg: none;
-    --bs-accordion-active-bg: none;
-    font-size: 14px;
+	scrollbar-width: thin !important;
+	--bs-accordion-btn-focus-box-shadow: none !important;
+	--bs-accordion-bg: none;
+	--bs-accordion-active-bg: none;
+	font-size: 13px;
 }
 
 body {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 .bg-success,
 .btn-success:hover {
-    opacity: 1;
-    background-color: #006012 !important;
+	opacity: 1;
+	background-color: #006012 !important;
 }
 
 .btn,
 label {
-    min-width: fit-content !important;
+	min-width: fit-content !important;
 }
 
 .swal2-cancel {
-    background-color: #d90a0a !important;
+	background-color: #d90a0a !important;
 }
 
 .swal2-confirm {
-    background-color: #037e1a !important;
+	background-color: #037e1a !important;
+}
+
+.clickable {
+	cursor: pointer !important;
 }
 
 /* Prime Green Text */
 .text-prime {
-    color: #0eb55c !important;
+	color: #0eb55c !important;
 }
 
 /* Prime Green Background */
 .bg-prime {
-    background-color: #0eb55c !important;
+	background-color: #0eb55c !important;
 }
 
 .btn-prime {
-    background-color: #0eb55c !important;
-    color: #fff !important;
+	background-color: #0eb55c !important;
+	color: #fff !important;
+}
+
+.btn-outline-prime {
+	--bs-btn-color: #0eb55c !important;
+	--bs-btn-border-color: #0eb55c !important;
+	--bs-btn-hover-color: #fff;
+	--bs-btn-hover-bg: #0eb55c;
+	--bs-btn-hover-border-color: #0eb55c;
+	--bs-btn-focus-shadow-rgb: 25, 135, 84;
+	--bs-btn-active-color: #fff;
+	--bs-btn-active-bg: #0eb55c;
+	--bs-btn-active-border-color: #0eb55c;
+	--bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+	--bs-btn-disabled-color: #0eb55c;
+	--bs-btn-disabled-bg: transparent;
+	--bs-btn-disabled-border-color: #0eb55c;
+	--bs-gradient: none;
 }
 
 /* Prime Green Text */
 .text-prime-secondary {
-    color: #1e5416 !important;
+	color: #1e5416 !important;
 }
 
 /* Prime Green Background */
 .bg-prime-secondary {
-    background-color: #1e5416 !important;
+	background-color: #1e5416 !important;
 }
 
 /* Table Customizations */
 td {
-    vertical-align: middle;
+	vertical-align: middle;
 }
 
 /* Input Customizations */
 .form-control:focus,
 .form-select:focus {
-    border-color: #0eb55c !important;
-    outline: 0 !important;
-    box-shadow: 0 0 0 0.25rem #0da65440 !important;
+	border-color: #0eb55c !important;
+	outline: 0 !important;
+	box-shadow: 0 0 0 0.25rem #0da65440 !important;
 }
 
 .form-select,
 option {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .dropdown-item:active {
-    background-color: #0eb55c !important;
-    color: #fff !important;
+	background-color: #0eb55c !important;
+	color: #fff !important;
 
-    span {
-        background-color: white !important;
-        color: #0eb55c !important;
-    }
+	span {
+		background-color: white !important;
+		color: #0eb55c !important;
+	}
 }
 
 /* Remove borders from accordion */
 .accordion .accordion-item,
 /* .accordion .accordion-button, */
 .accordion .accordion-header {
-    border: none !important;
-    box-shadow: none !important;
+	border: none !important;
+	box-shadow: none !important;
 }
 
 /* Optional: remove divider line sa collapsed state */

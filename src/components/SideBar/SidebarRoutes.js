@@ -88,29 +88,29 @@ export const routesByRole = {
     reports: {
       name: "Reports & Analytics",
       child: {
-        //         circulation: { name: "Circulation Reports", path: "LibrarianCirculationReports", icon: "bi bi-arrow-left-right" },
-        //         inventory: { name: "Inventory Reports", path: "LibrarianInventoryReports", icon: "bi bi-box-seam" },
+        circulation: { name: "Circulation Reports", path: "LibrarianCirculationReports", icon: "bi bi-arrow-left-right" },
+        inventory: { name: "Inventory Reports", path: "LibrarianInventoryReports", icon: "bi bi-box-seam" },
         patron: { name: "Patron Reports", path: "LibrarianPatronReports", icon: "bi bi-person-lines-fill" },
-        //         finance: { name: "Finance Reports", path: "LibrarianFinanceReports", icon: "bi bi-cash-stack" },
-        //   audit: { name: "Audit Logs", path: "LibrarianAuditLogs", icon: "bi bi-shield-lock" },
+        finance: { name: "Finance Reports", path: "LibrarianFinanceReports", icon: "bi bi-cash-stack" },
+        audit: { name: "Audit Logs", path: "LibrarianAuditLogs", icon: "bi bi-shield-lock" },
       },
     },
 
-    // settings: {
-    //     name: "Settings",
-    //     child: {
-    //         roles: { name: "Roles & Permission", path: "LibrarianRoles", icon: "bi bi-person-gear" },
-    //         information: { name: "Library Information", path: "LibrarianInformation", icon: "bi bi-info-circle" },
-    //         hours: { name: "Operating Hours & Holidays", path: "LibrarianOperatingHours", icon: "bi bi-clock" },
-    //         penalty: { name: "Penalty", path: "LibrarianPenalty", icon: "bi bi-exclamation-triangle" },
-    //     },
-    // },
+    settings: {
+      name: "Settings",
+      child: {
+        roles: { name: "Roles & Permission", path: "LibrarianRoles", icon: "bi bi-person-gear" },
+        information: { name: "Library Information", path: "LibrarianInformation", icon: "bi bi-info-circle" },
+        hours: { name: "Operating Hours & Holidays", path: "LibrarianOperatingHours", icon: "bi bi-clock" },
+        penalty: { name: "Penalty", path: "LibrarianPenalty", icon: "bi bi-exclamation-triangle" },
+      },
+    },
 
-    // backup: {
-    //     name: "Backup",
-    //     child: {
-    //         backup: { name: "Backup", path: "LibrarianBackup", icon: "bi bi-cloud-arrow-down" },
-    //     },
-    // },
+    backup: {
+      name: "Backup",
+      child: {
+        backup: { name: "Backup", path: "LibrarianBackup", icon: "bi bi-cloud-arrow-down" },
+      },
+    },
   },
 };
