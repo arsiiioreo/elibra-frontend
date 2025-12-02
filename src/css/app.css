@@ -98,6 +98,10 @@ option {
 	cursor: pointer;
 }
 
+.table-hover > tbody > tr:hover > .loading {
+	--bs-table-bg-state: rgba(255, 255, 255, 1);
+}
+
 .dropdown-item:active {
 	background-color: #0eb55c !important;
 	color: #fff !important;
@@ -108,15 +112,13 @@ option {
 	}
 }
 
-/* Remove borders from accordion */
-.accordion .accordion-item,
-/* .accordion .accordion-button, */
-.accordion .accordion-header {
-	border: none !important;
-	box-shadow: none !important;
+/* These are Bootstrap classes that are re-customized */
+.fade {
+	transition: opacity 0.05s linear !important;
 }
 
-/* Optional: remove divider line sa collapsed state */
-/* .accordion-button:not(.collapsed) {
-    box-shadow: none !important;
-} */
+label.required::after {
+	content: "*";
+	color: red;
+	font-size: 1rem;
+}

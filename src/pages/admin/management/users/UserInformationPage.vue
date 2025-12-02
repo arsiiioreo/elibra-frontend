@@ -120,7 +120,7 @@
 			<div class="col-12" v-if="user.librarian">
 				<h6 class="fw-bold mb-3 text-primary"><i class="bi bi-building me-2"></i>Library Information</h6>
 				<table class="table table-responsive table-hover">
-					<tbody>
+					<tbody v-if="user?.librarian?.section">
 						<tr>
 							<th>Campus</th>
 							<td>{{ user.librarian.branch?.campus?.name + " (" + user.librarian.branch?.campus?.abbrev + ")" }}</td>
@@ -132,6 +132,11 @@
 						<tr>
 							<th>Member since</th>
 							<td>{{ formatShortDate(user.librarian.branch?.created_at) }}</td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="2" style="text-transform: none">This librarian hasn't been assigned to any libraries yet.</td>
 						</tr>
 					</tbody>
 				</table>

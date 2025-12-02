@@ -86,7 +86,7 @@
 
 <script>
 import Swal from "sweetalert2";
-import { getRequest, postRequest } from "@/stores/requestService";
+import { deleteRequest, getRequest, postRequest, putRequest } from "@/stores/requestService";
 import { showLoading } from "@/services/LoadingService";
 
 export default {
@@ -162,7 +162,7 @@ export default {
 
 					if (!confirm.isConfirmed) return;
 
-					await postRequest("program/update", this.form);
+					await putRequest("program/update", this.form);
 					Swal.fire("Updated!", "Program updated successfully.", "success");
 				} else {
 					await postRequest("program/create", this.form);
@@ -190,7 +190,7 @@ export default {
 			if (!confirm.isConfirmed) return;
 
 			try {
-				await postRequest("program/delete", { id: program.id });
+				await deleteRequest(`program/delete/${program.id}`);
 				Swal.fire("Deleted!", "Program deleted successfully.", "success");
 				this.fetchPrograms();
 			} catch (err) {

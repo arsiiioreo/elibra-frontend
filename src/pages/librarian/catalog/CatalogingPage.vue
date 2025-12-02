@@ -2,16 +2,15 @@
 	<div class="w-100 h-100 vstack overflow-hidden">
 		<div class="card w-100 mb-2" v-if="!showDetails">
 			<div class="card-header">Data Management</div>
-			<div class="card-body">
-				<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addNewItem">Add New Item</button>
+			<div class="card-body hstack gap-2 justify-content-end">
+				<input type="search" name="search" id="search" class="form-control w-50" placeholder="Search..." />
+				<router-link :to="{ name: 'LibrarianAddNewCataloging' }" class="btn btn-outline-success">Add New Item</router-link>
+				<button class="btn btn-outline-secondary" @click="fetchItems(true)"><i class="bi bi-clockwise"></i>Refresh</button>
 			</div>
 		</div>
 		<div class="card w-100 h-100 overflow-hidden" v-if="!showDetails">
 			<div class="card-header">
-				<div class="hstack gap-2 justify-content-between">
-					All Library Items
-					<button class="btn btn-outline-secondary" @click="fetchItems(true)"><i class="bi bi-clockwise"></i>Refresh</button>
-				</div>
+				<div class="hstack">All Library Items</div>
 			</div>
 			<div class="card-body overflow-auto p-0">
 				<table class="table table-hover table-striped mb-0">
@@ -44,6 +43,26 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="card-footer hstack gap-2 justify-content-between">
+				<!-- Pagination -->
+				<div class="hstack gap-2" style="width: fit-content">
+					<span>Show Page</span>
+					<select name="page" id="page" class="form-select w-auto" v-model="params.page" @change="fetchItems">
+						<option :value="i + 1" v-for="(v, i) in pages" :key="v">{{ v }}</option>
+					</select>
+				</div>
+				<!-- Entries -->
+				<div class="hstack gap-2" style="width: fit-content">
+					<span>Show</span>
+					<select name="page" id="page" class="form-select w-auto" v-model="params.entries" @change="fetchItems">
+						<option value="25">25</option>
+						<option value="75">75</option>
+						<option value="150">150</option>
+						<option value="250">250</option>
+					</select>
+					<span>entries</span>
+				</div>
 			</div>
 		</div>
 		<div class="card h-100 w-100" v-if="showDetails">
@@ -84,8 +103,12 @@ export default {
 			selectedItem: null,
 
 			params: {
-				paginate: false,
+				page: 1,
+				entries: 25,
+				paginate: true,
 			},
+
+			pages: null,
 		};
 	},
 	methods: {
@@ -106,6 +129,8 @@ export default {
 				const res = await getItems(this.params);
 
 				this.data = res.data;
+				this.pages = res.last_page;
+				console.log(this.data);
 			} catch (e) {
 				showStatus({ status: "error", title: "Error", message: e.message });
 			} finally {

@@ -38,6 +38,12 @@
 							</select>
 						</div>
 
+						<!-- Birthdate -->
+						<div class="col-md-4">
+							<label class="form-label fw-semibold">Birthdate <span class="text-danger">*</span></label>
+							<input type="date" name="birtdate" id="birthdate" class="form-control" v-model="form.birthdate" required />
+						</div>
+
 						<!-- Role -->
 						<div class="col-md-4">
 							<label class="form-label fw-semibold">Role <span class="text-danger">*</span></label>
@@ -53,6 +59,10 @@
 						<div class="col-md-4">
 							<label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
 							<input type="email" class="form-control" v-model.trim="form.email" required />
+							<div class="hstack gap-2">
+								<input type="checkbox" name="autoEmail" id="autoEmail" class="form-check" v-model="autoEmail" />
+								<label class="form-label fw-semibold">Use ISU email?</label>
+							</div>
 						</div>
 
 						<!-- LIBRARIAN SECTION -->
@@ -143,6 +153,7 @@
 </template>
 
 <script>
+import { showLoading } from "@/services/LoadingService";
 import { showStatus } from "@/services/StatusService";
 import { confirm } from "@/services/YesNoService";
 import { fetchBranches, fetchCampuses, fetchDepartment, fetchPatronTypes, fetchProgram } from "@/stores/adminCache";
@@ -168,7 +179,9 @@ export default {
 				external_organization: "",
 				username: "",
 				contact_number: "",
+				birthdate: "",
 			},
+			autoEmail: false,
 			campuses: [],
 			branches: [],
 			departments: [],
@@ -206,6 +219,7 @@ export default {
 		},
 
 		async submitForm() {
+			showLoading({ message: "Adding new user..." });
 			const res = await postRequest("a/user/create", { ...this.form, pending_registration_approval: "0" });
 
 			if (res.data && res.data.status === "success") {
@@ -213,6 +227,8 @@ export default {
 				this.$emit("added");
 				this.resetForm();
 				this.closeModal();
+			} else {
+				showStatus({ status: "error", title: "Error", message: res.data.message || "An error occurred while adding the user." });
 			}
 		},
 
@@ -252,6 +268,20 @@ export default {
 
 		const branch = await fetchBranches();
 		this.branches = branch.data;
+	},
+	watch: {
+		autoEmail(newVal) {
+			if (!newVal) return (this.form.email = "");
+
+			if (newVal && (this.form.last_name == "" || this.form.first_name == "")) {
+				setTimeout(() => {
+					this.autoEmail = false;
+				});
+				showStatus({ status: "error", title: "Error", message: "You need to enter the first and last name before automating email." });
+			} else {
+				this.form.email = this.form.first_name.replace(" ", "").toLowerCase() + "." + (this.form.middle_initial ? this.form.middle_initial + "." : "") + this.form.last_name.replace(" ", "-").toLowerCase() + "@isu.edu.ph";
+			}
+		},
 	},
 };
 </script>

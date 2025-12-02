@@ -1,12 +1,15 @@
 <template>
 	<nav class="hstack p-3 gap-2 border-bottom">
-		<button class="btn btn-outline-secondary me-auto" @click="this.$emit('back', false)"><i class="bi bi-chevron-left"></i></button>
+		<div class="hstack gap-3 me-auto">
+			<button class="btn btn-outline-secondary" @click="this.$emit('back', false)"><i class="bi bi-chevron-left"></i></button>
+			<h4 class="mb-0">{{ item?.title }}</h4>
+		</div>
 		<button class="btn btn-outline-primary">Update Information</button>
 		<button class="btn btn-danger" @click="deleteItem(item?.title)">Delete</button>
 	</nav>
 	<div class="hstack p-2 h-100 overflow-hidden" v-if="item">
 		<!-- Item Image -->
-		<div class="h-100 p-3" style="max-width: 400px">
+		<div class="h-100 p-3" style="max-width: 200px">
 			<div class="border overflow-auto border-success rounded-2">
 				<img :src="item.cover || book_blank" alt="Resource Cover" width="100%" height="auto" />
 			</div>
@@ -101,7 +104,7 @@
 			<!-- Description -->
 			<div class="w-100 mt-4">
 				<h5 class="text-primary"><i class="bi bi-pen me-2"></i>Description</h5>
-				<textarea class="form-control" name="description" id="description" style="max-height: 300px" v-model="item.remarks"></textarea>
+				<textarea class="form-control" name="description" id="description" style="max-height: 300px" v-model="item.description"></textarea>
 			</div>
 		</div>
 	</div>

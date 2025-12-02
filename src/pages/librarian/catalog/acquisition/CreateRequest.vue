@@ -81,14 +81,14 @@
 import { showLoading } from "@/services/LoadingService";
 import { showStatus } from "@/services/StatusService";
 import { user } from "@/stores/auth";
-import { getItemType } from "@/stores/librarianCache";
 import { postRequest } from "@/stores/requestService";
+import { item_types } from "@/utilities/selectOptions";
 import { Modal } from "bootstrap";
 
 export default {
 	data() {
 		return {
-			item_types: null,
+			item_types: item_types,
 			form: {
 				requested_by: user?.id || null,
 				title: "",
@@ -103,12 +103,7 @@ export default {
 			},
 		};
 	},
-	async created() {
-		this.item_types = await getItemType();
-	},
 	methods: {
-		getItemType,
-
 		async createRequest() {
 			try {
 				showLoading({ message: "Creating acquisition request" });

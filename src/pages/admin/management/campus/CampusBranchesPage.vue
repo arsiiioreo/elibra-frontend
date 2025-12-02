@@ -9,7 +9,7 @@
 		</div>
 
 		<!-- Branches Table -->
-		<table class="table table-bordered table-hover align-middle">
+		<table class="table table-bordered table-hover align-middle position-relative">
 			<thead class="table-light">
 				<tr>
 					<th>No.</th>
@@ -36,7 +36,10 @@
 					<td>{{ branch.opening_hour }}</td>
 					<td>{{ branch.closing_hour }}</td>
 					<td class="text-center">
-						<button class="btn btn-sm btn-outline-primary me-1" @click="editBranch(branch)">
+						<button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#sectionModal">
+							<i class="bi bi-eye"></i>
+						</button>
+						<button class="btn btn-sm btn-outline-warning me-1" @click="editBranch(branch)">
 							<i class="bi bi-pencil"></i>
 						</button>
 						<button class="btn btn-sm btn-outline-danger" @click="deleteBranch(branch)">
@@ -98,6 +101,25 @@
 				</div>
 			</div>
 		</teleport>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="sectionModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalTitleId">Models</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">Add rows here</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 

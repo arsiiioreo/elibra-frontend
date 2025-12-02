@@ -1,186 +1,247 @@
 <template>
-	<div class="d-flex flex-column justify-content-start vh-100 w-100 bg-body-tertiary overflow-hidden">
-		<nav class="w-100 d-flex justify-content-between align-items-center px-md-5 px-1 p-3">
-			<!-- E-Libra Logo -->
-			<div class="hstack gap-1">
-				<img src="@/assets/logo.png" alt="ELibra Logo" width="50" height="auto" />
-				<h4 class="fw-bold text-prime">e-Libra</h4>
-			</div>
-			<router-link :to="{ name: 'landing' }" class="btn rounded-pill btn-outline-prime px-3"><i class="bi bi-house me-2"></i>Home</router-link>
-		</nav>
+	<div class="d-flex flex-column justify-content-center align-items-center vh-100 bg-dark text-white overflow-hidden">
+		<div class="position-absolute top-0 start-0 w-100 h-100 gradient-bg"></div>
 
-		<!-- Main Body -->
-		<div class="d-flex flex-column p-3 pt-0 pb-0 pb-md-2" style="height: fit-content !important">
-			<div class="hstack justify-content-center gap-3 mb-3">
-				<img src="@/assets/isu.png" alt="ISU Logo" width="40" height="auto" />
-				<h4 class="text-prime fw-bolder m-0">ISU Online Public Access Catalogue</h4>
-			</div>
-
-			<div class="p-2 w-100 d-flex justify-content-center">
-				<form @submit.prevent="fetchItems" class="w-100 hstack justify-content-center gap-2">
-					<button type="button" class="filter btn btn-outline-secondary px-4 p-3 rounded-pill hstack gap-2" data-bs-toggle="modal" data-bs-target="#filters"><i class="bi bi-filter"></i><span>Filters</span></button>
-					<input type="search" class="form-control shadow-sm border p-3 w-75 rounded-pill ps-4" id="search" placeholder="Search for materials" v-model="params.query" />
-					<button type="submit" class="btn btn-prime me-3 px-5 p-3 rounded-pill d-none d-md-block" @click="fetchItems()">Search</button>
-				</form>
-			</div>
+		<div class="card fade-in overflow-hidden" v-if="d.title" style="width: 85%; max-width: 1000px; height: 90vh; max-height: 90vh">
+			<!-- Information Page -->
+			<information-page :data="d" @back="d = {}" />
 		</div>
 
-		<div class="hstack w-100 h-100 px-3 py-2 gap-2 overflow-hidden">
-			<!-- List of Items -->
-			<div class="card w-100 h-100 shadow-sm">
-				<div class="card-header hstack justify-content-between">
-					<h5 class="mb-0"><i class="bi bi-list me-3"></i>Material List</h5>
-					<button class="btn btn-outline-secondary rounded-pill" @click="reset"><i class="bi bi-arrow-clockwise me-2"></i>Refresh</button>
-				</div>
+		<!-- MAIN CARD -->
+		<div class="card glass-card p-3 fade-in rounded-3 d-flex overflow-hidden" style="width: 85%; max-width: 1300px; height: 90vh; max-height: 90vh" v-else>
+			<h4 class="fw-bold text-prime">
+				<img src="@/assets/logo.png" alt="" width="50" height="50" />
+				ISU Online Public Access Catalog - {{ campus.name }}
+			</h4>
 
-				<div class="card-body overflow-auto list-group p-0 rounded-0">
-					<div class="hstack justify-content-center h-100" v-if="fetchingItems"><img src="@/assets/spinner.gif" alt="" width="75" /></div>
+			<div class="hstack gap-3 h-100 overflow-hidden">
+				<!-- Filters Section -->
+				<div class="card h-100" style="width: 30%">
+					<div class="card-header">Additional Filters</div>
+					<div class="card-body vstack">
+						<!-- Filters Directly Here -->
+						<div class="filter-group down">
+							<small class="fw-bold">Publication</small>
 
-					<div class="hstack justify-content-center h-100" v-else-if="books && books?.length <= 0">No Data to show.</div>
-					<button v-for="(book, index) in books" type="button" class="d-flex align-items-center list-group-item list-group-item-action" :key="book.id" @click="selectThis(book)" data-bs-toggle="modal" data-bs-target="#viewItem">
-						<div class="me-3 overflow-hidden shadow-sm hstack justify-content-center" style="border-radius: 2px; width: 35px; height: 50px">
-							<img :src="book.picture || book_blank" alt="" width="100%" />
-						</div>
-						<div class="d-flex flex-column">
-							<h6 class="fw-bold">{{ parseInt(index) + 1 }}. {{ book.title }}</h6>
-							<small class="m-0 small">Campus: {{ book.campus }}</small>
-						</div>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+							<div class="filter-item">
+								<label for="location"><i class="bi bi-map me-2"></i>Location</label>
+								<input type="text" class="form-control" placeholder="Default" data-bs-toggle="modal" data-bs-target="#locationSelection" readonly />
+							</div>
 
-	<!-- Search Filter -->
-	<div class="modal fade" id="filters" data-bs-backdrop="static">
-		<div class="modal-dialog modal-dialog-centered modal-md">
-			<div class="modal-content">
-				<div class="modal-header bg-prime text-white">
-					<div class="modal-title hstack gap-2">
-						<i class="bi bi-search me-3"></i>
-						<h5 class="m-0">Search Filters</h5>
-					</div>
-					<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-				</div>
-				<div class="modal-body">
-					<form class="d-flex flex-column text-start gap-3 h-100" @submit.prevent="fetchItems">
-						<div class="d-flex flex-column">
-							<label class="form-label">Campus</label>
-							<select class="form-select" name="campus" id="campus" v-model="params.campus_id">
-								<option value="">All</option>
-								<option :value="c.name" selected v-for="c in campuses" :key="c.id">{{ c.name }}</option>
-							</select>
+							<div class="filter-item">
+								<label for="year"><i class="bi bi-calendar me-2"></i>Year Published</label>
+								<div class="hstack gap-2">
+									<label for="from">From</label>
+									<select name="from" id="from" class="form-select" v-model="params.year_from">
+										<option value="">Default</option>
+										<option v-for="y in fromYear" :key="y" :value="y">{{ y }}</option>
+									</select>
+									<label for="to">To</label>
+									<select name="to" id="to" class="form-select" v-model="params.year_to">
+										<option value="">Default</option>
+										<option v-for="y in yearRange" :key="y" :value="y">{{ y }}</option>
+									</select>
+								</div>
+							</div>
 						</div>
-						<div class="d-flex flex-column">
-							<label class="form-label">Type</label>
-							<select class="form-select" name="type" id="type" v-model="params.type">
-								<option value="">All</option>
-								<option :value="t.id" selected v-for="t in item_types" :key="t.id">{{ t.name }}</option>
-							</select>
-						</div>
-						<div class="d-flex flex-column">
-							<label class="form-label">Section</label>
-							<select class="form-select" name="section" id="section" v-model="params.section">
-								<option value="">All</option>
-							</select>
-						</div>
-						<div class="d-flex flex-column">
-							<label class="form-label">Sort By</label>
-							<select class="form-select" name="sortBy" id="sortBy" v-model="params.sort">
-								<option value="title" selected>Title</option>
-								<option value="year_published">Year Published</option>
-								<option value="created_at">Date Added</option>
-							</select>
-						</div>
-						<div class="d-flex flex-column">
-							<label class="form-label">Order By</label>
-							<select class="form-select" name="sortBy" id="sortBy" v-model="params.order">
-								<option value="asc" selected>Ascending</option>
-								<option value="desc">Descending</option>
-							</select>
-						</div>
-						<div class="d-flex flex-column">
-							<label class="form-label">Date Published</label>
-							<div class="d-flex gap-2 p-1 align-items-center">
-								<p class="mb-0">From</p>
-								<select name="year" id="year" class="form-select" v-model="params.yearFrom">
-									<option value="" selected>Select Year</option>
-									<option v-for="year in yearRange" :key="year" value="year">{{ year }}</option>
+
+						<hr />
+
+						<div class="filter-group down">
+							<small class="fw-bold">Organize</small>
+							<div class="filter-item">
+								<label for="type"><i class="bi bi-list me-2"></i>Material Type</label>
+								<select name="type" id="type" class="form-select" v-model="params.type">
+									<option value="" v-if="item_types.length == 0">Loading item types, please wait...</option>
+									<option value="" v-else>All</option>
+									<option :value="i.id" v-for="(i, index) in item_types" :key="index" :selected="i.id">{{ i.name }}</option>
 								</select>
-
-								<p class="mb-0">To</p>
-								<select name="year" id="year" class="form-select" v-model="params.yearTo">
-									<option value="" selected>Select Year</option>
-									<option v-for="year in yearRange" :key="year" value="year">{{ year }}</option>
+							</div>
+							<div class="filter-item">
+								<label for="sort"><i class="bi bi-list me-2"></i>Sort By</label>
+								<select name="sort" id="sort" class="form-select" v-model="params.sort">
+									<option value="title">Title</option>
+									<option value="year_published">Year Published</option>
+								</select>
+							</div>
+							<div class="filter-item">
+								<label for="order"><i class="bi bi-arrow-up me-2" v-if="params.order == 'asc'"></i><i class="bi bi-arrow-down me-2" v-else></i>Order</label>
+								<select name="order" id="order" class="form-select" v-model="params.order">
+									<option value="asc">Ascending</option>
+									<option value="desc">Descending</option>
 								</select>
 							</div>
 						</div>
 
-						<div class="hstack gap-2">
-							<button class="btn btn-prime mt-3 rounded-pill w-100" type="submit" data-bs-dismiss="modal">Apply</button>
-							<button class="btn btn-outline-danger mt-3 rounded-pill w-100" type="button" @click="reset">Reset</button>
+						<div class="ms-auto mt-auto hstack gap-2">
+							<button class="btn btn-outline-danger" @click="resetFilters">Reset</button>
+							<button class="btn btn-outline-prime" @click="fetchItems">Apply</button>
 						</div>
-					</form>
+					</div>
 				</div>
+
+				<!-- Main Tab -->
+				<div class="w-100 card h-100 overflow-hidden">
+					<div class="card-header">Materials Table</div>
+					<div class="card-body d-flex flex-column overflow-auto h-100">
+						<!-- Search -->
+						<div class="row g-0 mb-3">
+							<div class="ms-auto hstack gap-2">
+								<div class="w-100 position-relative">
+									<div class="position-absolute top-100 start-0 w-100 shadow-sm border border-success rounded bg-light z-3 mt-2" v-show="dropDownRecentSearches" @mousedown.prevent>
+										<div class="text-muted p-3 fw-bold small"><i class="bi bi-arrow-clockwise me-1 small"></i> Recent Searches</div>
+										<div class="text-muted p-5 text-center small" v-if="recentSearches.length === 0">No recent searches.</div>
+										<div class="hstack dropdown-item p-2 ps-3" v-for="(p, index) in recentSearches" :key="index" @mousedown.prevent="selectRecent(p)" style="cursor: pointer">
+											<p class="mb-0 me-auto">{{ p.query }}</p>
+											<small class="text-muted small">{{ timeAgo(p.time) }}</small>
+											<button type="button" class="btn small" @mousedown.stop.prevent="removeRecent(p)">
+												<i class="bi bi-x"></i>
+											</button>
+										</div>
+									</div>
+
+									<input type="text" class="form-control" placeholder="Search" autocomplete="off" v-model="params.query" @focus="dropDownRecentSearches = true" @click="dropDownRecentSearches = true" @blur="handleBlur" @keyup.enter="performSearch" />
+
+									<button
+										class="btn position-absolute end-0 bottom-0"
+										v-if="params.query"
+										@click="
+											params.query = '';
+											fetchItems();
+										"
+									>
+										<i class="bi bi-x"></i>
+									</button>
+								</div>
+
+								<button class="btn btn-prime" @click="performSearch"><i class="bi bi-search me-2"></i>Search</button>
+								<button class="btn btn-outline-secondary" @click="refresh"><i class="bi bi-arrow-clockwise me-2"></i>Refresh</button>
+							</div>
+						</div>
+
+						<!-- Table -->
+						<div class="table-responsive border rounded bg-body-secondary overflow-auto h-100">
+							<list-page :items="items" :loading="fetchingItems" @selectedItem="d = $event" @loadMore="loadMore()" :loadingMore="loading_more" :atLastPage="disable_load_more" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="modal fade" id="viewItem" tabindex="-1">
+			<information-page :data="d" />
+		</div> -->
+
+		<footer class="text-center mt-4 small opacity-75 position-absolute bottom-0 end-0 start-0 mb-3">© {{ new Date().getFullYear() }} Isabela State University | e-Libra</footer>
+	</div>
+
+	<!-- Modals Here -->
+
+	<!-- Modals -->
+	<div class="modal fade" id="locationSelection" tabindex="-1">
+		<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+			<div class="modal-content">
+				<location-selection-modal />
 			</div>
 		</div>
 	</div>
 
-	<!-- Material's Information -->
-	<div class="modal fade" id="viewItem" tabindex="-1"><information-page :data="selectedBook" @reserve="reserve()" /></div>
-	<div class="modal fade" id="reserve" tabindex="-1" v-if="selectedBook"><reservation-page :bookId="selectedBook.id" :data="reservationDetails" /></div>
+	<!-- Reservation Modal -->
+	<div class="modal fade" id="reserveModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+		<ReservationPage :data="d" />
+	</div>
 </template>
 
 <script>
 import api from "@/plugins/axios";
-import book_blank from "@/assets/book_blank.png";
-import InformationPage from "@/views/opac/InformationPage.vue";
-import ReservationPage from "@/views/opac/ReservationPage.vue";
+import ListPage from "./opac/components/ListPage.vue";
 
-import { Modal } from "bootstrap";
+// Modals
+import LocationSelectionModal from "./opac/modals/LocationSelectionModal.vue";
+import InformationPage from "./opac/components/InformationPage.vue";
+import ReservationPage from "./opac/modals/ReservationPage.vue";
+
+import { timeAgo } from "@/utilities/dataManipulation";
+import { confirm } from "@/services/YesNoService";
 
 export default {
-	created() {
-		this.fetchItems();
-		this.fetchEverythingForFiltering();
-	},
-	components: { InformationPage, ReservationPage },
-	setup() {
-		return {
-			book_blank,
-		};
-	},
+	name: "OPAC",
+	components: { ListPage, LocationSelectionModal, InformationPage, ReservationPage },
+
 	data() {
 		return {
+			campus: { name: "Echague" },
+			recentSearches: [],
+			dropDownRecentSearches: false,
+			items: [],
+			d: {},
 			fetchingItems: false,
 
-			timer: null,
+			// Data for loading more
+			next_page: null,
+			last_page: null,
+			loading_more: false,
+			disable_load_more: false,
+
 			params: {
 				query: "",
 				campus_id: "",
-				type: "",
+				branch_id: "",
+				section_id: "",
+				year_to: "",
+				year_from: "",
 				sort: "title",
 				order: "asc",
-				section: "",
-				yearFrom: "",
-				yearTo: "",
+				type: "",
+				page: 1,
 			},
 
-			books: [],
-			campuses: [],
+			// Need for filtering
 			item_types: [],
-			reservationDetails: [],
-			img: null,
-			selectedBook: [],
 			yearRange: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i),
+			fromYear: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i),
 		};
 	},
+
 	methods: {
+		timeAgo,
+		performSearch() {
+			this.saveRecentSearch(this.params.query);
+			this.fetchItems();
+			this.dropDownRecentSearches = false;
+		},
+
+		async loadMore() {
+			this.loading_more = true;
+
+			const i = await api.get("api/opac", { params: { ...this.params, page: this.next_page } });
+
+			this.loading_more = false;
+			this.items = [...this.items, ...i.data.data];
+			this.last_page = i.data.last_page;
+
+			this.next_page += 1;
+		},
+
+		async fetchItems() {
+			this.fetchingItems = true;
+			this.items = [];
+			this.params.page = 1;
+			try {
+				const res = await api.get("api/opac", { params: { ...this.params } });
+
+				this.next_page = 2;
+				this.last_page = res.data.last_page;
+
+				this.items = res.data.data;
+			} catch (e) {
+				console.error(e.message);
+			}
+			this.fetchingItems = false;
+		},
+
 		async fetchEverythingForFiltering() {
 			try {
-				const res = await api.get("api/all-c");
-				this.campuses = res.data.data;
-
 				const types = await api.get("api/item-type/get");
 				this.item_types = types.data;
 			} catch (e) {
@@ -188,62 +249,116 @@ export default {
 			}
 		},
 
-		selectThis(book) {
-			this.selectedBook = book;
-			// console.log(this.selectedBook);
-		},
-
-		reset() {
-			this.params.query = "";
-			this.params.campus = "";
-			this.params.sort = "title";
-			this.params.type = "";
-			this.params.order = "asc";
-			this.params.section = "";
-			this.params.yearFrom = "";
-			this.params.yearTo = "";
-			this.fetchItems();
-		},
-
-		async fetchItems() {
-			this.books = null;
-			this.fetchingItems = true;
-			try {
-				const res = await api.get("api/item/get", { params: { ...this.params, paginate: false } });
-				this.books = res.data.data;
-			} catch (e) {
-				console.log(e.message);
-			} finally {
-				this.fetchingItems = false;
-			}
-		},
-
-		reserve(args) {
-			this.reservationDetails = args;
-			console.log(args);
-
-			this.$nextTick(() => {
-				const modal = new Modal(document.getElementById("reserve"));
-				modal.show();
-			});
-		},
-	},
-	watch: {
-		"params.query"() {
-			if (this.params.query === "") {
+		async refresh() {
+			const ok = await confirm({ title: "Refresh", message: "This will remove all filters. Proceed?" });
+			if (ok) {
+				this.params = { query: "", campus_id: "", branch_id: "", section_id: "", year_to: "", year_from: "", sort: "title", order: "asc" };
 				this.fetchItems();
 			}
 		},
 
-		"params.page"() {
-			this.fetchItems();
+		resetFilters() {
+			this.params.to = "";
+			this.params.from = "";
+			this.params.sort = "title";
+			this.params.order = "asc";
 		},
+
+		saveRecentSearch(query) {
+			if (!query || !query.trim()) return;
+			let stored = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+			stored = stored.filter((i) => i.query !== query);
+			stored.unshift({ query, time: new Date().toISOString() });
+			if (stored.length > 10) stored.pop();
+			localStorage.setItem("recentSearches", JSON.stringify(stored));
+			this.recentSearches = stored;
+		},
+
+		selectRecent(p) {
+			this.params.query = p.query;
+			this.performSearch();
+		},
+
+		async removeRecent(p) {
+			const ok = await confirm({ title: "Remove?", message: `Remove ${p.query}?` });
+			if (ok) {
+				this.recentSearches = this.recentSearches.filter((i) => i !== p);
+				localStorage.setItem("recentSearches", JSON.stringify(this.recentSearches));
+			}
+		},
+
+		handleBlur() {
+			setTimeout(() => {
+				this.dropDownRecentSearches = false;
+			}, 120);
+		},
+	},
+
+	watch: {
+		next_page() {
+			if (this.next_page > this.last_page) {
+				this.disable_load_more = true;
+			}
+		},
+	},
+
+	mounted() {
+		this.recentSearches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+		this.fetchItems();
+		this.fetchEverythingForFiltering();
 	},
 };
 </script>
 
 <style scoped>
-.form-label {
-	margin-bottom: 8px !important;
+.gradient-bg {
+	background: radial-gradient(circle at top left, rgba(34, 215, 152, 0.4), transparent 40%), radial-gradient(circle at bottom right, rgba(129, 200, 31, 0.3), transparent 40%), #054a3d;
+	filter: blur(30px);
+	z-index: 0;
+}
+
+.glass-card {
+	animation: float 5s ease-in-out infinite alternate;
+}
+.fade-in {
+	animation: fadeIn 0.25s ease forwards;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+@keyframes float {
+	0% {
+		transform: translateY(0px);
+	}
+	100% {
+		transform: translateY(-10px);
+	}
+}
+
+.filter-group {
+	display: flex;
+	flex-direction: column;
+}
+.filter-group small {
+	margin-left: -0.5rem;
+	margin-bottom: 0.5rem;
+	font-weight: bold;
+	color: #0eb55c;
+}
+.filter-item {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 0.75rem;
+}
+.filter-item > label {
+	margin-bottom: 0.75rem;
 }
 </style>

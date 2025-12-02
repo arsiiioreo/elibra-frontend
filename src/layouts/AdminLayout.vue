@@ -77,7 +77,7 @@
 						<p class="mb-0">{{ page.date }}</p>
 					</div>
 				</div>
-				<main class="container-fluid overflow-hidden h-100 p-3 bg-body-secondary">
+				<main class="d-flex overflow-hidden h-100 w-100 p-3 bg-body-secondary">
 					<router-view />
 				</main>
 			</div>

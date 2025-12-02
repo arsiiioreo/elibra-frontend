@@ -20,7 +20,7 @@ export const setUser = (userData) => {
 };
 
 export const thisIsMe = async () => {
-	showLoading({ message: "Loading data, please wait..." });
+	// showLoading({ message: "Loading data, please wait..." });
 
 	if (user.value) {
 		hideLoading();
@@ -30,9 +30,9 @@ export const thisIsMe = async () => {
 	try {
 		const res = await getRequest("user");
 
-		if (res) setUser(res.data);
+		if (res) setUser(res.data.data);
 		if (res.data.role === "1") {
-			localStorage.setItem("branch_id", res.data.branch.id);
+			localStorage.setItem("branch_id", res.data.data.branch.id);
 		}
 		return user.value;
 	} catch (e) {
