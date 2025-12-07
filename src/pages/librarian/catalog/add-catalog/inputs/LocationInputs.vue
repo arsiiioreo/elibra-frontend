@@ -23,10 +23,22 @@
 			<label for="branch" class="form-label">Branch</label>
 			<input type="text" class="form-control" id="branch" placeholder="No branch selected" :value="modelValue.branch.name ?? 'No branch, please login'" required readonly disabled />
 		</div>
+
+		<!-- Section -->
+		<div class="col-lg-6">
+			<label for="section" class="form-label">Section</label>
+			<select name="section" id="section" class="form-select" :value="modelValue?.section?.id" @change="updateInfo('section.id', $event.target.value)">
+				<option value="" disabled selected>Select Section</option>
+				<option :value="s.id" v-for="(s, index) in sections" :key="index">{{ s.name }}</option>
+			</select>
+		</div>
 	</div>
 </template>
 
 <script>
+import { thisIsMe } from "@/stores/auth";
+import { getRequest } from "@/stores/requestService";
+
 export default {
 	props: {
 		modelValue: {
@@ -35,13 +47,44 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			sections: [],
+			me: null,
+		};
+	},
+
 	methods: {
-		updateInfo(key, value) {
-			this.$emit("update:modelValue", {
-				...this.modelValue,
-				[key]: value,
-			});
+		updateInfo(path, value) {
+			const keys = path.split(".");
+			const updated = { ...this.modelValue };
+			let pointer = updated;
+
+			for (let i = 0; i < keys.length - 1; i++) {
+				const key = keys[i];
+
+				// Make sure nested object exists
+				pointer[key] = pointer[key] ? { ...pointer[key] } : {};
+				pointer = pointer[key];
+			}
+
+			pointer[keys[keys.length - 1]] = value;
+
+			this.$emit("update:modelValue", updated);
 		},
+
+		async fetchSections() {
+			const s = await getRequest(`sections/${this.me?.librarian?.section?.branch?.id}`);
+			this.sections = s.data.data;
+		},
+	},
+
+	async mounted() {
+		this.me = await thisIsMe();
+		if (this.me?.librarian?.section?.branch?.id) {
+			this.fetchSections();
+		}
+		console.log(this.me);
 	},
 };
 </script>

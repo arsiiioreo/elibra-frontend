@@ -59,7 +59,7 @@
 						<!-- Item Type -->
 						<div class="col-md-12">
 							<label class="form-label">Item Type</label>
-							<select v-model="form.item_type_id" class="form-select" required>
+							<select v-model="form.item_type" class="form-select" required>
 								<option disabled value="">Select Item Type</option>
 								<option :value="type.id" v-for="type in item_types" :key="type.id">{{ type.name }}</option>
 							</select>
@@ -99,7 +99,7 @@ export default {
 				quantity: "",
 				estimated_unit_price: "",
 				dealer: "",
-				item_type_id: "",
+				item_type: "",
 			},
 		};
 	},

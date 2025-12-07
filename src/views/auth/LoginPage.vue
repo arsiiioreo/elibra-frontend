@@ -81,34 +81,38 @@ export default {
 	methods: {
 		async login() {
 			this.isLoading = true;
-			const res = await login(this.form);
-			console.log(res);
-			this.isLoading = false;
 
-			if (res.data.status == "success") {
-				console.log("success");
+			try {
+				const res = await login(this.form);
+				this.isLoading = false;
 
-				justLoggedIn.value = true;
-				const decoded = jwtDecode(token.value);
+				if (res?.data?.status && res?.data?.status == "success") {
+					console.log("success");
 
-				if (decoded && decoded.role === "2") {
-					showStatus({ status: "info", title: "Oops", message: "The web version is dedicated for administrative use. Please install the application to enjoy patron services." });
+					justLoggedIn.value = true;
+					const decoded = jwtDecode(token.value);
+
+					if (decoded && decoded.role === "2") {
+						showStatus({ status: "info", title: "Oops", message: "The web version is dedicated for administrative use. Please install the application to enjoy patron services." });
+					} else {
+						await thisIsMe();
+
+						// const home = {
+						// 	0: "Admin",
+						// 	1: "Librarian",
+						// };
+						// this.$router.push({ name: home[decoded.role] });
+
+						this.$router.push({ name: "landing" });
+					}
 				} else {
-					await thisIsMe();
-
-					// const home = {
-					// 	0: "Admin",
-					// 	1: "Librarian",
-					// };
-					// this.$router.push({ name: home[decoded.role] });
-
-					this.$router.push({ name: "landing" });
+					if (res.status === 403) {
+						return showStatus({ status: "error", title: "Account Locked", message: res.data.message });
+					}
+					showStatus({ status: "error", title: "Error", message: res.data.message });
 				}
-			} else {
-				if (res.status === 403) {
-					return showStatus({ status: "error", title: "Account Locked", message: res.data.message });
-				}
-				showStatus({ status: "error", title: "Error", message: res.data.message });
+			} catch (err) {
+				showStatus({ status: "error", title: "Network Error", message: err });
 			}
 		},
 	},

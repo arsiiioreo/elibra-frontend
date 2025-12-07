@@ -101,78 +101,61 @@
 			<input type="text" class="form-control" id="pages" placeholder="Enter Pages" :value="modelValue.pages" @input="updateInfo('pages', $event.target.value)" />
 		</div>
 
-		<div class="col-12" v-if="modelValue.item_type === 'book' || modelValue.item_type === 'serial' || modelValue.item_type === 'periodical' || modelValue.item_type === 'newspaper'">
-			<div class="row g-2"></div>
+		<!-- ISBN / ISSN -->
+		<div class="col-lg-4" v-if="modelValue.item_type === 'book' || modelValue.item_type === 'serial' || modelValue.item_type === 'periodical' || modelValue.item_type === 'electronic'">
+			<label for="isbn_issn" class="form-label required">ISBN/ISSN</label>
+			<input type="text" class="form-control" id="isbn_issn" placeholder="Enter ISBN or ISSN" required :value="modelValue.isbn_issn" @input="updateInfo('isbn_issn', $event.target.value)" />
+		</div>
 
-			<!-- ISBN / ISSN -->
-			<div :class="[modelValue.item_type === 'book' ? 'col-lg-3' : 'col-lg-4']">
-				<label for="isbn_issn" class="form-label required">ISBN/ISSN</label>
-				<input type="text" class="form-control" id="isbn_issn" placeholder="Enter ISBN or ISSN" required :value="modelValue.isbn_issn" @input="updateInfo('isbn_issn', $event.target.value)" />
-			</div>
-			<!-- Volume and Issue -->
-			<div class="row g-2" v-if="modelValue.item_type == 5 || modelValue.item_type == 6">
-				<!-- Volume -->
-				<div class="col-lg-3">
-					<label for="Volume" class="form-label">Volume</label>
-					<input type="text" class="form-control" id="Volume" placeholder="Enter Volume" :value="modelValue.pages" @input="updateInfo('volume', $event.target.value)" />
-				</div>
+		<!-- Volume -->
+		<div class="col-lg-3" v-if="modelValue.item_type == 'periodical' || modelValue.item_type == 'serials'">
+			<label for="Volume" class="form-label">Volume</label>
+			<input type="text" class="form-control" id="Volume" placeholder="Enter Volume" :value="modelValue.pages" @input="updateInfo('volume', $event.target.value)" />
+		</div>
 
-				<!-- Issue -->
-				<div class="col-lg-3">
-					<label for="Issue" class="form-label">Issue</label>
-					<input type="text" class="form-control" id="Issue" placeholder="Enter Issue" :value="modelValue.pages" @input="updateInfo('issue', $event.target.value)" />
-				</div>
-			</div>
+		<!-- Issue -->
+		<div class="col-lg-3" v-if="modelValue.item_type == 'periodical' || modelValue.item_type == 'serials'">
+			<label for="Issue" class="form-label">Issue</label>
+			<input type="text" class="form-control" id="Issue" placeholder="Enter Issue" :value="modelValue.pages" @input="updateInfo('issue', $event.target.value)" />
+		</div>
+		<!-- DOI -->
+		<div class="col-lg-3" v-if="modelValue.item_type === 'serials'">
+			<label for="Volume" class="form-label">Volume</label>
+			<input type="text" class="form-control" id="Volume" placeholder="Enter Volume" :value="modelValue.pages" @input="updateInfo('volume', $event.target.value)" />
+		</div>
 
-			<!-- DOI -->
-			<div class="row g-2" v-if="modelValue.item_type == 5">
-				<!-- DOI -->
-				<div class="col-lg-3">
-					<label for="Volume" class="form-label">Volume</label>
-					<input type="text" class="form-control" id="Volume" placeholder="Enter Volume" :value="modelValue.pages" @input="updateInfo('volume', $event.target.value)" />
-				</div>
-			</div>
+		<!-- Newspaper Date -->
+		<div class="col-lg-4" v-if="modelValue.item_type === 'newspaper'">
+			<label for="date" class="form-label">Date</label>
+			<input type="date" class="form-control" id="date" placeholder="Enter Date" :value="modelValue.pages" @input="updateInfo('newspaper.date', $event.target.value)" />
+		</div>
 
-			<!-- Newspaper Clippings -->
-			<div class="row g-2" v-if="modelValue.item_type == 9">
-				<!-- date -->
-				<div class="col-lg-3">
-					<label for="date" class="form-label">Date</label>
-					<input type="date" class="form-control" id="date" placeholder="Enter Date" :value="modelValue.pages" @input="updateInfo('newspaper.date', $event.target.value)" />
-				</div>
-
-				<!-- Edition -->
-				<div class="col-lg-3">
-					<label for="edition" class="form-label">Edition</label>
-					<input type="text" class="form-control" id="edition" placeholder="Enter Edition" :value="modelValue.pages" @input="updateInfo('newspaper.edition', $event.target.value)" />
-				</div>
-			</div>
+		<!-- Edition -->
+		<div class="col-lg-4" v-if="modelValue.item_type === 'newspaper'">
+			<label for="edition" class="form-label">Edition</label>
+			<input type="text" class="form-control" id="edition" placeholder="Enter Edition" :value="modelValue.pages" @input="updateInfo('newspaper.edition', $event.target.value)" />
 		</div>
 
 		<!-- Academic Research Serial Inputs -->
-		<div class="col-12" v-if="modelValue.item_type == 2 || modelValue.item_type == 3">
-			<div class="row g-2">
-				<!-- Advisor -->
-				<div class="col-lg-3">
-					<label for="Advisor" class="form-label">Advisor</label>
-					<input type="text" class="form-control" id="Advisor" placeholder="Enter Advisor" :value="modelValue.academic.advisor" @input="updateInfo('academic.advisor', $event.target.value)" />
-				</div>
+		<!-- Advisor -->
+		<div class="col-lg-3" v-if="modelValue.item_type === 'thesis' || modelValue.item_type === 'dissertation'">
+			<label for="Advisor" class="form-label">Advisor</label>
+			<input type="text" class="form-control" id="Advisor" placeholder="Enter Advisor" :value="modelValue.academic.advisor" @input="updateInfo('academic.advisor', $event.target.value)" />
+		</div>
 
-				<!-- Advisor -->
-				<div class="col-lg-3">
-					<label for="Researchers" class="form-label">Researchers</label>
-					<input type="text" class="form-control" id="Researchers" placeholder="Enter Researchers" :value="modelValue.academic.researchers" @input="updateInfo('academic.researchers', $event.target.value)" />
-				</div>
+		<!-- Advisor -->
+		<div class="col-lg-3" v-if="modelValue.item_type === 'thesis' || modelValue.item_type === 'dissertation'">
+			<label for="Researchers" class="form-label">Researchers</label>
+			<input type="text" class="form-control" id="Researchers" placeholder="Enter Researchers" :value="modelValue.academic.researchers" @input="updateInfo('academic.researchers', $event.target.value)" />
+		</div>
 
-				<!-- Program -->
-				<div class="col-lg-6">
-					<label for="Program" class="form-label">Program</label>
-					<select class="form-select" id="Program" :value="modelValue.academic.program_id" @change="updateInfo('academic.program_id', $event.target.value)" required>
-						<option value="" disabled>Select Program</option>
-						<option :value="p.id" v-for="p in programs" :key="p.id">{{ p.name }}</option>
-					</select>
-				</div>
-			</div>
+		<!-- Program -->
+		<div class="col-lg-6" v-if="modelValue.item_type === 'thesis' || modelValue.item_type === 'dissertation'">
+			<label for="Program" class="form-label">Program</label>
+			<select class="form-select" id="Program" :value="modelValue.academic.program_id" @change="updateInfo('academic.program_id', $event.target.value)" required>
+				<option value="" disabled>Select Program</option>
+				<option :value="p.id" v-for="p in programs" :key="p.id">{{ p.name }}</option>
+			</select>
 		</div>
 
 		<!-- Description -->

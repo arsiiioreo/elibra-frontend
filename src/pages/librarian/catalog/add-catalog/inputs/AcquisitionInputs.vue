@@ -6,22 +6,37 @@
 			<small class="text-muted">Please enter the correct details for the item's acquisition.</small>
 		</div>
 
+		<!-- Acquisition Mode -->
+		<div class="col-lg-4">
+			<label for="acquisition_mode" class="form-label">Acquisition Mode</label>
+			<select name="acquisition_mode" id="" class="form-control" :value="modelValue.mode" @input="updateInfo('mode', $event.target.value)" required>
+				<option value="" disabled selected>Select Acquisition Mode</option>
+				<option :value="modelValue.id" v-for="(mode, index) in acquisition_modes" :key="index">{{ mode.name }}</option>
+			</select>
+		</div>
+
 		<!-- Donor -->
-		<div :class="modelValue.copies && modelValue.price ? 'col-lg-12' : 'col-lg-8'">
+		<div class="col-lg-4">
 			<label for="donor" class="form-label">Donor</label>
-			<input type="text" class="form-control" id="donor" placeholder="Enter Donor's Name" :value="modelValue.donor" @input="updateInfo('donor', $event.target.value)" />
+			<input type="text" class="form-control" id="donor" placeholder="Enter Donor's Name" :value="modelValue.donor" @input="updateInfo('donor', $event.target.value)" required />
+		</div>
+
+		<!-- Acquisition Date -->
+		<div class="col-lg-4">
+			<label for="acquisition_date" class="form-label">Acquisition Date</label>
+			<input type="date" class="form-control" id="acquisition_date" placeholder="Enter Acquisition's Date" :value="modelValue.date" @input="updateInfo('date', $event.target.value)" required />
 		</div>
 
 		<!-- Copies -->
-		<div :class="modelValue.copies && modelValue.price ? 'col-lg-4' : 'col-lg-2'">
-			<label for="copies" class="form-label">Copies</label>
-			<input type="number" class="form-control" id="copies" placeholder="Enter Copies" min="1" max="199" :value="modelValue.copies" @input="updateInfo('copies', Number($event.target.value))" />
+		<div class="col-lg-4">
+			<label for="copies" class="form-label">Quantity</label>
+			<input type="number" class="form-control" id="copies" placeholder="Enter Copies" min="1" max="199" :value="modelValue.copies" @input="updateInfo('copies', Number($event.target.value))" required />
 		</div>
 
 		<!-- Price -->
-		<div :class="modelValue.copies && modelValue.price ? 'col-lg-4' : 'col-lg-2'">
+		<div class="col-lg-4">
 			<label for="price" class="form-label">Price</label>
-			<input type="number" class="form-control" id="price" placeholder="Enter Price" min="0" :value="modelValue.price" @input="updateInfo('price', Number($event.target.value))" />
+			<input type="number" class="form-control" id="price" placeholder="Enter Price" min="0" :value="modelValue.price" @input="updateInfo('price', Number($event.target.value))" required />
 		</div>
 
 		<!-- Total -->
@@ -33,12 +48,20 @@
 </template>
 
 <script>
+import { acquisition_modes } from "@/utilities/selectOptions";
+
 export default {
 	props: {
 		modelValue: {
 			type: Object,
 			required: true,
 		},
+	},
+
+	setup() {
+		return {
+			acquisition_modes,
+		};
 	},
 
 	computed: {

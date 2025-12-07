@@ -15,8 +15,8 @@ export default {
 <style>
 #app {
 	/* font-family: Arial, Helvetica, sans-serif; */
-	/* font-family: "Open Sans", Arial; */
-	font-family: "Inter";
+	font-family: "Open Sans", Arial;
+	/* font-family: "Poppins"; */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }

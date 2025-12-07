@@ -1,0 +1,11 @@
+.bg-prime-gradient {
+	background: linear-gradient(to bottom, rgb(1, 104, 23), #0eb55c 60%) !important;
+	color: #fff !important;
+}
+
+.text-prime-gradient {
+	background: linear-gradient(to bottom, #006014, #0eb55c);
+	background-clip: text;
+	color: transparent;
+	-webkit-background-clip: text;
+}

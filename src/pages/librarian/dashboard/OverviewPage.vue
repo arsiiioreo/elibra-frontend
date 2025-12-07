@@ -12,7 +12,7 @@
 						</div>
 						<!-- Library Details -->
 						<div class="vstack">
-							<h3>{{ info?.branch?.name || "Loading..." }}</h3>
+							<h3>{{ info?.librarian?.section?.branch?.name || "Loading..." }}</h3>
 							<strong>Librarian: {{ info?.first_name || "Unknown" }}</strong>
 							<span>Campus: {{ info?.campus ? info?.campus?.name + " (" + info?.campus?.abbrev + ")" : "Loading..." }}</span>
 						</div>

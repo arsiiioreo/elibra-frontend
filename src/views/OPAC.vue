@@ -163,6 +163,7 @@ import ReservationPage from "./opac/modals/ReservationPage.vue";
 
 import { timeAgo } from "@/utilities/dataManipulation";
 import { confirm } from "@/services/YesNoService";
+import { item_types } from "@/utilities/selectOptions";
 
 export default {
 	name: "OPAC",
@@ -241,12 +242,7 @@ export default {
 		},
 
 		async fetchEverythingForFiltering() {
-			try {
-				const types = await api.get("api/item-type/get");
-				this.item_types = types.data;
-			} catch (e) {
-				console.log(e.message);
-			}
+			this.item_types = item_types;
 		},
 
 		async refresh() {

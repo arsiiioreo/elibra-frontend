@@ -122,3 +122,10 @@ label.required::after {
 	color: red;
 	font-size: 1rem;
 }
+
+.nav-title {
+	color: #0eb55c;
+	font-weight: 900;
+	margin: 0;
+	font-size: 1.5rem;
+}

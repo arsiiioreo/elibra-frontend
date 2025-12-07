@@ -10,8 +10,8 @@ const routes = [
 		path: "/",
 		name: "landing",
 		// redirect: { name: "login" },
-		component: () => import("../views/HomePage.vue"),
-		meta: { title: "Home", requiresAuth: false },
+		component: () => import("../views/LandingPage.vue"),
+		meta: { title: "e-Libra", requiresAuth: false },
 	},
 	{
 		path: "/login",

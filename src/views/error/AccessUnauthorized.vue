@@ -1,52 +1,61 @@
 <template>
-    <div style="height: 100vh">
-        <nav class="d-flex align-items-center justify-content-between w-100 p-5" style="height: 10%">
-            <div class="d-flex gap-4 align-items-center">
-                <img src="@/assets/logo.png" alt="" style="height: 50px; width: auto" />
-                <h4 class="text-prime fw-bolder m-0">e-Libra OPAC</h4>
-            </div>
-            <div v-if="!user.id" class="d-flex gap-3 align-items-center">
-                <button type="button" class="btn rounded-pill px-4 text-prime fw-semibold">Login</button>
-                <button type="button" class="btn rounded-pill px-4 text-white fw-semibold bg-prime">Register</button>
-            </div>
-            <div v-if="user.id">
-                <router-link to="/" class="d-flex gap-1 align-items-center rounded-5 border p-1 px-2 text-decoration-none text-prime">
-                    <img class="logo rounded-circle" :src="user.profile" alt="" style="height: 30px; width: auto" />
-                    <small class="me-2">{{ user.name }}</small>
-                </router-link>
-            </div>
-        </nav>
+	<div style="height: 100vh" class="position-relative">
+		<div class="d-flex w-100 top-0 position-fixed bg-white" style="z-index: 99">
+			<nav class="navbar hstack justify-content-between w-75 p-md-4 px-md-5 mx-auto">
+				<div class="hstack gap-md-3 gap-2 align-items-center">
+					<img src="@/assets/logo.png" alt="E-Libra Logo" width="40" />
+					<h2 class="nav-title text-prime-gradient">e-Libra</h2>
+				</div>
 
-        <main style="height: 90%">
-            <div class="row d-flex justify-content-center align-items-center h-75">
-                <div class="col-4 d-flex justify-content-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Bookshelf" class="mb-4" style="width: 50%; opacity: 0.7" />
-                </div>
-                <div class="col-4">
-                    <h1 class="display-1 fw-bold text-prime">401</h1>
-                    <p class="fs-3"><span class="text-prime">Oops!</span> This is not yours..</p>
-                    <p class="lead">
-                        It seems like you're trying to access something that's not yours, please go back. <br />
-                        If you think this is an error, please contact the developers and ask for access permission.
-                    </p>
+				<ul class="nav gap-2 ms-5" v-if="!token">
+					<li class="nav-item">
+						<router-link :to="{ name: 'login' }" class="nav-link text-white btn px-3 bg-prime"> Login </router-link>
+					</li>
+				</ul>
 
-                    <router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> 📚 Back to Home </router-link>
-                </div>
-            </div>
-        </main>
-    </div>
+				<ul class="nav gap-2" v-if="token">
+					<li class="nav-item">
+						<router-link class="nav-link text-black" :to="{ name: user?.role == 0 ? 'AdminDashboard' : 'LibrarianDashboard' }"><i class="bi bi-columns-gap me-2"></i>Dashboard</router-link>
+					</li>
+					<li class="nav-item">
+						<button @click="$logout" class="nav-link text-white btn px-3 bg-prime">Logout</button>
+					</li>
+				</ul>
+			</nav>
+		</div>
+
+		<main style="height: 100%" class="hstack">
+			<div class="row d-flex justify-content-center align-items-center h-75 mx-auto">
+				<div class="col-4 d-flex justify-content-center">
+					<img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Bookshelf" class="mb-4" style="width: 50%; opacity: 0.7" />
+				</div>
+				<div class="col-4">
+					<h1 class="display-1 fw-bold text-prime">401</h1>
+					<p class="fs-3"><span class="text-prime display-5 fw-bold">Oops!</span> This is not yours..</p>
+					<p class="lead">
+						It seems like you're trying to access something that's not yours, please go back. <br />
+						If you think this is an error, please contact the developers and ask for access permission.
+					</p>
+
+					<router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> 📚 Back to Home </router-link>
+				</div>
+			</div>
+		</main>
+	</div>
 </template>
 
 <script>
+import { token, user } from "@/stores/auth";
+
 export default {
-    data() {
-        return {
-            user: {},
-        };
-    },
-    mounted() {
-        this.user = JSON.parse(localStorage.getItem("user")) || {};
-    },
+	data() {
+		return {
+			user: user,
+			token: token,
+		};
+	},
+	mounted() {
+		this.user = JSON.parse(localStorage.getItem("user")) || {};
+	},
 };
 </script>
-

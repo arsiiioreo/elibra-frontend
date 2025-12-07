@@ -10,8 +10,10 @@ import Toast, { POSITION, useToast } from "vue-toastification";
 // CSS imports
 import "vue-toastification/dist/index.css";
 import "./css/app.css";
+import "./css/prime-variations.css";
 import "@fontsource/open-sans";
 import "@fontsource/inter";
+import "@fontsource/poppins";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";

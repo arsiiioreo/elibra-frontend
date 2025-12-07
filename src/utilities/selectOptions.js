@@ -6,6 +6,7 @@ export const item_types = {
 	newspaper: { id: "newspaper", name: "Newspaper Clippings" },
 	periodical: { id: "periodical", name: "Periodical" },
 	serial: { id: "serial", name: "Serial" },
+	thesis: { id: "thesis", name: "Thesis" },
 	vertical: { id: "vertical", name: "Vertical" },
 };
 
@@ -28,4 +29,21 @@ export const authorship = {
 	researcher: { id: "researcher", name: "researcher" },
 	producer: { id: "producer", name: "researcher" },
 	writer: { id: "writer", name: "researcher" },
+};
+
+export const acquisition_modes = {
+	purchased: { id: "purchased", name: "Purchased" },
+	gift: { id: "gift", name: "Gift" },
+	donated: { id: "donated", name: "Donated" },
+	exchange: { id: "exchange", name: "Exchange" },
+};
+
+export const status = {
+	available: { id: "available", name: "Available" },
+	reerved: { id: "reserved", name: "Reserved" },
+	on_load: { id: "on_load", name: "On Load" },
+	lost: { id: "lost", name: "Lost" },
+	missing: { id: "missing", name: "Missing" },
+	archived: { id: "archived", name: "Archived" },
+	condemned: { id: "condemned", name: "Condemned" },
 };

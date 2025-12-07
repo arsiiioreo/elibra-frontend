@@ -69,17 +69,18 @@ import { Modal } from "bootstrap";
 
 export default {
 	components: { PublisherCatalogModal, AuthorsCatalogModal, BibliographyInputs, LocationInputs, AuthorInputs, AcquisitionInputs, PublisherInputs },
+
 	data() {
 		return {
 			item: {
 				title: "Crimson Academy",
-				item_type: "",
-				year_published: "",
+				item_type: "thesis",
+				year_published: "2025",
 				isbn_issn: "",
-				language: "",
+				language: "1",
 				category: "",
-				call_number: "",
-				remarks: "",
+				call_number: "CIR 2571612",
+				description: "New added item for testing.",
 				pages: "",
 
 				volume: "",
@@ -96,13 +97,23 @@ export default {
 
 				publisher: null,
 				acquisition: {
-					copies: "1",
-					price: "",
+					mode: "purchased",
+					date: "",
+					dealer: "ISU Echague",
+					remarks: "Wala lang",
+
+					copies: "2",
+					price: "250",
+					discount: "25",
+					net_price: "",
 				},
 
 				authors: [],
 				campus: [],
 				branch: [],
+				section: {
+					id: "",
+				},
 
 				audio: {
 					format: "",
@@ -116,7 +127,7 @@ export default {
 
 				academic: {
 					advisor: "Desiray Nayga",
-					researchers: [],
+					researchers: ["Reign Balico", "Eugene Tobias"],
 					program_id: "",
 				},
 			},
@@ -163,6 +174,70 @@ export default {
 			state ? modal.show() : modal.hide();
 		},
 
+		getDefaultItem() {
+			return {
+				title: "",
+				item_type: "",
+				year_published: "",
+				isbn_issn: "",
+				language: "",
+				category: "",
+				call_number: "",
+				description: "",
+				pages: "",
+
+				volume: "",
+				issue: "",
+
+				serial: {
+					doi: "",
+				},
+
+				newspaper: {
+					date: "",
+					edition: "",
+				},
+
+				publisher: null,
+
+				acquisition: {
+					mode: "",
+					date: "",
+					dealer: "",
+					remarks: "",
+
+					copies: "",
+					price: "",
+					discount: "",
+					net_price: "",
+				},
+
+				authors: [],
+				campus: [],
+				branch: [],
+
+				section: {
+					id: "",
+				},
+
+				audio: {
+					format: "",
+					duration: {
+						hours: "",
+						minutes: "",
+						seconds: "",
+					},
+					producer: "",
+				},
+
+				academic: {
+					advisor: "",
+					researchers: [],
+					program_id: "",
+				},
+			};
+		},
+
 		async addNewItem() {
 			const a = await confirm({ title: "Confirm Addition", message: "Please check your inputs if correct before proceeding" });
 
@@ -176,11 +251,25 @@ export default {
 					call_number: this.item.call_number,
 					item_type: this.item.item_type,
 					language_id: this.item.language,
-					remarks: this.item.title,
+					description: this.item.description,
+					authors: this.item.authors,
 
 					// Audio Parameters
 					format: this.item.audio.format,
 					duration: this.item.audio.duration.hours + ":" + this.item.audio.duration.minutes + ":" + this.item.audio.duration.seconds,
+
+					section_id: this.item.section.id,
+
+					// Acquisition Parameters
+					acquisition_mode: this.item.acquisition.mode,
+					acquisition_date: this.item.acquisition.date,
+					dealer: this.item.acquisition.donor,
+					acquisition_remarks: this.item.acquisition.remarks,
+
+					copies: this.item.acquisition.copies,
+					price: this.item.acquisition.price,
+					discount: this.item.acquisition.discount,
+					net_price: this.item.acquisition.net_price,
 				});
 
 				if (b.data.status === "success") {
@@ -192,12 +281,23 @@ export default {
 
 			console.log(this.item);
 		},
+
+		computeNet() {
+			const c = Number(this.acquisition.copies) || 0;
+			const p = Number(this.acquisition.price) || 0;
+			const d = Number(this.acquisition.discount) || 0;
+
+			this.acquisition.net_price = c * p - d;
+		},
 	},
 
 	watch: {
 		"item.item_type"() {
 			this.item.category = "";
 		},
+		"acquisition.copies": "computeNet",
+		"acquisition.price": "computeNet",
+		"acquisition.discount": "computeNet",
 	},
 };
 </script>

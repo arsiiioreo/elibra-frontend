@@ -17,7 +17,7 @@
 		<!-- Item Information -->
 		<div class="vstack gap-1 w-100 h-100 px-2 p-3 overflow-auto">
 			<h1 class="fw-bold">{{ item?.title }}</h1>
-			<h5>{{ item?.publisher?.name || "-" }}</h5>
+			<p><span class="fw-bold">Description:</span> {{ item?.description }}</p>
 
 			<!-- General Information -->
 			<div class="w-100 mt-4">
@@ -87,15 +87,17 @@
 
 			<!-- Author Information -->
 			<div class="w-100 mt-4">
-				<h5 class="text-primary"><i class="bi bi-feather me-2"></i>Authors</h5>
+				<h5 class="text-primary"><i class="bi bi-feather me-2"></i>Ownership</h5>
 				<table class="table table-hover clickable">
 					<tbody>
-						<tr v-if="!authors">
+						<tr v-if="!item.authors?.length">
 							<td colspan="2">No Authors for this item</td>
 						</tr>
-						<tr v-else>
-							<th>Author</th>
-							<td>{{ item?.authors.name || "-" }}</td>
+						<tr v-else v-for="(a, index) in item?.authors" :key="a.id">
+							<th>Owner {{ index + 1 }}</th>
+							<td>
+								{{ a.name }} <span class="text-capitalize">({{ a.pivot.authorship }})</span>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -104,7 +106,7 @@
 			<!-- Description -->
 			<div class="w-100 mt-4">
 				<h5 class="text-primary"><i class="bi bi-pen me-2"></i>Description</h5>
-				<textarea class="form-control" name="description" id="description" style="max-height: 300px" v-model="item.description"></textarea>
+				<textarea class="form-control" name="description" id="description" style="max-height: 300px; resize: none" v-model="item.description" readonly></textarea>
 			</div>
 		</div>
 	</div>
@@ -126,6 +128,7 @@ export default {
 	props: {
 		thisItem: { type: Object, default: null },
 	},
+	emits: ["back"],
 	setup() {
 		return { book_blank };
 	},
@@ -142,11 +145,6 @@ export default {
 			if (ans) {
 				console.log(ans);
 			}
-		},
-	},
-	watch: {
-		item(newVal) {
-			console.log("📘 Selected item:", newVal?.title || "(none)");
 		},
 	},
 };
