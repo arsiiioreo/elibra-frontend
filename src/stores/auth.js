@@ -132,13 +132,13 @@ export const clearAuth = async () => {
 		});
 
 		// Success alert after logout
-		showStatus({ status: "success", title: "Logged Out", message: res.data.message });
+		showStatus({ status: "success", title: "Logged Out", message: res.data.message ?? "Logout successfully." });
 	} catch (e) {
 		showStatus({ status: "error", title: "Logged Out", message: e.message });
 	} finally {
 		user.value = null;
 		token.value = null;
-		router.replace({ name: "login" });
+		router.replace({ name: "landing" });
 		localStorage.clear();
 		clearAdminCache();
 		clearLibrarianCache();

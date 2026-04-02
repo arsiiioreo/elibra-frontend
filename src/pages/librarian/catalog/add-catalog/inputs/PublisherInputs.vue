@@ -15,7 +15,13 @@
 		<!-- Year of Publication -->
 		<div class="col-lg-3">
 			<label for="date_of_publication" class="form-label">Year of Publication</label>
-			<input type="number" class="form-control" id="date_of_publication" placeholder="Enter year (1920-2025)" min="1920" max="2025" required @input="updateInfo('year', $event.target.value)" />
+			<input type="number" class="form-control" id="date_of_publication" placeholder="Enter year (1920-2025)" min="1920" max="2025" required :value="modelValue.year_published" @input="updateInfo('year_published', $event.target.value)" />
+		</div>
+
+		<!-- Place of Publication -->
+		<div class="col-lg-12">
+			<label for="place_of_publication" class="form-label">Place of Publication</label>
+			<input type="text" class="form-control" id="place_of_publication" placeholder="Enter the place of publication" required :value="modelValue.place_of_publication" @input="updateInfo('place_of_publication', $event.target.value)" />
 		</div>
 	</div>
 </template>

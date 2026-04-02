@@ -71,11 +71,18 @@ export const librarianRoutes = [
 				meta: { title: "Cataloging", breadcrumb: "Cataloging", description: "View catalog collection" },
 			},
 			{
+				// General Viewing of Catalog
+				path: "cataloging/item/:id?",
+				name: "LibrarianCatalogingView",
+				component: () => import("@/pages/librarian/catalog/inventory/CatalogInformation.vue"),
+				meta: { title: "Cataloging", breadcrumb: "Cataloging", description: "View catalog collection" },
+			},
+			{
 				// Adding of new Item
-				path: "add-new",
+				path: "cataloging-form/:id?",
 				name: "LibrarianAddNewCataloging",
 				component: () => import("@/pages/librarian/catalog/AddNewItem.vue"),
-				meta: { title: "Add New Item", breadcrumb: "Add New Item", description: "Add new items for the collection" },
+				meta: { title: "Cataloging Form", breadcrumb: "Cataloging Form", description: "Add/Update items for the collection" },
 			},
 			{
 				path: "acquisition",
@@ -207,27 +214,67 @@ export const librarianRoutes = [
 	// 8. Settings
 	{
 		path: "settings",
-		name: "LibrarianSettings",
-		redirect: { name: "LibrarianRoles" },
 		meta: { requiresAuth: true, title: "Settings", breadcrumb: "Settings", description: "Configure system preferences and policies" },
 		children: [
 			{
-				path: "roles",
-				name: "LibrarianRoles",
-				component: () => import("@/pages/librarian/settings/RolesPage.vue"),
-				meta: { title: "Roles & Permission", breadcrumb: "Roles & Permission", description: "Manage roles and access permissions" },
+				path: "",
+				name: "LibrarianSettings",
+				component: () => import("@/pages/librarian/settings/MainPage.vue"),
+				meta: { title: "Settings", breadcrumb: "Settings", description: "Manage your account and library preferences." },
 			},
 			{
-				path: "information",
-				name: "LibrarianInformation",
-				component: () => import("@/pages/librarian/settings/InformationPage.vue"),
-				meta: { title: "Library Information", breadcrumb: "Library Information", description: "Edit basic library details and contact info" },
+				path: "user",
+				name: "LibrarianSettingsUser",
+				redirect: { name: "LibrarianSettingsUserProfile" },
+				component: () => import("@/pages/librarian/settings/users/MainPage.vue"),
+				meta: { title: "User Settings", breadcrumb: "User Settings", description: "Manage your own account's settings." },
+				children: [
+					{
+						path: "profile",
+						name: "LibrarianSettingsUserProfile",
+						component: () => import("@/pages/librarian/settings/users/ProfilePage.vue"),
+						meta: { title: "Profile", breadcrumb: "Profile", description: "Manage your own account's settings." },
+					},
+					{
+						path: "account",
+						name: "LibrarianSettingsUserAccount",
+						component: () => import("@/pages/librarian/settings/users/AccountPage.vue"),
+						meta: { title: "Account", breadcrumb: "Account", description: "Manage your own account's settings." },
+					},
+					{
+						path: "profile-picture",
+						name: "LibrarianSettingsUserProfilePicture",
+						component: () => import("@/pages/librarian/settings/users/ProfilePicturePage.vue"),
+						meta: { title: "Profile Photos", breadcrumb: "Profile Photos", description: "Manage your profile photos." },
+					},
+				],
 			},
 			{
-				path: "penalty",
-				name: "LibrarianPenalty",
-				component: () => import("@/pages/librarian/settings/PenaltyPage.vue"),
-				meta: { title: "Penalty", breadcrumb: "Penalty", description: "Configure fines and penalties for overdue items" },
+				path: "library",
+				name: "LibrarianSettingsLibrary",
+				redirect: { name: "LibrarianSettingsLibrarySections" },
+				component: () => import("@/pages/librarian/settings/library/MainPage.vue"),
+				meta: { title: "Library Settings", breadcrumb: "Library Settings", description: "Edit basic library details and contact info" },
+				children: [
+					{
+						path: "sections",
+						name: "LibrarianSettingsLibrarySections",
+						component: () => import("@/pages/librarian/settings/library/SectionsPage.vue"),
+						meta: { title: "Library - Sections", breadcrumb: "Sections", description: "Manage your own account's settings." },
+					},
+					{
+						path: "information",
+						name: "LibrarianSettingsLibraryInformation",
+						component: () => import("@/pages/librarian/settings/library/InformationPage.vue"),
+						meta: { title: "Library - Information", breadcrumb: "Information", description: "Manage library's information." },
+					},
+				],
+			},
+			{
+				path: "system",
+				name: "LibrarianSettingsSystem",
+				component: () => import("@/pages/librarian/settings/system/MainPage.vue"),
+				meta: { title: "System", breadcrumb: "System", description: "Edit basic library details and contact info" },
 			},
 		],
 	},

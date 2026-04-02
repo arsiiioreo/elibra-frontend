@@ -84,7 +84,6 @@ export default {
 		if (this.me?.librarian?.section?.branch?.id) {
 			this.fetchSections();
 		}
-		console.log(this.me);
 	},
 };
 </script>

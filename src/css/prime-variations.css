@@ -1,10 +1,28 @@
+/* 
+	Variables
+*/
+
+#app.mode-light {
+	/* Light Mode Variables */
+	--bg-prime-gradient: linear-gradient(to bottom, rgb(1, 104, 23), #0eb55c 60%);
+	--text-prime-gradient: linear-gradient(to bottom, #006014, #0eb55c);
+}
+
+#app.mode-dark {
+	/* Dark Mode Variables */
+	--bg-prime-gradient: linear-gradient(to bottom, rgb(1, 104, 23), #0eb55c 60%);
+	--text-prime-gradient: linear-gradient(to bottom, #006014, #70c683);
+}
+
+/* Application */
+
 .bg-prime-gradient {
-	background: linear-gradient(to bottom, rgb(1, 104, 23), #0eb55c 60%) !important;
+	background: var(--bg-prime-gradient) !important;
 	color: #fff !important;
 }
 
 .text-prime-gradient {
-	background: linear-gradient(to bottom, #006014, #0eb55c);
+	background: var(--text-prime-gradient);
 	background-clip: text;
 	color: transparent;
 	-webkit-background-clip: text;

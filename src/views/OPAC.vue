@@ -9,8 +9,8 @@
 
 		<!-- MAIN CARD -->
 		<div class="card glass-card p-3 fade-in rounded-3 d-flex overflow-hidden" style="width: 85%; max-width: 1300px; height: 90vh; max-height: 90vh" v-else>
-			<h4 class="fw-bold text-prime">
-				<img src="@/assets/logo.png" alt="" width="50" height="50" />
+			<h4 class="fw-bold text-prime hstack gap-2 p-2">
+				<img src="@/assets/logo.png" alt="" width="auto" height="30" />
 				ISU Online Public Access Catalog - {{ campus.name }}
 			</h4>
 
@@ -195,6 +195,7 @@ export default {
 				order: "asc",
 				type: "",
 				page: 1,
+				entries: 25,
 			},
 
 			// Need for filtering

@@ -37,7 +37,7 @@
 						If you think this is an error, please contact the developers and ask for access permission.
 					</p>
 
-					<router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> 📚 Back to Home </router-link>
+					<router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> Back to Home </router-link>
 				</div>
 			</div>
 		</main>
@@ -53,9 +53,6 @@ export default {
 			user: user,
 			token: token,
 		};
-	},
-	mounted() {
-		this.user = JSON.parse(localStorage.getItem("user")) || {};
 	},
 };
 </script>

@@ -24,20 +24,20 @@
 			</nav>
 		</div>
 
-		<main style="height: 100%">
-			<div class="row d-flex justify-content-center align-items-center h-75">
+		<main style="height: 100%" class="hstack">
+			<div class="row d-flex justify-content-center align-items-center h-75 mx-auto gap-2">
 				<div class="col-4 d-flex justify-content-center">
 					<img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Bookshelf" class="mb-4" style="width: 50%; opacity: 0.7" />
 				</div>
 				<div class="col-4">
 					<h1 class="display-1 fw-bold text-prime">404</h1>
-					<p class="fs-3"><span class="text-prime">Oops!</span> You got lost in the stacks.</p>
+					<p class="fs-3"><span class="text-prime display-5 fw-bold">Oops!</span> You got lost in the stacks.</p>
 					<p class="lead">
 						The book you're looking for isn't on this shelf.<br />
-						Maybe it was misplaced... or never written.
+						Maybe it was misplaced... or was never written.
 					</p>
 
-					<router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> 📚 Back to Home </router-link>
+					<router-link to="/" class="btn bg-prime px-4 py-2 mt-3 text-white"> Back to Home </router-link>
 				</div>
 			</div>
 		</main>
@@ -45,14 +45,14 @@
 </template>
 
 <script>
+import { token, user } from "@/stores/auth";
+
 export default {
 	data() {
 		return {
-			user: {},
+			user: user,
+			token: token,
 		};
-	},
-	mounted() {
-		this.user = JSON.parse(localStorage.getItem("user")) || {};
 	},
 };
 </script>

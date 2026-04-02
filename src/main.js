@@ -10,6 +10,7 @@ import Toast, { POSITION, useToast } from "vue-toastification";
 // CSS imports
 import "vue-toastification/dist/index.css";
 import "./css/app.css";
+import "./css/theme.css";
 import "./css/prime-variations.css";
 import "@fontsource/open-sans";
 import "@fontsource/inter";
@@ -30,6 +31,16 @@ app.config.globalProperties.$api = api;
 app.config.globalProperties.$token = token;
 app.config.globalProperties.$swal = swal;
 app.config.globalProperties.$toast = toast;
+
+const defaultTheme = "light";
+let theme = localStorage.getItem("theme");
+
+if (!theme) {
+	theme = defaultTheme;
+	localStorage.setItem("theme", theme);
+}
+
+document.getElementById("app").className = `mode-${theme}`;
 
 app.config.globalProperties.$logout = async () => {
 	try {

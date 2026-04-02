@@ -2,11 +2,11 @@
 	<div class="slider-wrapper position-relative vstack align-items-center justify-content-center">
 		<!-- <div class="skewer top z-1"></div> -->
 		<div class="slider-track z-0">
-			<div class="slide" v-for="(image, index) in images" :key="index">
+			<div class="slide" v-for="(image, index) in imagesDuplicated" :key="index">
 				<img :src="image" alt="" />
 			</div>
 			<!-- Duplicate for seamless loop -->
-			<div class="slide shadow" v-for="(image, index) in images" :key="'clone-' + index">
+			<div class="slide" v-for="(image, index) in imagesDuplicated" :key="'clone-' + index">
 				<img :src="image" alt="" />
 			</div>
 		</div>
@@ -22,6 +22,11 @@ export default {
 		return {
 			images: images,
 		};
+	},
+	computed: {
+		imagesDuplicated() {
+			return [...images];
+		},
 	},
 };
 </script>
@@ -65,16 +70,19 @@ export default {
 .slider-track {
 	display: flex;
 	width: max-content;
-	animation: scroll-left 70s linear infinite;
+	animation: scroll-left 120s linear infinite;
 }
 
 .slide {
 	flex: 0 0 auto;
 	padding-right: 10px;
+	min-height: 400px;
+	display: flex;
+	align-items: center;
 }
 
 .slide img {
-	height: 400px;
+	height: 300px;
 	width: auto;
 	display: block;
 	transition: transform 0.2s ease;
@@ -95,8 +103,11 @@ export default {
 	0% {
 		transform: translateX(0);
 	}
-	100% {
+	50% {
 		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0);
 	}
 }
 </style>

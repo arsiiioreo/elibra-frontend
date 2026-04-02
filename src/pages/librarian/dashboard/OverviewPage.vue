@@ -1,10 +1,10 @@
 <template>
-	<div class="h-100 w-100 vstack overflow-auto p-2">
+	<div class="h-100 w-100 vstack overflow-auto p-3">
 		<!-- Top row: Library Info + Status Cards -->
 		<div class="row g-3 mb-3 d-flex mb-5">
 			<!-- Library info card -->
 			<div class="col-md-6">
-				<div class="card shadow-sm">
+				<div class="card shadow">
 					<div class="card-body hstack align-items-start p-4 gap-2">
 						<!-- Icon -->
 						<div class="text-bg-success p-2 me-3 rounded">
@@ -17,14 +17,14 @@
 							<span>Campus: {{ info?.campus ? info?.campus?.name + " (" + info?.campus?.abbrev + ")" : "Loading..." }}</span>
 						</div>
 						<!-- Link to details -->
-						<router-link :to="{ name: 'LibrarianInformation' }" class="ms-auto">View Details</router-link>
+						<router-link :to="{ name: 'LibrarianSettings' }" class="ms-auto">View Details</router-link>
 					</div>
 				</div>
 			</div>
 
 			<!-- Status cards (Borrowed Books, Patron Logs, Overdue) -->
 			<div class="col-md-3" v-for="(item, index) in statCards" :key="index">
-				<div class="card h-100 shadow-sm">
+				<div class="card h-100">
 					<div class="card-body vstack justify-content-between">
 						<!-- Card Title -->
 						<strong class="mb-4">{{ item?.title }}</strong>
@@ -236,6 +236,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					plugins: {
 						legend: { display: true, position: "top" },
 						title: { display: true, text: "Today's Attendance" },
@@ -271,6 +272,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					plugins: {
 						legend: { position: "bottom" },
 						title: { display: true, text: "Patron Gender Distribution" },

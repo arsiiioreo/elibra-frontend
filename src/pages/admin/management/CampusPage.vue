@@ -64,12 +64,7 @@
 
 				<!-- BODY -->
 				<div class="card-body overflow-hidden position-relative p-0" style="height: 100%; min-height: 400px">
-					<div
-						class="slider-wrapper d-flex transition-all"
-						:style="{
-							transform: page === 1 ? 'translateX(0%)' : 'translateX(-100%)',
-						}"
-					>
+					<div class="slider-wrapper d-flex transition-all" :style="{ transform: page === 1 ? 'translateX(0%)' : 'translateX(-100%)' }">
 						<!-- PAGE 1 -->
 						<div class="page w-100 flex-shrink-0">
 							<!-- TABLE -->

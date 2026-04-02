@@ -4,7 +4,7 @@
 		<div class="position-absolute top-0 start-0 w-100 h-100 gradient-bg"></div>
 
 		<!-- LOGIN CARD -->
-		<div class="card glass-card p-4 fade-in text-white overflow-hidden" style="width: 400px; z-index: 5" v-if="!branch_id">
+		<div class="card glass-card p-4 fade-in text-white overflow-hidden" style="width: 400px; z-index: 5" v-if="!section_id">
 			<div class="mb-4 text-center text-light">
 				<img src="/logo.png" alt="ISU Logo" class="mb-3" style="width: 60px" />
 				<h2 class="fw-bold mb-0">Login</h2>
@@ -92,6 +92,11 @@
 								</div>
 							</div>
 
+							<!-- <div class="w-100 h-100 hstack justify-content-center">
+								<img src="@/assets/spinner.gif" alt="" width="50" />
+								Finding user, please wait...
+							</div> -->
+
 							<table class="table mt-auto">
 								<tbody>
 									<tr>
@@ -152,7 +157,7 @@ import Chart from "chart.js/auto";
 import profile_default from "@/assets/profile_default.png";
 import api from "@/plugins/axios";
 import { showLoading } from "@/services/LoadingService";
-import { login, token } from "@/stores/auth";
+import { login, thisIsMe, token } from "@/stores/auth";
 import { showStatus } from "@/services/StatusService";
 import { postRequest } from "@/stores/requestService";
 
@@ -165,6 +170,7 @@ export default {
 			password: "",
 			error: "",
 			loading: false,
+			checkingUser: false,
 			isFocused: false,
 			form: {
 				id_number: "",
@@ -174,7 +180,7 @@ export default {
 				time: "",
 				date: "",
 			},
-			branch_id: null,
+			section_id: null,
 			profile_picture: profile_default,
 			studentData: null,
 			toastMessage: "",
@@ -211,6 +217,7 @@ export default {
 		},
 
 		async handleSubmit() {
+			this.checkingUser = true;
 			if (!this.form.id_number) return;
 
 			clearTimeout(this.timer);
@@ -218,7 +225,7 @@ export default {
 			const id = document.getElementById("studentId");
 			id.select();
 
-			const res = await postRequest("attendance/record", { branch_id: this.branch_id, id_number: this.form.id_number });
+			const res = await postRequest("attendance/record", { section_id: this.section_id, id_number: this.form.id_number });
 			this.toastVisible = false;
 			this.toastMessage = "";
 
@@ -234,6 +241,7 @@ export default {
 				this.toastVisible = true;
 			}
 
+			this.checkingUser = false;
 			this.clearInput();
 			id.focus();
 		},
@@ -288,7 +296,7 @@ export default {
 
 		async fetchLogs() {
 			try {
-				const res = await api.get("api/attendance/logs", { params: { branch_id: 1 } });
+				const res = await api.get("api/attendance/logs", { params: { section_id: this.section_id } });
 				const logs = res.data;
 
 				this.hours = logs.map((item) => item.hour);
@@ -304,22 +312,33 @@ export default {
 			}
 		},
 
+		async setSection() {
+			this.section_id = this.user.librarian?.section.id;
+			localStorage.getItem("section_id", this.section_id);
+			console.log(this.section_id);
+		},
+
 		async login() {
 			showLoading({ message: "Logging in" });
 			try {
 				const res = await login({ user: this.username, password: this.password });
 
 				token.value = res.data.access_token;
+				this.user = await thisIsMe();
+				this.setSection();
 			} catch (e) {
 				showStatus({ status: "error", title: "Error", message: e.message });
 			}
 		},
 	},
 
-	mounted() {
+	async mounted() {
 		this.updateDateTime();
 		setInterval(this.updateDateTime, 1000);
-		this.branch_id = localStorage.getItem("branch_id") ?? null;
+		if (localStorage.getItem("token")) {
+			this.user = await thisIsMe();
+		}
+		this.setSection();
 
 		this.forceFocus();
 	},
@@ -331,7 +350,7 @@ export default {
 			}
 		},
 
-		branch_id(newVal) {
+		section_id(newVal) {
 			if (newVal) {
 				this.$nextTick(() => {
 					this.initChart();
@@ -352,7 +371,7 @@ export default {
 <style scoped>
 .gradient-bg {
 	background: radial-gradient(circle at top left, rgba(34, 215, 152, 0.4), transparent 40%), radial-gradient(circle at bottom right, rgba(129, 200, 31, 0.3), transparent 40%), #054a3d;
-	filter: blur(30px);
+	/* filter: blur(30px); */
 	z-index: 0;
 }
 

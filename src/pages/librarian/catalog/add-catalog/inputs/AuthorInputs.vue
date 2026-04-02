@@ -16,7 +16,7 @@
 		<!-- Authors Lists -->
 		<div class="col-lg-4" v-else v-for="(a, i) in modelValue" :key="a.id">
 			<label for="publisher" class="form-label">Author {{ i + 1 }}</label>
-			<input type="text" class="form-control" id="publisher" placeholder="Select publisher" :value="a.name ?? 'Select publisher'" required readonly />
+			<input type="text" class="form-control" id="publisher" placeholder="Select publisher" :value="`${a.last_name}, ${a.first_name}` ?? 'Select publisher'" required readonly />
 		</div>
 	</div>
 </template>

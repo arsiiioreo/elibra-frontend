@@ -47,3 +47,9 @@ export const status = {
 	archived: { id: "archived", name: "Archived" },
 	condemned: { id: "condemned", name: "Condemned" },
 };
+
+export const userStatus = {
+	0: { id: "0", name: "Available" },
+	1: { id: "1", name: "Suspended" },
+	2: { id: "2", name: "Expired" },
+};

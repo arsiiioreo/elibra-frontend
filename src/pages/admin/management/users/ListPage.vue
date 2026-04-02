@@ -1,9 +1,10 @@
 <template>
-	<table class="table table-hover table-striped table-responsive overflow-auto align-middle">
-		<thead class="position-sticky top-0">
-			<tr>
+	<table class="table table-hover table-striped table-responsive overflow-auto align-middle table-bordered">
+		<thead class="position-sticky top-0 mt-0">
+			<tr class="p-0 m-0">
 				<th class="tdh px-4">#</th>
-				<th class="w-50">Name</th>
+				<th>Full Name</th>
+				<th>Email</th>
 				<th>Role</th>
 				<th>Account Status</th>
 			</tr>
@@ -29,21 +30,21 @@
 				"
 			>
 				<td>{{ index + 1 }}</td>
-				<td class="hstack gap-3">
-					<div class="hstack">
-						<img :src="pfp" alt="" class="rounded-5" style="width: 45px" />
+				<td class="hstack gap-2">
+					<div class="logo">
+						<img :src="pfp" alt="" class="rounded-circle" style="width: 25px" />
 					</div>
-					<div class="vstack">
-						<span>
-							{{ user.last_name }}, {{ user.first_name }}
-							{{ user.middle_initial ? user.middle_initial + "." : "" }}
-						</span>
-						<small class="text-muted">{{ user.email }}</small>
-					</div>
+					<span>{{ `${user.last_name}, ${user.first_name} ${user.middle_initial ? user.middle_initial + "." : ""}` }}</span>
 				</td>
+				<td>{{ user.email }}</td>
 				<td>{{ user.roleText || user.role || "Human" }}</td>
 				<!-- <td>{{ user.status === "0" ? "Active" : user.status === "1" ? "For Approval" : "Inactive" }}</td> -->
-				<td>{{ user.pending_registration_approval === "1" ? "Pending Approval" : user.status === "0" ? "Active" : user.status === "1" ? "Inactive" : "Expired" }}</td>
+				<td>
+					<span class="badge bg-secondary-subtle text-black d-flex align-items-center gap-1" style="width: fit-content">
+						<span class="p-1 rounded-circle" :class="stat(user).dot" style="height: 5px; width: 5px"></span>
+						{{ stat(user).text }}
+					</span>
+				</td>
 			</tr>
 
 			<!-- show empty message -->
@@ -68,6 +69,7 @@ export default {
 			data: [],
 		};
 	},
+
 	methods: {
 		details(id) {
 			this.$emit("selected-id", id);
@@ -75,6 +77,28 @@ export default {
 
 		selectedUser(d) {
 			this.$emit("selected:user", d);
+		},
+
+		stat(user) {
+			if (user.pending_registration_approval === "1") {
+				return {
+					text: "Pending Approval",
+					dot: "bg-primary",
+				};
+			} else {
+				switch (user.status) {
+					case "0":
+						return {
+							text: "Active",
+							dot: "bg-prime",
+						};
+					case "1":
+						return {
+							text: "Expired",
+							dot: "bg-danger",
+						};
+				}
+			}
 		},
 	},
 	mounted() {

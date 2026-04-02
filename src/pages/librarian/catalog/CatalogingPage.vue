@@ -68,7 +68,7 @@
 		</div>
 		<div class="card h-100 w-100" v-if="showDetails">
 			<!-- <button class="btn btn-sm btn-primary" @click="showDetails = false">Back</button> -->
-			<item-information :thisItem="selectedItem" @back="showItemDetails" />
+			<ItemInformation :thisItem="selectedItem" @back="showItemDetails" />
 		</div>
 	</div>
 
@@ -145,7 +145,7 @@
 </template>
 
 <script>
-import ItemInformation from "./inventory/ItemInformation.vue";
+import ItemInformation from "./inventory/CatalogInformation.vue";
 
 import { showStatus } from "@/services/StatusService";
 import { getItems, storage } from "@/stores/librarianCache";
@@ -164,6 +164,7 @@ export default {
 			//   For viewing item details
 			showDetails: false,
 			selectedItem: null,
+			selectedItemId: null,
 			types: item_types,
 
 			params: {
@@ -181,9 +182,10 @@ export default {
 		},
 
 		viewThisItem(item) {
-			this.showItemDetails(true);
+			// this.showItemDetails(true);
 
-			this.selectedItem = item;
+			// this.selectedItem = item;
+			this.$router.push({ name: "LibrarianCatalogingView", params: { id: item.id } });
 		},
 
 		async fetchItems(refresh = false) {
@@ -201,6 +203,13 @@ export default {
 				this.fetching = false;
 			}
 		},
+	},
+	mounted() {
+		this.selectedItemId = this.$route.params.id;
+		if (this.selectedItemId) {
+			this.showItemDetails(true);
+			this.selectedItem = this.data.find((item) => item.id === this.selectedItemId);
+		}
 	},
 };
 </script>

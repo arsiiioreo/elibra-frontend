@@ -1,23 +1,23 @@
 <template>
-	<router-view />
+	<router-view :class="themeClass[theme]" />
 </template>
-<!-- 
-<script>
-import { thisIsMe } from "./stores/auth";
 
+<script>
 export default {
-	async created() {
-		await thisIsMe();
+	data() {
+		return {
+			theme: localStorage.getItem("theme") || null,
+			themeClass: {
+				light: "mode-light",
+			},
+		};
+	},
+	mounted() {
+		if (!this.theme) {
+			localStorage.setItem("theme", "light");
+		}
 	},
 };
-</script> -->
+</script>
 
-<style>
-#app {
-	/* font-family: Arial, Helvetica, sans-serif; */
-	font-family: "Open Sans", Arial;
-	/* font-family: "Poppins"; */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-</style>
+<style src="@/css/theme.css"></style>

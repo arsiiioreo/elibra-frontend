@@ -19,7 +19,7 @@
 		</div>
 
 		<!-- Item Type -->
-		<div :class="[modelValue.item_type == 1 ? 'col-lg-3' : 'col-lg-6']">
+		<div class="col-lg-4">
 			<label for="item_type" class="form-label required">Item Type</label>
 			<select class="form-select" id="item_type" :value="modelValue.item_type" @change="updateInfo('item_type', $event.target.value)" required>
 				<option value="" disabled>Select Item Type</option>
@@ -29,19 +29,8 @@
 			</select>
 		</div>
 
-		<!-- Category (if item_type == 1) -->
-		<div class="col-lg-3" v-if="modelValue.item_type === 'book'">
-			<label for="category" class="form-label required">Category</label>
-			<select class="form-select" id="category" :value="modelValue.category" @change="updateInfo('category', $event.target.value)" required>
-				<option value="" disabled>Select Category</option>
-				<option v-for="value in categories" :key="value.id" :value="value.id">
-					{{ value.name }}
-				</option>
-			</select>
-		</div>
-
 		<!-- Language -->
-		<div :class="[modelValue.item_type === 'book' ? 'col-lg-3' : 'col-lg-6']">
+		<div class="col-lg-4">
 			<label for="language" class="form-label required">Language</label>
 			<select class="form-select" id="language" :value="modelValue.language" @change="updateInfo('language', $event.target.value)" required>
 				<option value="" disabled>Select Language</option>
@@ -93,19 +82,8 @@
 			</div>
 		</div>
 
-		<!-- Book, Newspaper, Periodical, Serial Inputs -->
-
-		<!-- Pages -->
-		<div class="col-lg-4" v-if="modelValue.item_type === 'book' || modelValue.item_type === 'serial' || modelValue.item_type === 'periodical' || modelValue.item_type === 'newspaper'">
-			<label for="pages" class="form-label">Pages</label>
-			<input type="text" class="form-control" id="pages" placeholder="Enter Pages" :value="modelValue.pages" @input="updateInfo('pages', $event.target.value)" />
-		</div>
-
-		<!-- ISBN / ISSN -->
-		<div class="col-lg-4" v-if="modelValue.item_type === 'book' || modelValue.item_type === 'serial' || modelValue.item_type === 'periodical' || modelValue.item_type === 'electronic'">
-			<label for="isbn_issn" class="form-label required">ISBN/ISSN</label>
-			<input type="text" class="form-control" id="isbn_issn" placeholder="Enter ISBN or ISSN" required :value="modelValue.isbn_issn" @input="updateInfo('isbn_issn', $event.target.value)" />
-		</div>
+		<!-- Book -->
+		<BookInput v-model="item.book" v-if="modelValue.item_type === 'book'" />
 
 		<!-- Volume -->
 		<div class="col-lg-3" v-if="modelValue.item_type == 'periodical' || modelValue.item_type == 'serials'">
@@ -118,6 +96,7 @@
 			<label for="Issue" class="form-label">Issue</label>
 			<input type="text" class="form-control" id="Issue" placeholder="Enter Issue" :value="modelValue.pages" @input="updateInfo('issue', $event.target.value)" />
 		</div>
+
 		<!-- DOI -->
 		<div class="col-lg-3" v-if="modelValue.item_type === 'serials'">
 			<label for="Volume" class="form-label">Volume</label>
@@ -128,12 +107,6 @@
 		<div class="col-lg-4" v-if="modelValue.item_type === 'newspaper'">
 			<label for="date" class="form-label">Date</label>
 			<input type="date" class="form-control" id="date" placeholder="Enter Date" :value="modelValue.pages" @input="updateInfo('newspaper.date', $event.target.value)" />
-		</div>
-
-		<!-- Edition -->
-		<div class="col-lg-4" v-if="modelValue.item_type === 'newspaper'">
-			<label for="edition" class="form-label">Edition</label>
-			<input type="text" class="form-control" id="edition" placeholder="Enter Edition" :value="modelValue.pages" @input="updateInfo('newspaper.edition', $event.target.value)" />
 		</div>
 
 		<!-- Academic Research Serial Inputs -->
@@ -161,7 +134,7 @@
 		<!-- Description -->
 		<div class="col-lg-12">
 			<label for="description" class="form-label">Description/Abstract</label>
-			<textarea class="form-control" id="description" placeholder="Enter a short description of the item..." maxlength="255" :value="modelValue.remarks" @input="updateInfo('remarks', $event.target.value)"></textarea>
+			<textarea class="form-control" id="description" placeholder="Enter a short description of the item..." style="resize: none" rows="4" :value="modelValue.description" @input="updateInfo('description', $event.target.value)"></textarea>
 		</div>
 	</div>
 </template>
@@ -170,7 +143,10 @@
 import { thisIsMe } from "@/stores/auth";
 import { getLanguages } from "@/stores/librarianCache";
 import { getRequest } from "@/stores/requestService";
-import { categories, item_types } from "@/utilities/selectOptions";
+import { item_types } from "@/utilities/selectOptions";
+
+// Extended Bibliography Inputs
+import BookInput from "./extended_bibliography/BookInput.vue";
 
 export default {
 	props: {
@@ -180,17 +156,25 @@ export default {
 		},
 	},
 
+	components: {
+		BookInput,
+	},
+
 	data() {
 		return {
 			// Dynamic
 			item_types: item_types,
-			categories: categories,
 			languages: null,
 			programs: null,
+			item: this.modelValue,
 		};
 	},
 
 	methods: {
+		log(val) {
+			this.updateInfo(val.path, val.value);
+		},
+
 		updateInfo(path, value) {
 			const keys = path.split(".");
 			const updated = { ...this.modelValue };
@@ -210,10 +194,21 @@ export default {
 		},
 	},
 
+	watch: {
+		"item.book"(val) {
+			console.log(val);
+			this.$emit("update:modelValue", { ...this.modelValue, book: val });
+		},
+		modelValue(val) {
+			this.item = val;
+		},
+	},
+
 	async mounted() {
 		this.languages = await getLanguages();
 
 		const me = await thisIsMe();
+
 		this.programs = (await getRequest(`program/read/from-campus/${me?.campus?.id}`)).data?.data;
 	},
 };

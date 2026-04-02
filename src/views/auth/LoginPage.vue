@@ -8,7 +8,7 @@
 						<div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center bg-success text-white p-4">
 							<div class="d-flex flex-column justify-content-center align-items-center my-5">
 								<img src="@/assets/book.png" alt="E-Libra Logo" class="mb-3" style="width: 80px" />
-								<h1 class="fw-bold mb-0">E-Libra</h1>
+								<h1 class="fw-bold mb-0 text-white">E-Libra</h1>
 								<p class="mt-3 mb-4 text-center small">“Enhanced Library Integrated Book and Resources Automation”</p>
 								<div class="fs-3 mb-4">● ● ● ● ●</div>
 							</div>
@@ -86,33 +86,52 @@ export default {
 				const res = await login(this.form);
 				this.isLoading = false;
 
-				if (res?.data?.status && res?.data?.status == "success") {
-					console.log("success");
-
+				// --- SUCCESS PATH ---
+				if (res.data?.status === "success") {
 					justLoggedIn.value = true;
+
 					const decoded = jwtDecode(token.value);
 
-					if (decoded && decoded.role === "2") {
-						showStatus({ status: "info", title: "Oops", message: "The web version is dedicated for administrative use. Please install the application to enjoy patron services." });
-					} else {
-						await thisIsMe();
-
-						// const home = {
-						// 	0: "Admin",
-						// 	1: "Librarian",
-						// };
-						// this.$router.push({ name: home[decoded.role] });
-
-						this.$router.push({ name: "landing" });
+					// Patron trying to access web
+					if (decoded.role === "2") {
+						return showStatus({
+							status: "info",
+							title: "Oops",
+							message: "The web version is for administrative users. Please use the mobile app for patron features.",
+						});
 					}
-				} else {
-					if (res.status === 403) {
-						return showStatus({ status: "error", title: "Account Locked", message: res.data.message });
-					}
-					showStatus({ status: "error", title: "Error", message: res.data.message });
+
+					// Identify the user then set their session
+					await thisIsMe();
+
+					// redirect — stick to ONE destination unless role-based
+					this.$router.push({ name: "landing" });
+
+					return;
 				}
+
+				// --- FAILURE PATH (but handled by backend) ---
+				if (res?.status === 403) {
+					return showStatus({
+						status: "error",
+						title: "Account Locked",
+						message: res.response.data.message,
+					});
+				}
+
+				return showStatus({
+					status: "error",
+					title: "Error",
+					message: res.data?.message ?? "Login failed.",
+				});
 			} catch (err) {
-				showStatus({ status: "error", title: "Network Error", message: err });
+				this.isLoading = false;
+
+				return showStatus({
+					status: "error",
+					title: "Network Error",
+					message: err?.response?.data?.message ?? "Please check your connection.",
+				});
 			}
 		},
 	},

@@ -1,5 +1,5 @@
 <template>
-	<div class="hstack gap-3 h-100 align-items-center justify-content-start w-100">
+	<div class="hstack gap-2 h-100 align-items-center justify-content-start w-100">
 		<div class="d-flex flex-column align-items-center justify-content-start text-dark overflow-auto h-100 w-100">
 			<div class="card mb-2 w-100">
 				<div class="card-header">Data Management</div>
@@ -8,64 +8,54 @@
 						<div class="hstack gap-2 justify-content-end">
 							<!-- Filter Dropdown -->
 							<div class="btn-group">
-								<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="bi bi-funnel me-2"></i><span class="me-2">Filter</span></button>
-								<ul class="dropdown-menu dropdown-menu-end" id="filterBtn" style="width: 300px">
-									<div class="container p-3">
+								<button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="bi bi-sliders me-1"></i><span class="me-2">Filter</span></button>
+								<ul class="dropdown-menu dropdown-menu-end shadow-sm" id="filterBtn" style="width: 300px">
+									<div class="container card-body">
 										<h6 class="fw-bold mb-3">Filter Option</h6>
-										<div class="mb-3">
-											<label for="role" class="form-label">Role</label>
-											<select name="role" id="role" class="form-select mb-2" v-model="params.role">
-												<option value="">All</option>
-												<option value="0">Admin</option>
-												<option value="1">Librarian</option>
-												<option value="2">Patron</option>
-											</select>
-										</div>
-										<div class="mb-3">
-											<label for="campus" class="form-label">Campus</label>
-											<select name="campus" id="campus" class="form-select mb-2" v-model="params.campus">
-												<option value="">All</option>
-												<option :value="c.id" v-for="c in campuses" :key="c.id">{{ c.name }}</option>
-											</select>
-										</div>
-										<div class="mb-3">
-											<label for="status" class="form-label">Account Status</label>
-											<select name="status" id="status" class="form-select mb-2" v-model="params.status">
-												<option value="">All</option>
-												<option value="0">Active</option>
-												<option value="1">For Approval</option>
-												<option value="2">Inactive</option>
-											</select>
+										<div class="row g-2">
+											<div class="col-6">
+												<label for="role" class="form-label">Role</label>
+												<select name="role" id="role" class="form-select mb-2" v-model="params.role">
+													<option value="">All</option>
+													<option value="0">Admin</option>
+													<option value="1">Librarian</option>
+													<option value="2">Patron</option>
+												</select>
+											</div>
+											<div class="col-6">
+												<label for="status" class="form-label">Account Status</label>
+												<select name="status" id="status" class="form-select mb-2" v-model="params.status">
+													<option value="">All</option>
+													<option value="0">Active</option>
+													<option value="1">For Approval</option>
+													<option value="2">Inactive</option>
+												</select>
+											</div>
+											<div class="col-12">
+												<label for="campus" class="form-label">Campus</label>
+												<select name="campus" id="campus" class="form-select mb-2" v-model="params.campus">
+													<option value="">All</option>
+													<option :value="c.id" v-for="c in campuses" :key="c.id">{{ c.name }}</option>
+												</select>
+											</div>
+											<div class="col-6">
+												<label for="sort" class="form-label">Sort By</label>
+												<select name="sort" id="sort" class="form-select mb-2" v-model="params.sort">
+													<option value="last_name">Name</option>
+													<option value="status">Status</option>
+													<option value="created_at">Date Created</option>
+												</select>
+											</div>
+											<div class="col-6">
+												<label for="order" class="form-label">Order By</label>
+												<select name="order" id="order" class="form-select mb-2" v-model="params.order">
+													<option value="asc">Ascending</option>
+													<option value="desc">Descending</option>
+												</select>
+											</div>
 										</div>
 										<div class="hstack justify-content-end gap-2 mt-2">
 											<button class="btn btn-success" data-bs-dismiss="dropdown" @click="applyFilter">Apply</button>
-										</div>
-									</div>
-								</ul>
-							</div>
-							<!-- Display Manipulation -->
-							<div class="btn-group">
-								<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="bi bi-filter me-2"></i><span class="me-2">Sort</span></button>
-								<ul class="dropdown-menu dropdown-menu-end" id="sortBtn" style="width: 300px">
-									<div class="container p-3">
-										<h6 class="fw-bold mb-3">Sort Option</h6>
-										<div class="mb-3">
-											<label for="sort" class="form-label">Sort By</label>
-											<select name="sort" id="sort" class="form-select mb-2" v-model="params.sort">
-												<option value="last_name">Name</option>
-												<option value="status">Status</option>
-												<option value="created_at">Date Created</option>
-											</select>
-										</div>
-										<div class="mb-3">
-											<label for="order" class="form-label">Order By</label>
-											<select name="order" id="order" class="form-select mb-2" v-model="params.order">
-												<option value="asc">Ascending</option>
-												<option value="desc">Descending</option>
-											</select>
-										</div>
-										<div class="hstack justify-content-end gap-2 mt-2">
-											<button class="btn btn-success" data-bs-dismiss="dropdown" @click="applySort">Apply</button>
 										</div>
 									</div>
 								</ul>
@@ -75,17 +65,14 @@
 							<!-- Search Input -->
 							<SearchInput v-model:query="params.query" />
 							<button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addNewUser"><i class="bi bi-person-add me-2"></i>Add User</button>
+							<button class="btn btn-outline-dark" @click="refresh">Refresh</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="card w-100 h-100 overflow-auto">
-				<div class="card-header hstack justify-content-between">
-					<h5 class="m-0"><i class="bi bi-person-circle ms-2 me-3"></i>All Users</h5>
-					<button class="btn btn-outline-dark" @click="refresh"><i class="bi bi-arrow-clockwise me-2"></i>Refresh</button>
-				</div>
 				<div class="card-body overflow-auto p-0">
-					<div class="">
+					<div class="table-container">
 						<ListPage :users="users" :fetching="fetchingUsers" @selected-id="selectedUserId" @selected:user="selectedUser = $event" />
 					</div>
 				</div>
@@ -186,14 +173,6 @@ export default {
 
 		async applyFilter() {
 			const dropdownToggle = document.getElementById("filterBtn");
-			const dropdown = Dropdown.getInstance(dropdownToggle) || new Dropdown(dropdownToggle);
-			dropdown.hide();
-			storage.users = null;
-			await this.fetchUsers();
-		},
-
-		async applySort() {
-			const dropdownToggle = document.getElementById("sortBtn");
 			const dropdown = Dropdown.getInstance(dropdownToggle) || new Dropdown(dropdownToggle);
 			dropdown.hide();
 			storage.users = null;

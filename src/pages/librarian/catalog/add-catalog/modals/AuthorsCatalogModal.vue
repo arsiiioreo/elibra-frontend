@@ -4,7 +4,17 @@
 			<div class="modal-body p-4 vstack overflow-hidden">
 				<div class="d-flex">
 					<div class="vstack mb-3">
-						<h5 class="fw-bold" id="modalTitleId">Add Author</h5>
+						<h5
+							class="fw-bold"
+							id="modalTitleId"
+							@click="
+								createNewAuthor = true;
+								// newAuthor = query;
+								query = '';
+							"
+						>
+							Add Author
+						</h5>
 						<small>Please fill up the form with correct details.</small>
 					</div>
 					<button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -47,8 +57,7 @@
 										showQuerySuggestions = false;
 									"
 								>
-									{{ a.name }}
-
+									{{ `${a.last_name}, ${a.first_name}` }}
 									<i class="bi" :class="[isSelected(a) ? 'bi-check-circle-fill text-success' : 'bi-plus-circle']"></i>
 								</button>
 							</li>
@@ -56,18 +65,36 @@
 					</div>
 
 					<button class="btn btn-outline-success">Search</button>
-					<button class="btn" :class="[createNewAuthor ? 'btn-danger' : 'btn-outline-primary']" @click="createNewAuthor = !createNewAuthor"><i class="bi me-2" :class="[createNewAuthor ? 'bi-x' : 'bi-person-add']"></i>{{ createNewAuthor ? "Close Form" : "New Author" }}</button>
+					<button
+						class="btn"
+						:class="[createNewAuthor ? 'btn-danger' : 'btn-outline-primary']"
+						@click="
+							createNewAuthor = !createNewAuthor;
+							newAuthor = query;
+							query = '';
+						"
+					>
+						<i class="bi me-2" :class="[createNewAuthor ? 'bi-x' : 'bi-person-add']"></i>{{ createNewAuthor ? "Close Form" : "New Author" }}
+					</button>
 				</div>
 
-				<form @submit.prevent="" class="card mb-3" v-if="createNewAuthor">
+				<form @submit.prevent="createAuthor" class="card mb-3" v-if="createNewAuthor">
 					<div class="card-header">Create New Author</div>
 					<div class="card-body">
 						<form @submit.prevent="createAuthor">
-							<label for="name" class="form-label required">Name</label>
-							<div class="hstack gap-2">
-								<input type="text" class="form-control" id="name" placeholder="Ex. Juan Dela Cruz" required v-model="newAuthor" />
-								<button type="submit" class="btn btn-success"><i class="bi bi-plus"></i>Add</button>
+							<div class="vstack gap-2">
+								<label for="name" class="form-label required">Last Name</label>
+								<input type="text" class="form-control" id="last_name" placeholder="Ex. Dela Cruz" required v-model="newAuthor.last_name" />
 							</div>
+							<div class="vstack gap-2">
+								<label for="name" class="form-label required">First Name</label>
+								<input type="text" class="form-control" id="first_name" placeholder="Ex. Juan" required v-model="newAuthor.first_name" />
+							</div>
+							<div class="vstack gap-2">
+								<label for="name" class="form-label required">Middle Initial (optional)</label>
+								<input type="text" class="form-control" id="middle_initial" placeholder="Ex. Juan Dela Cruz" v-model="newAuthor.middle_initial" />
+							</div>
+							<button type="submit" class="btn btn-success"><i class="bi bi-plus"></i>Add</button>
 						</form>
 					</div>
 				</form>
@@ -79,7 +106,7 @@
 
 						<ol class="list-group list-group-numbered list-group-flush w-100 overflow-y-auto" v-else>
 							<li class="list-group-item hstack justify-content-end border-bottom" v-for="a in selectedAuthors" :key="a?.id">
-								<div class="ms-2 me-auto">{{ a?.name }}</div>
+								<div class="ms-2 me-auto">{{ `${a.last_name}, ${a.first_name}` }}</div>
 								<button class="btn btn-sm btn-danger" @click="deleteAuthor(a)"><i class="bi bi-trash"></i></button>
 							</li>
 						</ol>
@@ -109,7 +136,11 @@ export default {
 			query: "",
 			authors: [],
 			selectedAuthors: [],
-			newAuthor: null,
+			newAuthor: {
+				last_name: "",
+				first_name: "",
+				middle_initial: "",
+			},
 
 			loading: false,
 			createNewAuthor: false,
@@ -144,6 +175,8 @@ export default {
 
 				if (b.data.status == "success") {
 					this.selectedAuthors.push(b.data.data);
+					this.newAuthor = "";
+					this.createNewAuthor = false;
 					showStatus({ status: "success", title: "Success", message: "Author added successfully!" });
 				}
 			}

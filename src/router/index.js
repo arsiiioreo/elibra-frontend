@@ -32,10 +32,31 @@ const routes = [
 		meta: { title: "OPAC", requiresAuth: false },
 	},
 	{
-		path: "/practice",
-		name: "Practice",
-		component: () => import("../views/PracticePage.vue"),
-		meta: { title: "Practice", requiresAuth: false },
+		path: "/circulation",
+		name: "Circulation",
+		redirect: { name: "CirculationDashboard" },
+		component: () => import("../views/circulation/MainPage.vue"),
+		meta: { title: "Circulation", requiresAuth: false },
+		children: [
+			{
+				path: "dashboard",
+				name: "CirculationDashboard",
+				component: () => import("../views/circulation/DashboardPage.vue"),
+				meta: { title: "Dashboard", requiresAuth: false },
+			},
+			{
+				path: "attendance",
+				name: "CirculationAttendance",
+				component: () => import("../views/circulation/DashboardPage.vue"),
+				meta: { title: "Attendance", requiresAuth: false },
+			},
+			{
+				path: "borrowing",
+				name: "CirculationBorrowing",
+				component: () => import("../views/circulation/BorrowingPage.vue"),
+				meta: { title: "Borrowing", requiresAuth: false },
+			},
+		],
 	},
 	{
 		path: "/attendance",
@@ -43,11 +64,17 @@ const routes = [
 		component: () => import("../views/AttendancePage.vue"),
 		meta: { title: "Attendance", requiresAuth: false },
 	},
+	{
+		path: "/practice",
+		name: "Practice",
+		component: () => import("../views/PracticePage.vue"),
+		meta: { title: "Practice", requiresAuth: false },
+	},
 
 	// Admin Pages
 	{
 		path: "/a",
-		component: () => import("../layouts/AdminLayout.vue"),
+		component: () => import("../layouts/ManagementLayout.vue"),
 		meta: { requiresAuth: true, breadcrumb: "Administrator" },
 
 		children: adminRoutes,
@@ -56,7 +83,7 @@ const routes = [
 	// Librarian Pages
 	{
 		path: "/l",
-		component: () => import("../layouts/LibrarianLayout.vue"),
+		component: () => import("../layouts/ManagementLayout.vue"),
 		meta: { requiresAuth: true, breadcrumb: "Librarian" },
 
 		children: librarianRoutes,

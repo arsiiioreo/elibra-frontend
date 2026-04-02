@@ -11,14 +11,14 @@
 			<label for="acquisition_mode" class="form-label">Acquisition Mode</label>
 			<select name="acquisition_mode" id="" class="form-control" :value="modelValue.mode" @input="updateInfo('mode', $event.target.value)" required>
 				<option value="" disabled selected>Select Acquisition Mode</option>
-				<option :value="modelValue.id" v-for="(mode, index) in acquisition_modes" :key="index">{{ mode.name }}</option>
+				<option :value="mode.id" v-for="(mode, index) in acquisition_modes" :key="index">{{ mode.name }}</option>
 			</select>
 		</div>
 
 		<!-- Donor -->
 		<div class="col-lg-4">
-			<label for="donor" class="form-label">Donor</label>
-			<input type="text" class="form-control" id="donor" placeholder="Enter Donor's Name" :value="modelValue.donor" @input="updateInfo('donor', $event.target.value)" required />
+			<label for="donor" class="form-label">{{ modelValue.mode === "purchased" || modelValue.mode === "exchange" ? "Dealer" : "Donor" }}</label>
+			<input type="text" class="form-control" id="donor" placeholder="Enter Donor's Name" :value="modelValue.dealer" @input="updateInfo('dealer', $event.target.value)" required />
 		</div>
 
 		<!-- Acquisition Date -->
@@ -34,9 +34,9 @@
 		</div>
 
 		<!-- Price -->
-		<div class="col-lg-4">
+		<div class="col-lg-4" v-if="modelValue.mode === 'purchased'">
 			<label for="price" class="form-label">Price</label>
-			<input type="number" class="form-control" id="price" placeholder="Enter Price" min="0" :value="modelValue.price" @input="updateInfo('price', Number($event.target.value))" required />
+			<input type="number" class="form-control" id="price" placeholder="Enter Price" min="0" :value="modelValue.price" @input="updateInfo('price', Number($event.target.value))" />
 		</div>
 
 		<!-- Total -->
@@ -58,9 +58,9 @@ export default {
 		},
 	},
 
-	setup() {
+	data() {
 		return {
-			acquisition_modes,
+			acquisition_modes: acquisition_modes,
 		};
 	},
 

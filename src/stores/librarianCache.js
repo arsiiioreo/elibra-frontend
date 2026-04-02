@@ -4,10 +4,10 @@ import { getRequest } from "./requestService";
 export const storage = reactive({
 	activities: null,
 	items: null,
-	// item_type: null,
 	acquisition_request: null,
 	language: null,
 	category: null,
+	section: null,
 });
 
 export const preloadLibrarianCache = async () => {
@@ -77,6 +77,19 @@ export const getAcquisitionRequest = async () => {
 
 		storage.acquisition_request = res.data.data;
 		return storage.acquisition_request;
+	} catch (e) {
+		console.error("Failed to fetch activities:", e);
+	}
+};
+
+export const getSections = async () => {
+	if (storage.section) return storage.section;
+
+	try {
+		const res = await getRequest("sections");
+
+		storage.section = res.data.data;
+		return storage.section;
 	} catch (e) {
 		console.error("Failed to fetch activities:", e);
 	}

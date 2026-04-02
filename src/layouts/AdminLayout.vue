@@ -2,8 +2,10 @@
 	<div class="d-flex flex-column vh-100 overflow-hidden">
 		<div class="page-header d-flex justify-content-between align-items-center bg-white p-2 px-3 border-bottom" style="z-index: 1">
 			<div class="d-flex align-items-center">
-				<span class="p-2 py-1 bg-light border rounded me-3 text-prime" @click="setSideBarState" style="cursor: pointer">
-					<i class="bi bi-list"></i>
+				<span class="p-2 py-1 border shadow-sm rounded me-3 clickable position-relative hstack" @click="setSideBarState">
+					<i class="bi bi-grid-1x2 text-white"></i>
+					<i class="bi bi-grid-1x2 position-absolute text-prime" :class="[sideBarOpen ? 'opacity-0' : 'opacity-100']" style="transition: opacity 0.2s ease"></i>
+					<i class="bi bi-grid-1x2-fill position-absolute text-prime" :class="[!sideBarOpen ? 'opacity-0' : 'opacity-100']" style="transition: opacity 0.5s ease"></i>
 				</span>
 				<img class="me-3" :src="isu" alt="" width="30" height="auto" />
 				<div style="font-size: 0.85rem">

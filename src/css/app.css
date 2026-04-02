@@ -8,6 +8,7 @@
 	--bs-accordion-bg: none;
 	--bs-accordion-active-bg: none;
 	font-size: 13px;
+	--bs-success-rgb: 25, 135, 84;
 }
 
 body {
@@ -18,7 +19,7 @@ body {
 .bg-success,
 .btn-success:hover {
 	opacity: 1;
-	background-color: #006012 !important;
+	background-color: var(--bs-success-rgb);
 }
 
 .btn,

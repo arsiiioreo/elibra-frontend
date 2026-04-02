@@ -84,23 +84,23 @@ export const routesByRole = {
 		//     },
 		// },
 
-		reports: {
-			name: "Reports & Analytics",
-			child: {
-				circulation: { name: "Circulation Reports", path: "LibrarianCirculationReports", icon: "bi bi-arrow-left-right" },
-				inventory: { name: "Inventory Reports", path: "LibrarianInventoryReports", icon: "bi bi-box-seam" },
-				patron: { name: "Patron Reports", path: "LibrarianPatronReports", icon: "bi bi-person-lines-fill" },
-				finance: { name: "Finance Reports", path: "LibrarianFinanceReports", icon: "bi bi-cash-stack" },
-				audit: { name: "Audit Logs", path: "LibrarianAuditLogs", icon: "bi bi-shield-lock" },
-			},
-		},
+		// reports: {
+		// 	name: "Reports & Analytics",
+		// 	child: {
+		// 		circulation: { name: "Circulation Reports", path: "LibrarianCirculationReports", icon: "bi bi-arrow-left-right" },
+		// 		inventory: { name: "Inventory Reports", path: "LibrarianInventoryReports", icon: "bi bi-box-seam" },
+		// 		patron: { name: "Patron Reports", path: "LibrarianPatronReports", icon: "bi bi-person-lines-fill" },
+		// 		finance: { name: "Finance Reports", path: "LibrarianFinanceReports", icon: "bi bi-cash-stack" },
+		// 		audit: { name: "Audit Logs", path: "LibrarianAuditLogs", icon: "bi bi-shield-lock" },
+		// 	},
+		// },
 
 		settings: {
 			name: "Settings",
 			child: {
-				roles: { name: "Roles & Permission", path: "LibrarianRoles", icon: "bi bi-person-gear" },
-				information: { name: "Library Information", path: "LibrarianInformation", icon: "bi bi-info-circle" },
-				penalty: { name: "Penalty", path: "LibrarianPenalty", icon: "bi bi-exclamation-triangle" },
+				user: { name: "User", path: "LibrarianSettingsUser", icon: "bi bi-person-gear" },
+				library: { name: "Library", path: "LibrarianSettingsLibrary", icon: "bi bi-buildings" },
+				system: { name: "System", path: "LibrarianSettingsSystem", icon: "bi bi-gear" },
 			},
 		},
 

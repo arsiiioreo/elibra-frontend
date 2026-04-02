@@ -1,0 +1,43 @@
+/* Default app styles */
+#app {
+	font-family: "Poppins", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--bs-body-bg);
+	color: var(--bs-body-color);
+	transition: all 0.3s ease;
+}
+
+/* LIGHT MODE */
+#app.mode-light {
+	--bs-body-bg: #ffffff;
+	--bs-body-bg-rgb: 255, 255, 255;
+	--bs-body-color: #000000;
+	--bs-heading-color: #000000;
+	--bs-secondary-color: rgba(33, 37, 41, 0.75);
+	--bs-secondary-bg: #e9ecef;
+
+	/* Optional Bootstrap overrides */
+	--bs-primary: #0d6efd;
+	--bs-success: #198754;
+	--bs-info: #0dcaf0;
+	--bs-warning: #ffc107;
+	--bs-danger: #dc3545;
+}
+
+/* DARK MODE */
+#app.mode-dark {
+	--bs-body-bg: #262626;
+	--bs-body-bg-rgb: 38, 38, 38;
+	--bs-body-color: #ffffff;
+	--bs-heading-color: #ffffff;
+	--bs-secondary-color: rgba(210, 210, 210, 0.75);
+	--bs-secondary-bg: #343a40;
+
+	/* Optional Bootstrap overrides */
+	--bs-primary: #0d6efd;
+	--bs-success: #198754;
+	--bs-info: #0dcaf0;
+	--bs-warning: #ffc107;
+	--bs-danger: #dc3545;
+}
